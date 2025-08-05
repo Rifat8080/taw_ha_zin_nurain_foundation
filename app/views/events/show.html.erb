@@ -1,0 +1,167 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="lg:grid lg:grid-cols-12 lg:gap-x-8">
+    <!-- Event Image -->
+    <div class="lg:col-span-5">
+      <% if @event.event_image.attached? %>
+        <div class="aspect-w-4 aspect-h-3 rounded-lg overflow-hidden">
+          <%= image_tag @event.event_image, class: "w-full h-full object-center object-cover" %>
+        </div>
+      <% else %>
+        <div class="aspect-w-4 aspect-h-3 rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center">
+          <span class="text-gray-400">No Image Available</span>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Event Details -->
+    <div class="mt-8 lg:mt-0 lg:col-span-7">
+      <div class="flex items-center justify-between">
+        <h1 class="text-3xl font-bold text-gray-900"><%= @event.name %></h1>
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium 
+          <%= @event.event_status == 'upcoming' ? 'bg-green-100 text-green-800' : 
+              @event.event_status == 'active' ? 'bg-blue-100 text-blue-800' : 
+              'bg-gray-100 text-gray-800' %>">
+          <%= @event.event_status.capitalize %>
+        </span>
+      </div>
+
+      <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div>
+          <h3 class="text-sm font-medium text-gray-900">Event Details</h3>
+          <dl class="mt-2 space-y-1">
+            <div>
+              <dt class="text-sm text-gray-500">Date:</dt>
+              <dd class="text-sm text-gray-900">
+                <%= @event.start_date.strftime("%B %d, %Y") %>
+                <% if @event.start_date != @event.end_date %>
+                  - <%= @event.end_date.strftime("%B %d, %Y") %>
+                <% end %>
+              </dd>
+            </div>
+            <div>
+              <dt class="text-sm text-gray-500">Time:</dt>
+              <dd class="text-sm text-gray-900">
+                <%= @event.start_time.strftime("%I:%M %p") %> - <%= @event.end_time.strftime("%I:%M %p") %>
+              </dd>
+            </div>
+            <div>
+              <dt class="text-sm text-gray-500">Venue:</dt>
+              <dd class="text-sm text-gray-900"><%= @event.venue %></dd>
+            </div>
+            <div>
+              <dt class="text-sm text-gray-500">Category:</dt>
+              <dd class="text-sm text-gray-900"><%= @event.ticket_category.capitalize %></dd>
+            </div>
+          </dl>
+        </div>
+
+        <div>
+          <h3 class="text-sm font-medium text-gray-900">Ticket Information</h3>
+          <dl class="mt-2 space-y-1">
+            <div>
+              <dt class="text-sm text-gray-500">Price:</dt>
+              <dd class="text-2xl font-bold text-gray-900">$<%= @event.ticket_price %></dd>
+            </div>
+            <div>
+              <dt class="text-sm text-gray-500">Total Seats:</dt>
+              <dd class="text-sm text-gray-900"><%= @event.seat_number %></dd>
+            </div>
+            <div>
+              <dt class="text-sm text-gray-500">Available:</dt>
+              <dd class="text-sm text-gray-900 <%= @event.sold_out? ? 'text-red-600' : 'text-green-600' %>">
+                <%= @event.available_seats %> seats
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <% if @event.guest_description.present? %>
+        <div class="mt-8">
+          <h3 class="text-lg font-medium text-gray-900">About the Event</h3>
+          <div class="mt-2 prose prose-sm text-gray-500">
+            <%= simple_format(@event.guest_description) %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Guest Information -->
+      <% if @event.guest_list.present? %>
+        <div class="mt-8">
+          <h3 class="text-lg font-medium text-gray-900">Special Guests</h3>
+          <div class="mt-2 prose prose-sm text-gray-500">
+            <%= simple_format(@event.guest_list) %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Action Buttons -->
+      <div class="mt-8 flex flex-col sm:flex-row gap-4">
+        <% unless @event_user %>
+          <% unless @event.sold_out? %>
+            <%= form_with model: [@event, @event.tickets.build], local: true, class: "flex-1" do |form| %>
+              <%= form.submit "Buy Ticket - $#{@event.ticket_price}", 
+                  class: "w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+            <% end %>
+          <% else %>
+            <button disabled class="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 bg-gray-100 cursor-not-allowed">
+              Sold Out
+            </button>
+          <% end %>
+        <% else %>
+          <div class="flex-1 text-center py-3 px-4 border border-green-300 rounded-md shadow-sm text-sm font-medium text-green-700 bg-green-50">
+            ✓ You are registered for this event
+          </div>
+        <% end %>
+        
+        <div class="flex gap-2">
+          <%= link_to "Edit Event", edit_event_path(@event), 
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+          <%= link_to "View Attendees", attendees_event_path(@event), 
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+        </div>
+      </div>
+
+      <!-- User's Tickets -->
+      <% if @user_tickets.any? %>
+        <div class="mt-8">
+          <h3 class="text-lg font-medium text-gray-900">Your Tickets</h3>
+          <div class="mt-4 space-y-4">
+            <% @user_tickets.each do |ticket| %>
+              <div class="border border-gray-200 rounded-lg p-4 flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-900">
+                    Ticket #<%= ticket.id.split('-').first %>
+                    <% if ticket.seat_number.present? %>
+                      - Seat <%= ticket.seat_number %>
+                    <% end %>
+                  </p>
+                  <p class="text-sm text-gray-500">
+                    Status: <span class="<%= ticket.status == 'active' ? 'text-green-600' : 'text-gray-600' %>">
+                      <%= ticket.status.capitalize %>
+                    </span>
+                  </p>
+                </div>
+                <div class="flex gap-2">
+                  <%= link_to "View QR Code", ticket_path(ticket), 
+                      class: "inline-flex items-center px-3 py-1 border border-gray-300 rounded text-sm text-gray-700 bg-white hover:bg-gray-50" %>
+                  <% if ticket.can_be_cancelled? %>
+                    <%= link_to "Cancel", ticket_path(ticket), method: :delete, 
+                        data: { confirm: "Are you sure you want to cancel this ticket?" },
+                        class: "inline-flex items-center px-3 py-1 border border-red-300 rounded text-sm text-red-700 bg-white hover:bg-red-50" %>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="mt-8">
+    <%= link_to "← Back to Events", events_path, 
+        class: "inline-flex items-center text-sm text-gray-500 hover:text-gray-700" %>
+  </div>
+</div>

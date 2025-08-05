@@ -8,6 +8,170 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+# Create sample users if they don't exist
+if User.count == 0
+  admin_user = User.create!(
+    first_name: "John",
+    last_name: "Admin",
+    email: "admin@example.com",
+    phone_number: 1234567890,
+    password: "password123",
+    password_confirmation: "password123",
+    role: "admin",
+    address: "123 Admin Street, City, State"
+  )
+
+  regular_user = User.create!(
+    first_name: "Jane",
+    last_name: "Doe",
+    email: "jane@example.com",
+    phone_number: 1234567891,
+    password: "password123",
+    password_confirmation: "password123",
+    role: "member",
+    address: "456 User Avenue, City, State"
+  )
+
+  volunteer_user = User.create!(
+    first_name: "Bob",
+    last_name: "Volunteer",
+    email: "bob@example.com",
+    phone_number: 1234567892,
+    password: "password123",
+    password_confirmation: "password123",
+    role: "volunteer",
+    address: "789 Volunteer Lane, City, State"
+  )
+
+  puts "Created #{User.count} users"
+end
+
+# Create sample events
+if Event.count == 0
+  # Upcoming event
+  upcoming_event = Event.create!(
+    name: "Annual Charity Gala",
+    start_date: Date.current + 30.days,
+    end_date: Date.current + 30.days,
+    start_time: Time.parse("18:00"),
+    end_time: Time.parse("23:00"),
+    seat_number: 200,
+    venue: "Grand Ballroom, Luxury Hotel, Downtown",
+    guest_list: "Special guest speaker: Dr. Sarah Johnson, renowned philanthropist\nPerformance by the City Orchestra\nAward ceremony for outstanding volunteers",
+    guest_description: "Join us for an elegant evening of giving back to the community. This annual gala brings together supporters, volunteers, and beneficiaries to celebrate our achievements and raise funds for future projects. Enjoy a three-course dinner, live entertainment, and inspiring stories from those we've helped.",
+    ticket_price: 150,
+    ticket_category: "premium"
+  )
+
+  # Active event (today)
+  active_event = Event.create!(
+    name: "Community Workshop: Digital Literacy",
+    start_date: Date.current,
+    end_date: Date.current + 2.days,
+    start_time: Time.parse("09:00"),
+    end_time: Time.parse("17:00"),
+    seat_number: 50,
+    venue: "Community Center, Room A & B",
+    guest_list: "Workshop facilitators:\n- Tech expert Alex Chen\n- Senior trainer Maria Rodriguez\n- Digital inclusion specialist David Kim",
+    guest_description: "A comprehensive 3-day workshop designed to help community members develop essential digital skills. Topics include basic computer operations, internet safety, online banking, social media basics, and accessing government services online. All skill levels welcome!",
+    ticket_price: 25,
+    ticket_category: "general"
+  )
+
+  # Past event
+  past_event = Event.create!(
+    name: "Food Drive & Community BBQ",
+    start_date: Date.current - 15.days,
+    end_date: Date.current - 15.days,
+    start_time: Time.parse("11:00"),
+    end_time: Time.parse("16:00"),
+    seat_number: 300,
+    venue: "City Park, Pavilion Area",
+    guest_list: "Special guests:\n- Mayor Jennifer Smith\n- Local band 'The Harmonics'\n- Chef Roberto from 'Taste of Home' restaurant",
+    guest_description: "A community gathering combining food donation drive with a fun family BBQ. We collected non-perishable food items for local food banks while enjoying grilled food, live music, and family activities. A great success bringing the community together!",
+    ticket_price: 0,
+    ticket_category: "standard"
+  )
+
+  # VIP Concert
+  concert_event = Event.create!(
+    name: "Live Concert: Local Artists Showcase",
+    start_date: Date.current + 45.days,
+    end_date: Date.current + 45.days,
+    start_time: Time.parse("19:30"),
+    end_time: Time.parse("22:30"),
+    seat_number: 100,
+    venue: "Riverside Amphitheater",
+    guest_list: "Featured Artists:\n- Indie rock band 'Midnight Echo'\n- Folk singer-songwriter Lisa Thompson\n- Jazz trio 'Blue Note Collective'\n- Hip-hop artist MC Flow",
+    guest_description: "An evening celebrating local musical talent with performances across multiple genres. Support emerging artists while enjoying an intimate concert experience under the stars. Proceeds benefit our youth music education programs.",
+    ticket_price: 75,
+    ticket_category: "vip"
+  )
+
+  puts "Created #{Event.count} sample events"
+
+  # Create some sample tickets for the past event and active event
+  users = User.limit(3)
+  
+  # Past event tickets (already used)
+  users.each do |user|
+    ticket = past_event.tickets.create!(
+      user: user,
+      ticket_type: past_event.ticket_category,
+      price: past_event.ticket_price,
+      status: 'used'
+    )
+    
+    # Also create event user registration
+    past_event.event_users.create!(
+      user: user,
+      status: 'attended'
+    )
+  end
+
+  # Active event tickets
+  users.first(2).each do |user|
+    ticket = active_event.tickets.create!(
+      user: user,
+      ticket_type: active_event.ticket_category,
+      price: active_event.ticket_price,
+      status: 'active',
+      seat_number: "A#{rand(1..25)}"
+    )
+    
+    # Also create event user registration
+    active_event.event_users.create!(
+      user: user,
+      status: 'registered'
+    )
+  end
+
+  # Upcoming event tickets
+  users.each do |user|
+    ticket = upcoming_event.tickets.create!(
+      user: user,
+      ticket_type: upcoming_event.ticket_category,
+      price: upcoming_event.ticket_price,
+      status: 'active',
+      seat_number: "VIP#{rand(1..50)}"
+    )
+    
+    # Also create event user registration
+    upcoming_event.event_users.create!(
+      user: user,
+      status: 'registered'
+    )
+  end
+
+  puts "Created sample tickets and registrations"
+end
+
+puts "\nSeed data creation completed!"
+puts "Events: #{Event.count}"
+puts "Tickets: #{Ticket.count}"
+puts "Event Registrations: #{EventUser.count}"
+puts "Users: #{User.count}"
+
 # Create sample users for testing
 puts "Creating sample users..."
 

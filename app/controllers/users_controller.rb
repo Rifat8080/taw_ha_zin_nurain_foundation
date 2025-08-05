@@ -1,28 +1,19 @@
 class UsersController < ApplicationController
+  before_action :require_admin
   before_action :set_user, only: [:show, :edit, :update, :destroy]
 
   def index
-    @users = User.all
+    @users = User.all.order(:created_at)
+  end
+  
+  def admin_index
+    redirect_to users_path
   end
 
   def show
   end
 
-  def new
-    @user = User.new
-  end
-
   def edit
-  end
-
-  def create
-    @user = User.new(user_params)
-
-    if @user.save
-      redirect_to @user, notice: 'User was successfully created.'
-    else
-      render :new
-    end
   end
 
   def update
@@ -35,7 +26,7 @@ class UsersController < ApplicationController
 
   def destroy
     @user.destroy
-    redirect_to users_url, notice: 'User was successfully destroyed.'
+    redirect_to users_url, notice: 'User was successfully deleted.'
   end
 
   private
@@ -45,6 +36,6 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:first_name, :last_name, :phone_number, :email, :password, :password_confirmation, :role, :address)
+    params.require(:user).permit(:first_name, :last_name, :phone_number, :role, :address)
   end
 end

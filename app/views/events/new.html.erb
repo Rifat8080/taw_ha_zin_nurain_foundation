@@ -1,0 +1,133 @@
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="bg-white shadow-lg rounded-lg">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h1 class="text-2xl font-bold text-gray-900">Create New Event</h1>
+    </div>
+
+    <div class="p-6">
+      <%= form_with model: @event, local: true, multipart: true, class: "space-y-6" do |form| %>
+        <% if @event.errors.any? %>
+          <div class="bg-red-50 border border-red-200 rounded-md p-4">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">
+                  There were <%= pluralize(@event.errors.count, "error") %> with your submission:
+                </h3>
+                <div class="mt-2 text-sm text-red-700">
+                  <ul class="list-disc pl-5 space-y-1">
+                    <% @event.errors.full_messages.each do |message| %>
+                      <li><%= message %></li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Event Details -->
+          <div class="space-y-6">
+            <div>
+              <%= form.label :name, class: "block text-sm font-medium text-gray-700" %>
+              <%= form.text_field :name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+            </div>
+
+            <div>
+              <%= form.label :venue, class: "block text-sm font-medium text-gray-700" %>
+              <%= form.text_area :venue, rows: 3, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <%= form.label :start_date, class: "block text-sm font-medium text-gray-700" %>
+                <%= form.date_field :start_date, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+              </div>
+              
+              <div>
+                <%= form.label :end_date, class: "block text-sm font-medium text-gray-700" %>
+                <%= form.date_field :end_date, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <%= form.label :start_time, class: "block text-sm font-medium text-gray-700" %>
+                <%= form.time_field :start_time, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+              </div>
+              
+              <div>
+                <%= form.label :end_time, class: "block text-sm font-medium text-gray-700" %>
+                <%= form.time_field :end_time, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ticket Information -->
+          <div class="space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <%= form.label :seat_number, "Total Seats", class: "block text-sm font-medium text-gray-700" %>
+                <%= form.number_field :seat_number, min: 1, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+              </div>
+              
+              <div>
+                <%= form.label :ticket_price, "Ticket Price ($)", class: "block text-sm font-medium text-gray-700" %>
+                <%= form.number_field :ticket_price, min: 0, step: 0.01, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+              </div>
+            </div>
+
+            <div>
+              <%= form.label :ticket_category, class: "block text-sm font-medium text-gray-700" %>
+              <%= form.select :ticket_category, 
+                  options_for_select([
+                    ['General', 'general'],
+                    ['VIP', 'vip'],
+                    ['Premium', 'premium'],
+                    ['Standard', 'standard']
+                  ]), 
+                  { prompt: 'Select category' }, 
+                  { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" } %>
+            </div>
+
+            <div>
+              <%= form.label :event_image, "Event Image", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.file_field :event_image, accept: "image/*", class: "mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" %>
+            </div>
+
+            <div>
+              <%= form.label :guest_image, "Guest Image", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.file_field :guest_image, accept: "image/*", class: "mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Guest Information -->
+        <div class="space-y-6">
+          <div>
+            <%= form.label :guest_list, "Special Guests", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_area :guest_list, rows: 3, placeholder: "List special guests, speakers, or performers...", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+          </div>
+
+          <div>
+            <%= form.label :guest_description, "Event Description", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_area :guest_description, rows: 4, placeholder: "Describe the event, activities, and what attendees can expect...", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+          <%= link_to "Cancel", events_path, 
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+          <%= form.submit "Create Event", 
+              class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

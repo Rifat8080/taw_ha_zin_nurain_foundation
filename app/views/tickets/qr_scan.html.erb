@@ -1,0 +1,208 @@
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+    <div class="bg-gradient-to-r from-green-600 to-blue-600 px-6 py-4">
+      <h1 class="text-2xl font-bold text-white">QR Code Scanner</h1>
+      <p class="text-green-100">Scan ticket QR codes for event check-in</p>
+    </div>
+
+    <div class="p-6">
+      <!-- Scanner Section -->
+      <div class="text-center mb-6">
+        <div id="qr-scanner" class="mx-auto max-w-sm">
+          <video id="video" class="w-full h-auto border-2 border-gray-300 rounded-lg" autoplay muted playsinline></video>
+        </div>
+        
+        <div class="mt-4">
+          <button id="start-scan" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150">
+            Start Scanning
+          </button>
+          <button id="stop-scan" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150 hidden">
+            Stop Scanning
+          </button>
+        </div>
+      </div>
+
+      <!-- Manual Input Section -->
+      <div class="border-t border-gray-200 pt-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Manual QR Code Entry</h3>
+        
+        <div class="flex gap-2">
+          <input type="text" id="manual-qr" placeholder="Enter QR code manually..." 
+                 class="flex-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+          <button onclick="validateManualQR()" 
+                  class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+            Validate
+          </button>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div id="scan-results" class="mt-6 hidden">
+        <div class="border-t border-gray-200 pt-6">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Scan Results</h3>
+          <div id="result-content" class="space-y-4"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script>
+  let video, canvas, context, scanning = false;
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    video = document.getElementById('video');
+    canvas = document.createElement('canvas');
+    context = canvas.getContext('2d');
+    
+    document.getElementById('start-scan').addEventListener('click', startScanning);
+    document.getElementById('stop-scan').addEventListener('click', stopScanning);
+  });
+
+  async function startScanning() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' } // Use back camera if available
+      });
+      
+      video.srcObject = stream;
+      scanning = true;
+      
+      document.getElementById('start-scan').classList.add('hidden');
+      document.getElementById('stop-scan').classList.remove('hidden');
+      
+      // Start scanning loop
+      requestAnimationFrame(scanQRCode);
+      
+    } catch (error) {
+      console.error('Error accessing camera:', error);
+      showResult('error', 'Unable to access camera. Please check permissions.');
+    }
+  }
+
+  function stopScanning() {
+    scanning = false;
+    
+    if (video.srcObject) {
+      video.srcObject.getTracks().forEach(track => track.stop());
+    }
+    
+    document.getElementById('start-scan').classList.remove('hidden');
+    document.getElementById('stop-scan').classList.add('hidden');
+  }
+
+  function scanQRCode() {
+    if (!scanning) return;
+    
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      canvas.height = video.videoHeight;
+      canvas.width = video.videoWidth;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, imageData.width, imageData.height);
+      
+      if (code) {
+        validateQRCode(code.data);
+        return; // Stop scanning after successful read
+      }
+    }
+    
+    requestAnimationFrame(scanQRCode);
+  }
+
+  function validateManualQR() {
+    const qrCode = document.getElementById('manual-qr').value.trim();
+    if (qrCode) {
+      validateQRCode(qrCode);
+    } else {
+      showResult('error', 'Please enter a QR code');
+    }
+  }
+
+  async function validateQRCode(qrCode) {
+    try {
+      const response = await fetch('<%= validate_qr_tickets_path %>', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ qr_code: qrCode })
+      });
+      
+      const result = await response.json();
+      
+      if (result.status === 'success') {
+        showResult('success', result.message, result.ticket);
+      } else {
+        showResult('error', result.message);
+      }
+      
+    } catch (error) {
+      console.error('Error validating QR code:', error);
+      showResult('error', 'Error validating QR code. Please try again.');
+    }
+  }
+
+  function showResult(type, message, ticketData = null) {
+    const resultsDiv = document.getElementById('scan-results');
+    const contentDiv = document.getElementById('result-content');
+    
+    let bgColor, textColor, icon;
+    
+    if (type === 'success') {
+      bgColor = 'bg-green-50';
+      textColor = 'text-green-800';
+      icon = '✓';
+    } else {
+      bgColor = 'bg-red-50';
+      textColor = 'text-red-800';
+      icon = '✗';
+    }
+    
+    let content = `
+      <div class="${bgColor} border border-${type === 'success' ? 'green' : 'red'}-200 rounded-md p-4">
+        <div class="flex items-center">
+          <span class="text-2xl mr-3">${icon}</span>
+          <div class="flex-1">
+            <h4 class="text-lg font-medium ${textColor}">${type === 'success' ? 'Success' : 'Error'}</h4>
+            <p class="${textColor}">${message}</p>
+            ${ticketData ? `
+              <div class="mt-2 text-sm ${textColor}">
+                <p><strong>User:</strong> ${ticketData.user_name}</p>
+                <p><strong>Event:</strong> ${ticketData.event_name}</p>
+                <p><strong>Type:</strong> ${ticketData.ticket_type}</p>
+                ${ticketData.seat_number ? `<p><strong>Seat:</strong> ${ticketData.seat_number}</p>` : ''}
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+    
+    contentDiv.innerHTML = content;
+    resultsDiv.classList.remove('hidden');
+    
+    // Clear manual input
+    document.getElementById('manual-qr').value = '';
+    
+    // Auto-hide after 5 seconds for success, continue scanning
+    if (type === 'success') {
+      setTimeout(() => {
+        resultsDiv.classList.add('hidden');
+        if (scanning) {
+          requestAnimationFrame(scanQRCode);
+        }
+      }, 5000);
+    } else {
+      // For errors, continue scanning immediately
+      if (scanning) {
+        setTimeout(() => {
+          requestAnimationFrame(scanQRCode);
+        }, 2000);
+      }
+    }
+  }
+</script>

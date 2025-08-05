@@ -40,7 +40,15 @@ gem "kamal", require: false
 # Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
 gem "thruster", require: false
 
-gem 'bcrypt', '~> 3.1.7'
+# Authentication
+gem 'devise'
+
+# QR Code generation for tickets
+gem 'rqrcode', '~> 2.0'
+gem 'chunky_png'
+
+# Pagination
+gem 'kaminari'
 
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]

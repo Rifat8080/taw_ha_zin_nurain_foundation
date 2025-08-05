@@ -1,0 +1,129 @@
+<<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Events</h1>
+    <a href="<%= new_event_path %>" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+      Create Event
+    </a>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white p-4 rounded-lg shadow mb-6">
+    <%= form_with url: events_path, method: :get, local: true, class: "flex flex-wrap gap-4 items-end" do |form| %>
+      <div class="flex-1 min-w-48">
+        <%= form.text_field :search, placeholder: "Search events...", value: params[:search], 
+            class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+      </div>
+      
+      <div>
+        <%= form.select :category, options_for_select([
+          ['All Categories', ''],
+          ['General', 'general'],
+          ['VIP', 'vip'],
+          ['Premium', 'premium'],
+          ['Standard', 'standard']
+        ], params[:category]), {}, 
+        { class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" } %>
+      </div>
+      
+      <div>
+        <%= form.select :status, options_for_select([
+          ['All Events', ''],
+          ['Upcoming', 'upcoming'],
+          ['Active', 'active'],
+          ['Past', 'past']
+        ], params[:status]), {}, 
+        { class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" } %>
+      </div>
+      
+      <div>
+        <%= form.submit "Filter", class: "inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Events Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% @events.each do |event| %>
+      <div class="bg-white overflow-hidden shadow rounded-lg">
+        <% if event.event_image.attached? %>
+          <div class="h-48 bg-gray-200">
+            <%= image_tag event.event_image, class: "w-full h-full object-cover" %>
+          </div>
+        <% else %>
+          <div class="h-48 bg-gray-200 flex items-center justify-center">
+            <span class="text-gray-400">No Image</span>
+          </div>
+        <% end %>
+        
+        <div class="p-6">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                <%= event.event_status == 'upcoming' ? 'bg-green-100 text-green-800' : 
+                    event.event_status == 'active' ? 'bg-blue-100 text-blue-800' : 
+                    'bg-gray-100 text-gray-800' %>">
+                <%= event.event_status.capitalize %>
+              </span>
+            </div>
+            <div class="ml-auto">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                <%= event.ticket_category.capitalize %>
+              </span>
+            </div>
+          </div>
+          
+          <h3 class="mt-2 text-lg font-medium text-gray-900">
+            <%= link_to event.name, event_path(event), class: "hover:text-blue-600" %>
+          </h3>
+          
+          <p class="mt-1 text-sm text-gray-500">
+            <%= event.venue %>
+          </p>
+          
+          <div class="mt-2 text-sm text-gray-600">
+            <p><strong>Date:</strong> <%= event.start_date.strftime("%B %d, %Y") %> 
+            <% if event.start_date != event.end_date %>
+              - <%= event.end_date.strftime("%B %d, %Y") %>
+            <% end %></p>
+            <p><strong>Time:</strong> <%= event.start_time.strftime("%I:%M %p") %> - <%= event.end_time.strftime("%I:%M %p") %></p>
+          </div>
+          
+          <div class="mt-4 flex items-center justify-between">
+            <div class="text-sm text-gray-600">
+              <p><strong>Price:</strong> $<%= event.ticket_price %></p>
+              <p><strong>Available:</strong> <%= event.available_seats %> / <%= event.seat_number %></p>
+            </div>
+            
+            <div class="flex space-x-2">
+              <%= link_to "View", event_path(event), 
+                  class: "inline-flex items-center px-3 py-1 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+              <%= link_to "Edit", edit_event_path(event), 
+                  class: "inline-flex items-center px-3 py-1 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @events.empty? %>
+    <div class="text-center py-12">
+      <div class="text-gray-400">
+        <svg class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 0h6a2 2 0 012 2v10a2 2 0 01-2 2H10a2 2 0 01-2-2V9a2 2 0 012-2z" />
+        </svg>
+      </div>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">No events found</h3>
+      <p class="mt-1 text-sm text-gray-500">Get started by creating a new event.</p>
+      <div class="mt-6">
+        <%= link_to new_event_path, 
+            class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+          Create Event
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>v>
+  <h1 class="font-bold text-4xl">Events#index</h1>
+  <p>Find me in app/views/events/index.html.erb</p>
+</div>

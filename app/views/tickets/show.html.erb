@@ -1,0 +1,110 @@
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+    <!-- Ticket Header -->
+    <div class="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4">
+      <h1 class="text-2xl font-bold text-white">Event Ticket</h1>
+      <p class="text-blue-100">Ticket ID: #<%= @ticket.id.split('-').first %></p>
+    </div>
+
+    <!-- Ticket Content -->
+    <div class="p-6">
+      <!-- Event Information -->
+      <div class="border-b border-gray-200 pb-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4"><%= @ticket.event.name %></h2>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <h3 class="text-sm font-medium text-gray-500">DATE & TIME</h3>
+            <p class="mt-1 text-sm text-gray-900">
+              <%= @ticket.event.start_date.strftime("%B %d, %Y") %>
+              <% if @ticket.event.start_date != @ticket.event.end_date %>
+                - <%= @ticket.event.end_date.strftime("%B %d, %Y") %>
+              <% end %>
+            </p>
+            <p class="text-sm text-gray-900">
+              <%= @ticket.event.start_time.strftime("%I:%M %p") %> - <%= @ticket.event.end_time.strftime("%I:%M %p") %>
+            </p>
+          </div>
+          
+          <div>
+            <h3 class="text-sm font-medium text-gray-500">VENUE</h3>
+            <p class="mt-1 text-sm text-gray-900"><%= @ticket.event.venue %></p>
+          </div>
+          
+          <div>
+            <h3 class="text-sm font-medium text-gray-500">TICKET TYPE</h3>
+            <p class="mt-1 text-sm text-gray-900"><%= @ticket.ticket_type.capitalize %></p>
+          </div>
+          
+          <div>
+            <h3 class="text-sm font-medium text-gray-500">PRICE</h3>
+            <p class="mt-1 text-sm text-gray-900">$<%= @ticket.price %></p>
+          </div>
+          
+          <% if @ticket.seat_number.present? %>
+            <div>
+              <h3 class="text-sm font-medium text-gray-500">SEAT NUMBER</h3>
+              <p class="mt-1 text-sm text-gray-900"><%= @ticket.seat_number %></p>
+            </div>
+          <% end %>
+          
+          <div>
+            <h3 class="text-sm font-medium text-gray-500">STATUS</h3>
+            <p class="mt-1 text-sm">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                <%= @ticket.status == 'active' ? 'bg-green-100 text-green-800' : 
+                    @ticket.status == 'used' ? 'bg-blue-100 text-blue-800' : 
+                    'bg-gray-100 text-gray-800' %>">
+                <%= @ticket.status.capitalize %>
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- QR Code Section -->
+      <div class="pt-6 text-center">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">QR Code</h3>
+        
+        <div class="flex justify-center mb-4">
+          <div class="p-4 bg-white border-2 border-gray-300 rounded-lg">
+            <%= @ticket.qr_code_svg.html_safe %>
+          </div>
+        </div>
+        
+        <p class="text-sm text-gray-500 mb-4">
+          Present this QR code at the event entrance for quick check-in
+        </p>
+        
+        <div class="text-xs text-gray-400 font-mono bg-gray-50 p-2 rounded">
+          QR Code: <%= @ticket.qr_code %>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="pt-6 border-t border-gray-200 flex justify-between">
+        <%= link_to "← Back to Event", event_path(@ticket.event), 
+            class: "inline-flex items-center text-sm text-gray-500 hover:text-gray-700" %>
+            
+        <div class="flex gap-2">
+          <% if @ticket.can_be_cancelled? %>
+            <%= link_to "Cancel Ticket", ticket_path(@ticket), method: :delete,
+                data: { confirm: "Are you sure you want to cancel this ticket? This action cannot be undone." },
+                class: "inline-flex items-center px-3 py-2 border border-red-300 text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50" %>
+          <% end %>
+          
+          <button onclick="printTicket()" 
+                  class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            Print Ticket
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function printTicket() {
+    window.print();
+  }
+</script>

@@ -1,8 +1,15 @@
 Rails.application.routes.draw do
+  devise_for :users
+  
+  # Admin-only user management routes
+  resources :users, only: [:index, :show, :edit, :update, :destroy] do
+    collection do
+      get :admin_index
+    end
+  end
+  
   resources :expenses
   resources :donations
-  resources :password_resets, only: [ :new, :create, :edit, :update ]
-  resources :users
   resources :projects
 
   # Volunteer Management System Routes
@@ -11,17 +18,26 @@ Rails.application.routes.draw do
   resources :team_assignments, except: [ :edit, :update ]
   resources :work_orders
 
+  # Event Management System Routes
+  resources :events do
+    resources :event_users, only: [:create, :destroy], path: 'registrations'
+    resources :tickets, only: [:create, :destroy]
+    member do
+      get :attendees
+    end
+  end
+  
+  resources :tickets, only: [:index, :show] do
+    member do
+      get :qr_code
+      patch :use_ticket
+    end
+    collection do
+      get :qr_scan
+      post :validate_qr
+    end
+  end
+
   root "home#index"
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get "up" => "rails/health#show", as: :rails_health_check
-
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
-
-  # Defines the root path route ("/")
-  # root "posts#index"
+  
 end

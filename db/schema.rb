@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_05_131133) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_05_183645) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -51,6 +51,38 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_05_131133) do
     t.datetime "updated_at", null: false
     t.index ["project_id"], name: "index_donations_on_project_id"
     t.index ["user_id"], name: "index_donations_on_user_id"
+  end
+
+  create_table "event_users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.uuid "event_id", null: false
+    t.string "ticket_code", null: false
+    t.string "status", default: "registered"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_event_users_on_event_id"
+    t.index ["status"], name: "index_event_users_on_status"
+    t.index ["ticket_code"], name: "index_event_users_on_ticket_code", unique: true
+    t.index ["user_id", "event_id"], name: "index_event_users_on_user_id_and_event_id", unique: true
+    t.index ["user_id"], name: "index_event_users_on_user_id"
+  end
+
+  create_table "events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.text "name", null: false
+    t.date "start_date", null: false
+    t.date "end_date", null: false
+    t.time "start_time", null: false
+    t.time "end_time", null: false
+    t.integer "seat_number", null: false
+    t.text "venue", null: false
+    t.text "guest_list"
+    t.text "guest_description"
+    t.integer "ticket_price", null: false
+    t.string "ticket_category", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["start_date"], name: "index_events_on_start_date"
+    t.index ["ticket_category"], name: "index_events_on_ticket_category"
   end
 
   create_table "expenses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -102,18 +134,38 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_05_131133) do
     t.index ["volunteer_id"], name: "index_team_assignments_on_volunteer_id"
   end
 
+  create_table "tickets", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "event_id", null: false
+    t.uuid "user_id", null: false
+    t.string "qr_code", null: false
+    t.string "ticket_type", null: false
+    t.integer "price", null: false
+    t.string "status", default: "active"
+    t.string "seat_number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id", "seat_number"], name: "index_tickets_on_event_id_and_seat_number", unique: true
+    t.index ["event_id"], name: "index_tickets_on_event_id"
+    t.index ["qr_code"], name: "index_tickets_on_qr_code", unique: true
+    t.index ["status"], name: "index_tickets_on_status"
+    t.index ["ticket_type"], name: "index_tickets_on_ticket_type"
+    t.index ["user_id"], name: "index_tickets_on_user_id"
+  end
+
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
     t.integer "phone_number"
     t.string "email"
-    t.text "password_digest"
     t.string "role"
     t.string "address"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
+    t.string "encrypted_password", default: "", null: false
+    t.datetime "remember_created_at"
+    t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token"
   end
 
@@ -150,11 +202,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_05_131133) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "donations", "projects"
   add_foreign_key "donations", "users"
+  add_foreign_key "event_users", "events"
+  add_foreign_key "event_users", "users"
   add_foreign_key "expenses", "projects"
   add_foreign_key "payments", "projects"
   add_foreign_key "payments", "users"
   add_foreign_key "team_assignments", "volunteers"
   add_foreign_key "team_assignments", "volunteers_teams", column: "team_id"
+  add_foreign_key "tickets", "events"
+  add_foreign_key "tickets", "users"
   add_foreign_key "volunteers", "users"
   add_foreign_key "work_orders", "users", column: "assigned_by"
   add_foreign_key "work_orders", "volunteers_teams", column: "team_id"
