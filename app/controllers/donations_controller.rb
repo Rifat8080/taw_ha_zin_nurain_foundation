@@ -1,5 +1,5 @@
 class DonationsController < ApplicationController
-  before_action :set_donation, only: [:show, :edit, :update, :destroy]
+  before_action :set_donation, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @donations = Donation.includes(:user, :project).all
@@ -10,15 +10,16 @@ class DonationsController < ApplicationController
 
   def new
     @donation = Donation.new
+    @donation.project_id = params[:project_id] if params[:project_id]
     @users = User.all
     @projects = Project.all
   end
 
   def create
     @donation = Donation.new(donation_params)
-    
+
     if @donation.save
-      redirect_to @donation, notice: 'Donation was successfully created.'
+      redirect_to @donation, notice: "Donation was successfully created."
     else
       @users = User.all
       @projects = Project.all
@@ -33,7 +34,7 @@ class DonationsController < ApplicationController
 
   def update
     if @donation.update(donation_params)
-      redirect_to @donation, notice: 'Donation was successfully updated.'
+      redirect_to @donation, notice: "Donation was successfully updated."
     else
       @users = User.all
       @projects = Project.all
@@ -43,7 +44,7 @@ class DonationsController < ApplicationController
 
   def destroy
     @donation.destroy
-    redirect_to donations_url, notice: 'Donation was successfully deleted.'
+    redirect_to donations_url, notice: "Donation was successfully deleted."
   end
 
   private

@@ -9,7 +9,48 @@
 
   <%= render @project %>
 
-  <%= link_to "Edit this project", edit_project_path(@project), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <%= link_to "Back to projects", projects_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <%= button_to "Destroy this project", @project, method: :delete, form_class: "sm:inline-block mt-2 sm:mt-0 sm:ml-2", class: "w-full rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure?" } %>
+  <!-- Donations Section -->
+  <div class="mt-8 bg-white shadow-lg rounded-lg overflow-hidden">
+    <div class="px-6 py-4 bg-gray-50 border-b">
+      <h2 class="text-2xl font-bold text-gray-900">Donations</h2>
+      <div class="mt-2">
+        <p class="text-lg font-semibold text-green-600">Total Raised: $<%= @total_donations %></p>
+        <p class="text-sm text-gray-600"><%= @donations.count %> donation(s)</p>
+      </div>
+    </div>
+    
+    <% if @donations.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Donor</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @donations.order(created_at: :desc).each do |donation| %>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">$<%= donation.amount %></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><%= donation.user.first_name %> <%= donation.user.last_name %></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= donation.created_at.strftime("%B %d, %Y") %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="px-6 py-8 text-center">
+        <p class="text-gray-500">No donations yet for this project.</p>
+        <%= link_to "Make the first donation", new_donation_path(project_id: @project.id), class: "mt-2 text-blue-500 hover:text-blue-700 font-medium" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-6">
+    <%= link_to "Edit this project", edit_project_path(@project), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+    <%= link_to "Back to projects", projects_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+    <%= button_to "Destroy this project", @project, method: :delete, form_class: "sm:inline-block mt-2 sm:mt-0 sm:ml-2", class: "w-full rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure?" } %>
+  </div>
 </div>

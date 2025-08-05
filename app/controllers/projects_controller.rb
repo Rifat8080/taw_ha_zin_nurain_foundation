@@ -8,6 +8,8 @@ class ProjectsController < ApplicationController
 
   # GET /projects/1 or /projects/1.json
   def show
+    @donations = @project.donations.includes(:user)
+    @total_donations = @donations.sum(:amount)
   end
 
   # GET /projects/new
