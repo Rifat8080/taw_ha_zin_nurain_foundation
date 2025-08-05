@@ -4,6 +4,13 @@ Rails.application.routes.draw do
   resources :password_resets, only: [ :new, :create, :edit, :update ]
   resources :users
   resources :projects
+
+  # Volunteer Management System Routes
+  resources :volunteers
+  resources :volunteers_teams
+  resources :team_assignments, except: [ :edit, :update ]
+  resources :work_orders
+
   root "home#index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

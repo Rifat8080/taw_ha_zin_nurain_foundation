@@ -1,0 +1,76 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-900"><%= @work_order.title %></h1>
+    <div class="flex gap-2">
+      <%= link_to 'Edit', edit_work_order_path(@work_order), class: 'bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded' %>
+      <%= link_to 'View Team', @work_order.volunteers_team, class: 'bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded' %>
+      <%= link_to 'Duplicate', new_work_order_path(team_id: @work_order.team_id), class: 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' %>
+      <%= link_to 'Delete', @work_order, method: :delete, 
+                  data: { confirm: 'Are you sure?' }, 
+                  class: 'bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded' %>
+      <%= link_to 'Back to List', work_orders_path, class: 'bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded' %>
+    </div>
+  </div>
+
+  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 sm:px-6">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">Work Order Details</h3>
+      <p class="mt-1 max-w-2xl text-sm text-gray-500">Complete information about this work order.</p>
+    </div>
+    <div class="border-t border-gray-200">
+      <dl>
+        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Title</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= @work_order.title %></dd>
+        </div>
+        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Description</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= simple_format(@work_order.description) %></dd>
+        </div>
+        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Assigned to team</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            <%= link_to @work_order.team_name, @work_order.volunteers_team, class: 'text-indigo-600 hover:text-indigo-900' %>
+          </dd>
+        </div>
+        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">District</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= @work_order.team_district %></dd>
+        </div>
+        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Assigned date</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            <%= @work_order.assigned_date.strftime('%B %d, %Y') %>
+            <%= days_until_badge(@work_order) %>
+          </dd>
+        </div>
+        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Assigned by</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2"><%= @work_order.assigned_by_name %></dd>
+        </div>
+        <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Status</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            <%= work_order_status_badge(@work_order) %>
+          </dd>
+        </div>
+        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Checklist</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            <ul class="border border-gray-200 rounded-md divide-y divide-gray-200">
+              <% @work_order.checklist_items.each_with_index do |item, index| %>
+                <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+                  <div class="w-0 flex-1 flex items-center">
+                    <span class="ml-2 flex-1 w-0 truncate">
+                      <%= index + 1 %>. <%= item %>
+                    </span>
+                  </div>
+                </li>
+              <% end %>
+            </ul>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</div>

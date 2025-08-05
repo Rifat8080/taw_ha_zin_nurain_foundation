@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_05_123219) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_05_131133) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -63,6 +63,27 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_05_123219) do
     t.index ["project_id"], name: "index_expenses_on_project_id"
   end
 
+  create_table "payments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "amount", null: false
+    t.uuid "user_id", null: false
+    t.uuid "project_id", null: false
+    t.string "transaction_id", null: false
+    t.string "payment_method", default: "bkash"
+    t.string "status", default: "pending"
+    t.string "bkash_payment_id"
+    t.string "bkash_trx_id"
+    t.text "payment_url"
+    t.text "callback_url"
+    t.text "error_message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bkash_payment_id"], name: "index_payments_on_bkash_payment_id"
+    t.index ["project_id"], name: "index_payments_on_project_id"
+    t.index ["status"], name: "index_payments_on_status"
+    t.index ["transaction_id"], name: "index_payments_on_transaction_id", unique: true
+    t.index ["user_id"], name: "index_payments_on_user_id"
+  end
+
   create_table "projects", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.text "name"
     t.text "categories"
@@ -70,6 +91,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_05_123219) do
     t.boolean "project_status_active"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "team_assignments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "volunteer_id", null: false
+    t.uuid "team_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["team_id"], name: "index_team_assignments_on_team_id"
+    t.index ["volunteer_id"], name: "index_team_assignments_on_volunteer_id"
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -87,9 +117,45 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_05_123219) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token"
   end
 
+  create_table "volunteers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.date "joining_date", null: false
+    t.string "role", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_volunteers_on_user_id"
+  end
+
+  create_table "volunteers_teams", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.text "name", null: false
+    t.text "district", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "work_orders", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "team_id", null: false
+    t.text "title", null: false
+    t.text "description", null: false
+    t.text "checklist", null: false
+    t.date "assigned_date", null: false
+    t.uuid "assigned_by", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assigned_by"], name: "index_work_orders_on_assigned_by"
+    t.index ["team_id"], name: "index_work_orders_on_team_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "donations", "projects"
   add_foreign_key "donations", "users"
   add_foreign_key "expenses", "projects"
+  add_foreign_key "payments", "projects"
+  add_foreign_key "payments", "users"
+  add_foreign_key "team_assignments", "volunteers"
+  add_foreign_key "team_assignments", "volunteers_teams", column: "team_id"
+  add_foreign_key "volunteers", "users"
+  add_foreign_key "work_orders", "users", column: "assigned_by"
+  add_foreign_key "work_orders", "volunteers_teams", column: "team_id"
 end

@@ -1,0 +1,82 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">Volunteers</h1>
+    <div class="flex gap-2">
+      <%= link_to 'New Volunteer', new_volunteer_path, class: 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' %>
+      <%= link_to 'Team Assignments', team_assignments_path, class: 'bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded' %>
+      <%= link_to 'All Teams', volunteers_teams_path, class: 'bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded' %>
+    </div>
+  </div>
+
+  <div class="mb-4 flex gap-4 items-center">
+    <%= form_with url: volunteers_path, method: :get, local: true, class: 'flex gap-4 items-center' do |form| %>
+      <%= form.select :role, options_for_select([['All Roles', '']] + volunteer_role_options, params[:role]), 
+                      {}, { class: 'border border-gray-300 rounded px-3 py-2' } %>
+      <%= form.submit 'Filter', class: 'bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded' %>
+      <% if params[:role].present? %>
+        <%= link_to 'Clear Filter', volunteers_path, class: 'bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded' %>
+      <% end %>
+    <% end %>
+    
+    <div class="ml-auto text-sm text-gray-600">
+      Total: <%= @volunteers.count %> volunteers
+    </div>
+  </div>
+
+  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joining Date</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Teams</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <% @volunteers.each do |volunteer| %>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <div>
+                  <div class="text-sm font-medium text-gray-900"><%= volunteer.full_name %></div>
+                  <div class="text-sm text-gray-500"><%= volunteer.phone_number %></div>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              <%= volunteer.email %>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <%= volunteer_role_badge(volunteer.role) %>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              <%= volunteer.joining_date.strftime('%B %d, %Y') %>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              <%= link_to volunteer.teams_count, team_assignments_path(volunteer_id: volunteer.id), class: 'text-blue-600 hover:text-blue-900' %> teams
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <div class="flex space-x-2">
+                <%= link_to 'View', volunteer, class: 'bg-indigo-500 hover:bg-indigo-700 text-white px-3 py-1 rounded text-xs' %>
+                <%= link_to 'Edit', edit_volunteer_path(volunteer), class: 'bg-green-500 hover:bg-green-700 text-white px-3 py-1 rounded text-xs' %>
+                <%= link_to 'Assign Team', new_team_assignment_path(volunteer_id: volunteer.id), class: 'bg-yellow-500 hover:bg-yellow-700 text-white px-3 py-1 rounded text-xs' %>
+                <%= link_to 'Delete', volunteer, method: :delete, 
+                            data: { confirm: 'Are you sure? This will also remove all team assignments.' }, 
+                            class: 'bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded text-xs' %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <% if @volunteers.empty? %>
+    <div class="text-center py-8">
+      <p class="text-gray-500">No volunteers found.</p>
+    </div>
+  <% end %>
+</div>
