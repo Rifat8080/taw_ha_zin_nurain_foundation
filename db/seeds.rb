@@ -11,41 +11,14 @@
 # Create sample users for testing
 puts "Creating sample users..."
 
-# Create Users for testing if they don't exist
-user1 = User.find_or_initialize_by(email: 'admin@foundation.org')
-if user1.new_record?
-  user1.phone_number = 2001001001
-  user1.first_name = 'Admin'
-  user1.last_name = 'User'
-  user1.password = 'password123'
-  user1.password_confirmation = 'password123'
-  user1.role = 'admin'
-  user1.address = '123 Admin Street'
-  user1.save!
-end
-
-user2 = User.find_or_initialize_by(email: 'volunteer@foundation.org')
-if user2.new_record?
-  user2.phone_number = 2001001002
-  user2.first_name = 'Test'
-  user2.last_name = 'Volunteer'
-  user2.password = 'password123'
-  user2.password_confirmation = 'password123'
-  user2.role = 'member'
-  user2.address = '456 Volunteer Avenue'
-  user2.save!
-end
-
-user3 = User.find_or_initialize_by(email: 'coordinator@foundation.org')
-if user3.new_record?
-  user3.phone_number = 2001001003
-  user3.first_name = 'Team'
-  user3.last_name = 'Coordinator'
-  user3.password = 'password123'
-  user3.password_confirmation = 'password123'
-  user3.role = 'member'
-  user3.address = '789 Coordinator Boulevard'
-  user3.save!
+admin_user = User.find_or_create_by!(email: "admin@tawhazin.org") do |user|
+  user.first_name = "Admin"
+  user.last_name = "User"
+  user.phone_number = 1234567890
+  user.role = "admin"
+  user.address = "123 Foundation St, Dhaka"
+  user.password = "password123"
+  user.password_confirmation = "password123"
 end
 
 member_users = []
@@ -166,7 +139,7 @@ work_orders.each_with_index do |wo_data, index|
       wo.checklist = wo_data[:checklist]
       wo.assigned_date = wo_data[:assigned_date]
       wo.team_id = created_teams[index % created_teams.length].id
-      wo.assigned_by = user1.id
+      wo.assigned_by = admin_user.id
     end
   end
 end
@@ -175,7 +148,7 @@ puts "Created #{WorkOrder.count} work orders"
 
 puts "Sample data creation completed!"
 puts "You can now test the volunteer management system with:"
-puts "- #{User.count} users (1 admin, #{User.where(role: 'member').count} members)"
+puts "- #{User.count} users (1 admin, #{member_users.count} members)"
 puts "- #{VolunteersTeam.count} volunteer teams"
 puts "- #{Volunteer.count} volunteers"
 puts "- #{TeamAssignment.count} team assignments"

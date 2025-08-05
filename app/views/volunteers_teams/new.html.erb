@@ -23,13 +23,13 @@
 
       <div class="mb-4">
         <%= form.label :name, 'Team Name', class: 'block text-sm font-medium text-gray-700' %>
-        <%= form.text_field :name,
+        <%= form.text_area :name, rows: 3,
                            class: 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500' %>
       </div>
 
       <div class="mb-4">
         <%= form.label :district, 'District', class: 'block text-sm font-medium text-gray-700' %>
-        <%= form.text_field :district,
+        <%= form.text_area :district, rows: 2,
                            class: 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500' %>
       </div>
 
