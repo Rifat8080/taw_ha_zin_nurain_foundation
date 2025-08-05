@@ -10,6 +10,8 @@ class ProjectsController < ApplicationController
   def show
     @donations = @project.donations.includes(:user)
     @total_donations = @donations.sum(:amount)
+    @expenses = @project.expenses
+    @total_expenses = @expenses.sum(:amount)
   end
 
   # GET /projects/new

@@ -48,6 +48,71 @@
     <% end %>
   </div>
 
+  <!-- Expenses Section -->
+  <div class="mt-8 bg-white shadow-lg rounded-lg overflow-hidden">
+    <div class="px-6 py-4 bg-gray-50 border-b">
+      <h2 class="text-2xl font-bold text-gray-900">Expenses</h2>
+      <div class="mt-2">
+        <p class="text-lg font-semibold text-red-600">Total Spent: $<%= @total_expenses %></p>
+        <p class="text-sm text-gray-600"><%= @expenses.count %> expense(s)</p>
+      </div>
+    </div>
+    
+    <% if @expenses.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @expenses.order(date: :desc).each do |expense| %>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><%= expense.title %></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">$<%= expense.amount %></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= expense.date.strftime("%B %d, %Y") %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="px-6 py-8 text-center">
+        <p class="text-gray-500">No expenses yet for this project.</p>
+        <%= link_to "Add the first expense", new_expense_path(project_id: @project.id), class: "mt-2 text-blue-500 hover:text-blue-700 font-medium" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Financial Summary -->
+  <div class="mt-8 bg-white shadow-lg rounded-lg overflow-hidden">
+    <div class="px-6 py-4 bg-gray-50 border-b">
+      <h2 class="text-2xl font-bold text-gray-900">Financial Summary</h2>
+    </div>
+    <div class="px-6 py-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="text-center">
+          <p class="text-sm text-gray-600">Total Donations</p>
+          <p class="text-2xl font-bold text-green-600">$<%= @total_donations %></p>
+        </div>
+        <div class="text-center">
+          <p class="text-sm text-gray-600">Total Expenses</p>
+          <p class="text-2xl font-bold text-red-600">$<%= @total_expenses %></p>
+        </div>
+        <div class="text-center">
+          <p class="text-sm text-gray-600">Net Balance</p>
+          <% net_balance = @total_donations - @total_expenses %>
+          <p class="text-2xl font-bold <%= net_balance >= 0 ? 'text-green-600' : 'text-red-600' %>">
+            $<%= net_balance %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="mt-6">
     <%= link_to "Edit this project", edit_project_path(@project), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
     <%= link_to "Back to projects", projects_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
