@@ -8,4 +8,6 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
- *= require flowbite
+
+/* Import Flowbite styles */
+@import url('https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css');
