@@ -1,0 +1,47 @@
+<<div class="container mx-auto px-4 py-8">
+  <div class="max-w-2xl mx-auto">
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+      <div class="px-6 py-4 bg-gray-50 border-b">
+        <h1 class="text-2xl font-bold text-gray-900">Donation Details</h1>
+      </div>
+      
+      <div class="px-6 py-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Amount</label>
+            <p class="mt-1 text-lg font-semibold text-green-600">$<%= @donation.amount %></p>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Donation Date</label>
+            <p class="mt-1 text-sm text-gray-900"><%= @donation.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Donor</label>
+            <p class="mt-1 text-sm text-gray-900"><%= @donation.user.first_name %> <%= @donation.user.last_name %></p>
+            <p class="text-sm text-gray-500"><%= @donation.user.email %></p>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Project</label>
+            <p class="mt-1 text-sm text-gray-900"><%= @donation.project.name %></p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="px-6 py-4 bg-gray-50 border-t flex justify-between">
+        <div>
+          <%= link_to "Edit", edit_donation_path(@donation), class: "bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mr-2" %>
+          <%= link_to "Delete", donation_path(@donation), method: :delete, 
+                      confirm: "Are you sure?", 
+                      class: "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" %>
+        </div>
+        <%= link_to "Back to Donations", donations_path, class: "bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" %>
+      </div>
+    </div>
+  </div>
+</div>v>
+  <h1 class="font-bold text-4xl">Donations#show</h1>
+  <p>Find me in app/views/donations/show.html.erb</p>
+</div>
