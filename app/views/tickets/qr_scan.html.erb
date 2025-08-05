@@ -61,11 +61,21 @@
   });
 
   async function startScanning() {
+    console.log('Starting camera access...');
+    
+    // Check if getUserMedia is supported
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      showResult('error', 'Camera API not supported in this browser.');
+      return;
+    }
+    
     try {
+      console.log('Requesting camera permission...');
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment' } // Use back camera if available
       });
       
+      console.log('Camera access granted!');
       video.srcObject = stream;
       scanning = true;
       
@@ -77,7 +87,21 @@
       
     } catch (error) {
       console.error('Error accessing camera:', error);
-      showResult('error', 'Unable to access camera. Please check permissions.');
+      
+      let errorMessage = 'Unable to access camera. ';
+      if (error.name === 'NotAllowedError') {
+        errorMessage += 'Please allow camera permissions and try again.';
+      } else if (error.name === 'NotFoundError') {
+        errorMessage += 'No camera found on this device.';
+      } else if (error.name === 'NotSupportedError') {
+        errorMessage += 'Camera not supported on this device.';
+      } else if (error.name === 'NotReadableError') {
+        errorMessage += 'Camera is already in use.';
+      } else {
+        errorMessage += `Error: ${error.message}`;
+      }
+      
+      showResult('error', errorMessage);
     }
   }
 
