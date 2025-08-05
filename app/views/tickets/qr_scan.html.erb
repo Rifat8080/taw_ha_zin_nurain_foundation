@@ -61,7 +61,7 @@
   });
 
   async function startScanning() {
-    console.log('Starting camera access...');
+  
     
     // Check if getUserMedia is supported
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -75,7 +75,6 @@
         video: { facingMode: 'environment' } // Use back camera if available
       });
       
-      console.log('Camera access granted!');
       video.srcObject = stream;
       scanning = true;
       
