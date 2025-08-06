@@ -1,9 +1,9 @@
 class UsersController < ApplicationController
-  before_action :require_admin
   before_action :set_user, only: [:show, :edit, :update, :destroy]
 
   def index
-    @users = User.all.order(:created_at)
+    # Exclude users with volunteer role as they are shown in volunteers#index
+    @users = User.where.not(role: 'volunteer').order(:created_at)
   end
   
   def admin_index

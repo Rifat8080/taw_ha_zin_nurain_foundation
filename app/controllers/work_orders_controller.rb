@@ -1,4 +1,5 @@
 class WorkOrdersController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_work_order, only: [ :show, :edit, :update, :destroy ]
 
   def index
@@ -21,15 +22,23 @@ class WorkOrdersController < ApplicationController
 
   def new
     @work_order = WorkOrder.new
+    # Auto-set assign date to current date and current user as work assigner
+    @work_order.assigned_date = Date.current
+    @work_order.assigned_by = current_user.id
+    
     @teams = VolunteersTeam.all
     @users = User.where(role: "admin")
   end
 
   def create
     @work_order = WorkOrder.new(work_order_params)
+    
+    # Ensure assign date and work assigner are set even if not provided in params
+    @work_order.assigned_date ||= Date.current
+    @work_order.assigned_by ||= current_user.id
 
     if @work_order.save
-      redirect_to @work_order, notice: "Work order was successfully created."
+      redirect_to @work_order, notice: "Work order was successfully created and assigned to you for #{@work_order.assigned_date.strftime('%B %d, %Y')}."
     else
       @teams = VolunteersTeam.all
       @users = User.where(role: "admin")

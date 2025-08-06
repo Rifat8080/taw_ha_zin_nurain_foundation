@@ -2,6 +2,8 @@ class TeamAssignment < ApplicationRecord
   belongs_to :volunteer
   belongs_to :volunteers_team, foreign_key: :team_id
 
+  validates :volunteer_id, presence: true
+  validates :team_id, presence: true
   validates :volunteer_id, uniqueness: { scope: :team_id, message: "is already assigned to this team" }
 
   scope :by_volunteer, ->(volunteer_id) { where(volunteer_id: volunteer_id) }

@@ -12,6 +12,9 @@ class TeamAssignmentsController < ApplicationController
 
   def new
     @team_assignment = TeamAssignment.new
+    # Pre-select volunteer if coming from volunteer profile
+    @team_assignment.volunteer_id = params[:volunteer_id] if params[:volunteer_id].present?
+    
     @volunteers = Volunteer.includes(:user).all
     @teams = VolunteersTeam.all
   end
@@ -22,9 +25,13 @@ class TeamAssignmentsController < ApplicationController
     if @team_assignment.save
       redirect_to @team_assignment, notice: "Team assignment was successfully created."
     else
+      # Log the errors for debugging
+      Rails.logger.error "TeamAssignment creation failed: #{@team_assignment.errors.full_messages.join(', ')}"
+      Rails.logger.error "Params: #{team_assignment_params.inspect}"
+      
       @volunteers = Volunteer.includes(:user).all
       @teams = VolunteersTeam.all
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -40,6 +47,10 @@ class TeamAssignmentsController < ApplicationController
   end
 
   def team_assignment_params
-    params.require(:team_assignment).permit(:volunteer_id, :team_id)
+    # Log the incoming parameters for debugging
+    Rails.logger.info "Raw params: #{params.inspect}"
+    permitted = params.require(:team_assignment).permit(:volunteer_id, :team_id)
+    Rails.logger.info "Permitted params: #{permitted.inspect}"
+    permitted
   end
 end
