@@ -31,8 +31,27 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
-  # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
+  # Enable mailer delivery errors to be raised in development
+  config.action_mailer.raise_delivery_errors = true
+
+  # Email delivery configuration
+  if ENV['GMAIL_USERNAME'].present? && ENV['GMAIL_APP_PASSWORD'].present?
+    # Use SMTP delivery method for sending real emails
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = {
+      address: 'smtp.gmail.com',
+      port: 587,
+      domain: 'gmail.com',
+      user_name: ENV['GMAIL_USERNAME'],
+      password: ENV['GMAIL_APP_PASSWORD'],
+      authentication: 'plain',
+      enable_starttls_auto: true
+    }
+  else
+    # Fallback to file delivery for development testing
+    config.action_mailer.delivery_method = :file
+    config.action_mailer.file_settings = { location: Rails.root.join('tmp/mails') }
+  end
 
   # Make template changes take effect immediately.
   config.action_mailer.perform_caching = false

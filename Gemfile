@@ -69,6 +69,8 @@ group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
   gem "foreman"
+  # Environment variables for development
+  gem "dotenv-rails"
 end
 
 group :test do

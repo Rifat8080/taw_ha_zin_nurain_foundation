@@ -1,8 +1,8 @@
-require 'securerandom'
+require "securerandom"
 
 class DonationsController < ApplicationController
   before_action :set_donation, only: [ :show, :edit, :update, :destroy ]
-  skip_before_action :authenticate_user!, only: [:new, :create]
+  skip_before_action :authenticate_user!, only: [ :new, :create ]
 
   def index
     @donations = Donation.includes(:user, :project).all
@@ -19,16 +19,24 @@ class DonationsController < ApplicationController
 
   def create
     @donation = Donation.new(donation_params.except(:first_name, :last_name, :email, :phone_number, :address))
-    
+
     # Handle user assignment
     if current_user
       # User is logged in, assign current user
       @donation.user = current_user
     else
       # User is not logged in, find or create user
-      user = find_or_create_donor
+      result = find_or_create_donor
+      user = result.is_a?(Array) ? result[0] : result
+      temp_password = result.is_a?(Array) ? result[1] : nil
+      
       if user.persisted?
         @donation.user = user
+        
+        # Send welcome email if this is a new user
+        if temp_password
+          UserMailer.welcome_donor(user, temp_password).deliver_now
+        end
       else
         @donation.errors.add(:base, "Unable to create donor: #{user.errors.full_messages.join(', ')}")
         @projects = Project.all
@@ -41,7 +49,7 @@ class DonationsController < ApplicationController
       if current_user
         redirect_to @donation, notice: "Donation was successfully created."
       else
-        redirect_to root_path, notice: "Thank you for your donation! A confirmation will be sent to your email."
+        redirect_to root_path, notice: "Thank you for your donation! Please check your email for account login details."
       end
     else
       @projects = Project.all
@@ -85,7 +93,7 @@ class DonationsController < ApplicationController
 
     # Create new user with a temporary password
     temp_password = SecureRandom.hex(8)
-    User.create(
+    user = User.create(
       first_name: donation_params[:first_name],
       last_name: donation_params[:last_name],
       email: donation_params[:email],
@@ -93,7 +101,10 @@ class DonationsController < ApplicationController
       address: donation_params[:address],
       password: temp_password,
       password_confirmation: temp_password,
-      role: 'member'
+      role: "member"
     )
+    
+    # Return array with user and temp_password for new users
+    [user, temp_password]
   end
 end
