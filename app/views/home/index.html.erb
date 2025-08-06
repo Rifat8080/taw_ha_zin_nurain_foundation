@@ -19,7 +19,7 @@
 <!-- Quick Actions -->
 <div class="py-12 bg-gray-50">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       
       <!-- Login/Account Section -->
       <div class="bg-white rounded-lg shadow-md p-6">
@@ -89,6 +89,22 @@
           <%= link_to "View All Events", events_path, 
               class: "block w-full text-center py-2 px-4 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 transition duration-200" %>
         <% end %>
+      </div>
+
+      <!-- Donation Section -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-xl font-semibold text-gray-900 mb-4">
+          <svg class="w-6 h-6 inline mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+          </svg>
+          Make a Donation
+        </h3>
+        <p class="text-gray-600 mb-4">Support our community initiatives and projects.</p>
+        
+        <%= render 'donations/donation_form', 
+            donation: @donation, 
+            projects: @projects, 
+            submit_text: 'Donate Now' %>
       </div>
       
     </div>

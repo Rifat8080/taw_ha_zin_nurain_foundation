@@ -3,5 +3,7 @@ class HomeController < ApplicationController
   
   def index
     @upcoming_events = Event.upcoming.limit(3)
+    @donation = Donation.new
+    @projects = Project.all
   end
 end

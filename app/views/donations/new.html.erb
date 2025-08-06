@@ -5,42 +5,13 @@
         <h1 class="text-2xl font-bold text-gray-900">New Donation</h1>
       </div>
       
-      <%= form_with model: @donation, local: true, class: "px-6 py-4" do |form| %>
-        <% if @donation.errors.any? %>
-          <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            <h3 class="font-bold">Error! Please fix the following issues:</h3>
-            <ul class="list-disc list-inside">
-              <% @donation.errors.full_messages.each do |message| %>
-                <li><%= message %></li>
-              <% end %>
-            </ul>
-          </div>
-        <% end %>
-
-        <div class="mb-4">
-          <%= form.label :amount, class: "block text-sm font-medium text-gray-700 mb-2" %>
-          <%= form.number_field :amount, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500", placeholder: "Enter donation amount" %>
-        </div>
-
-        <div class="mb-4">
-          <%= form.label :user_id, "Donor", class: "block text-sm font-medium text-gray-700 mb-2" %>
-          <%= form.select :user_id, options_from_collection_for_select(@users, :id, ->(user) { "#{user.first_name} #{user.last_name}" }, @donation.user_id), 
-                          { prompt: "Select a donor" }, 
-                          { class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" } %>
-        </div>
-
-        <div class="mb-6">
-          <%= form.label :project_id, "Project", class: "block text-sm font-medium text-gray-700 mb-2" %>
-          <%= form.select :project_id, options_from_collection_for_select(@projects, :id, :name, @donation.project_id), 
-                          { prompt: "Select a project" }, 
-                          { class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" } %>
-        </div>
-
-        <div class="flex justify-between">
-          <%= form.submit "Create Donation", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
-          <%= link_to "Cancel", donations_path, class: "bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" %>
-        </div>
-      <% end %>
+      <div class="px-6 py-4">
+        <%= render 'donation_form', 
+            donation: @donation, 
+            projects: @projects, 
+            submit_text: 'Create Donation',
+            show_cancel: true %>
+      </div>
     </div>
   </div>
 </div>
