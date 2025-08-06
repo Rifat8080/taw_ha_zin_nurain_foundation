@@ -90,7 +90,10 @@ class TicketsController < ApplicationController
     ticket = Ticket.find_by(qr_code: qr_code)
 
     if ticket.nil?
-      render json: { status: "error", message: "Invalid QR code" }, status: :not_found
+      render json: { 
+        status: "error", 
+        message: "QR code not found. Please verify this is a valid ticket QR code." 
+      }, status: :not_found
       return
     end
 
@@ -102,30 +105,34 @@ class TicketsController < ApplicationController
 
         render json: {
           status: "success",
-          message: "Ticket validated successfully",
+          message: "✅ Welcome! Ticket validated successfully. Enjoy the event!",
           ticket: ticket_details_for_response(ticket)
         }
       else
-        render json: { status: "error", message: "Failed to validate ticket" }, status: :unprocessable_entity
+        render json: { 
+          status: "error", 
+          message: "Unable to validate ticket due to a system error. Please try again or contact support." 
+        }, status: :unprocessable_entity
       end
     else
       case ticket.status
       when "used"
+        used_date = ticket.updated_at.strftime("%B %d, %Y at %I:%M %p")
         render json: {
           status: "error",
-          message: "Ticket has already been used",
+          message: "⚠️ This ticket was already used on #{used_date}. Each ticket can only be used once.",
           ticket: ticket_details_for_response(ticket, include_used_at: true)
         }, status: :unprocessable_entity
       when "cancelled"
         render json: {
           status: "error",
-          message: "Ticket has been cancelled",
+          message: "❌ This ticket has been cancelled and cannot be used. Please contact support if you believe this is an error.",
           ticket: ticket_details_for_response(ticket)
         }, status: :unprocessable_entity
       when "refunded"
         render json: {
           status: "error",
-          message: "Ticket has been refunded",
+          message: "💰 This ticket has been refunded and is no longer valid. Please purchase a new ticket if you wish to attend.",
           ticket: ticket_details_for_response(ticket)
         }, status: :unprocessable_entity
       else
@@ -139,7 +146,7 @@ class TicketsController < ApplicationController
           details[:event_start_date] = ticket.event.start_date.strftime("%B %d, %Y")
           render json: {
             status: "error",
-            message: "Ticket cannot be used yet. Event check-in opens 1 day before the event.",
+            message: "⏰ Check-in is not available yet. Entry opens 1 day before the event on #{details[:event_start_date]}.",
             ticket: details
           }, status: :unprocessable_entity
         elsif current_date > event_end
@@ -147,13 +154,13 @@ class TicketsController < ApplicationController
           details[:event_end_date] = ticket.event.end_date.strftime("%B %d, %Y")
           render json: {
             status: "error",
-            message: "Ticket has expired. Event has ended.",
+            message: "⌛ This ticket has expired. The event ended on #{details[:event_end_date]}.",
             ticket: details
           }, status: :unprocessable_entity
         else
           render json: {
             status: "error",
-            message: "Ticket cannot be used at this time",
+            message: "⚠️ This ticket cannot be used at this time. Please contact support for assistance.",
             ticket: ticket_details_for_response(ticket)
           }, status: :unprocessable_entity
         end

@@ -198,10 +198,16 @@ class QRScanner {
   }
 
   async validateQRCode(qrCode) {
+    // Store for retry functionality
+    this.storeLastScannedCode(qrCode);
+    
     if (!this.validateUrl) {
-      this.showResult('error', 'Validation URL not configured');
+      this.showResult('error', 'Validation URL not configured', null, 'system');
       return;
     }
+
+    // Show loading state
+    this.showResult('loading', 'Validating QR code...', null, 'loading');
 
     try {
       const response = await fetch(this.validateUrl, {
@@ -213,87 +219,281 @@ class QRScanner {
         body: JSON.stringify({ qr_code: qrCode })
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
       const result = await response.json();
       
-      if (result.status === 'success') {
-        this.showResult('success', result.message, result.ticket);
+      if (response.ok && result.status === 'success') {
+        this.showResult('success', result.message, result.ticket, 'success');
       } else {
-        this.showResult('error', result.message);
+        // Handle specific error cases based on status codes and messages
+        this.handleValidationError(response.status, result, qrCode);
       }
       
     } catch (error) {
       console.error('Error validating QR code:', error);
-      this.showResult('error', 'Error validating QR code. Please try again.');
+      
+      if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+        this.showResult('error', 'Network connection failed. Please check your internet connection and try again.', null, 'network');
+      } else {
+        this.showResult('error', 'An unexpected error occurred. Please try again.', null, 'system');
+      }
     }
   }
 
-  showResult(type, message, ticketData = null) {
+  handleValidationError(statusCode, result, qrCode) {
+    const errorType = this.getErrorType(statusCode, result.message);
+    
+    switch (statusCode) {
+      case 404:
+        this.showResult('error', 'QR code not found. This ticket may not exist in our system.', null, 'not-found');
+        break;
+        
+      case 422:
+        // Handle specific business logic errors
+        if (result.message.includes('already been used')) {
+          const usedAt = result.ticket?.used_at || 'Unknown time';
+          this.showResult('error', `This ticket was already used on ${usedAt}.`, result.ticket, 'already-used');
+        } else if (result.message.includes('cancelled')) {
+          this.showResult('error', 'This ticket has been cancelled and cannot be used.', result.ticket, 'cancelled');
+        } else if (result.message.includes('refunded')) {
+          this.showResult('error', 'This ticket has been refunded and cannot be used.', result.ticket, 'refunded');
+        } else if (result.message.includes('cannot be used yet')) {
+          const eventDate = result.ticket?.event_start_date || 'the event date';
+          this.showResult('error', `Check-in is not available yet. It opens 1 day before ${eventDate}.`, result.ticket, 'too-early');
+        } else if (result.message.includes('expired') || result.message.includes('ended')) {
+          const endDate = result.ticket?.event_end_date || 'recently';
+          this.showResult('error', `This ticket has expired. The event ended on ${endDate}.`, result.ticket, 'expired');
+        } else {
+          this.showResult('error', result.message || 'This ticket cannot be used at this time.', result.ticket, 'invalid');
+        }
+        break;
+        
+      case 401:
+        this.showResult('error', 'You are not authorized to validate tickets. Please log in.', null, 'unauthorized');
+        break;
+        
+      case 403:
+        this.showResult('error', 'You do not have permission to validate tickets.', null, 'forbidden');
+        break;
+        
+      case 500:
+        this.showResult('error', 'Server error occurred. Please contact support if this continues.', null, 'server-error');
+        break;
+        
+      default:
+        this.showResult('error', result.message || 'An error occurred while validating the ticket.', result.ticket, 'unknown');
+    }
+  }
+
+  getErrorType(statusCode, message) {
+    if (statusCode === 404) return 'not-found';
+    if (statusCode === 422) {
+      if (message.includes('already been used')) return 'already-used';
+      if (message.includes('cancelled')) return 'cancelled';
+      if (message.includes('refunded')) return 'refunded';
+      if (message.includes('cannot be used yet')) return 'too-early';
+      if (message.includes('expired')) return 'expired';
+      return 'invalid';
+    }
+    if (statusCode === 401) return 'unauthorized';
+    if (statusCode === 403) return 'forbidden';
+    if (statusCode >= 500) return 'server-error';
+    return 'unknown';
+  }
+
+  showResult(type, message, ticketData = null, errorType = null) {
     const resultsDiv = this.safeQuerySelector('#scan-results');
     const contentDiv = this.safeQuerySelector('#result-content');
     
     if (!resultsDiv || !contentDiv) return;
 
-    let bgColor, textColor, icon;
+    let bgColor, textColor, borderColor, icon, iconColor;
     
     if (type === 'success') {
       bgColor = 'bg-green-50';
       textColor = 'text-green-800';
-      icon = '✓';
+      borderColor = 'border-green-200';
+      iconColor = 'text-green-600';
+      icon = '✅';
+    } else if (type === 'loading') {
+      bgColor = 'bg-blue-50';
+      textColor = 'text-blue-800';
+      borderColor = 'border-blue-200';
+      iconColor = 'text-blue-600';
+      icon = '⏳';
     } else {
       bgColor = 'bg-red-50';
       textColor = 'text-red-800';
-      icon = '✗';
+      borderColor = 'border-red-200';
+      iconColor = 'text-red-600';
+      
+      // Choose specific icons based on error type
+      switch (errorType) {
+        case 'not-found':
+          icon = '🔍';
+          break;
+        case 'already-used':
+          icon = '🚫';
+          break;
+        case 'cancelled':
+        case 'refunded':
+          icon = '❌';
+          break;
+        case 'too-early':
+          icon = '⏰';
+          break;
+        case 'expired':
+          icon = '⌛';
+          break;
+        case 'unauthorized':
+        case 'forbidden':
+          icon = '🔒';
+          break;
+        case 'network':
+          icon = '📡';
+          break;
+        case 'server-error':
+          icon = '🔧';
+          break;
+        default:
+          icon = '⚠️';
+      }
     }
-    
-    let content = `
-      <div class="${bgColor} border border-${type === 'success' ? 'green' : 'red'}-200 rounded-md p-4">
-        <div class="flex items-center">
-          <span class="text-2xl mr-3">${icon}</span>
+
+    // Create enhanced result HTML
+    let html = `
+      <div class="p-4 rounded-lg border-2 ${bgColor} ${borderColor}">
+        <div class="flex items-start space-x-3">
+          <div class="flex-shrink-0">
+            <span class="text-2xl ${iconColor}">${icon}</span>
+          </div>
           <div class="flex-1">
-            <h4 class="text-lg font-medium ${textColor}">${type === 'success' ? 'Success' : 'Error'}</h4>
-            <p class="${textColor}">${message}</p>
-            ${ticketData ? `
-              <div class="mt-2 text-sm ${textColor}">
-                <p><strong>User:</strong> ${ticketData.user_name || 'N/A'}</p>
-                <p><strong>Event:</strong> ${ticketData.event_name || 'N/A'}</p>
-                <p><strong>Type:</strong> ${ticketData.ticket_type || 'N/A'}</p>
-                ${ticketData.seat_number ? `<p><strong>Seat:</strong> ${ticketData.seat_number}</p>` : ''}
-              </div>
-            ` : ''}
+            <h3 class="text-lg font-semibold ${textColor} mb-2">
+              ${this.getResultTitle(type, errorType)}
+            </h3>
+            <p class="${textColor} mb-3">${message}</p>
+            
+            ${this.generateTicketDetails(ticketData, type, errorType)}
+            ${this.generateActionButtons(type, errorType)}
           </div>
         </div>
       </div>
     `;
+
+    contentDiv.innerHTML = html;
+    resultsDiv.classList.remove('hidden');
     
-    contentDiv.innerHTML = content;
-    this.removeClass(resultsDiv, 'hidden');
-    
-    // Clear manual input
-    const manualInput = this.safeQuerySelector('#manual-qr');
-    if (manualInput) {
-      manualInput.value = '';
-    }
-    
-    // Auto-hide after 5 seconds for success, continue scanning
-    if (type === 'success') {
+    // Auto-hide loading messages
+    if (type === 'loading') {
       setTimeout(() => {
-        this.addClass(resultsDiv, 'hidden');
-        if (this.scanning) {
-          requestAnimationFrame(() => this.scanQRCode());
+        // Don't hide if result has been updated to something else
+        if (contentDiv.innerHTML.includes('⏳')) {
+          resultsDiv.classList.add('hidden');
         }
-      }, 5000);
-    } else {
-      // For errors, continue scanning immediately
-      if (this.scanning) {
-        setTimeout(() => {
-          requestAnimationFrame(() => this.scanQRCode());
-        }, 2000);
-      }
+      }, 10000); // Hide after 10 seconds if still loading
     }
+    
+    // Scroll to results
+    resultsDiv.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  getResultTitle(type, errorType) {
+    if (type === 'success') return 'Ticket Validated Successfully!';
+    if (type === 'loading') return 'Processing...';
+    
+    switch (errorType) {
+      case 'not-found': return 'Ticket Not Found';
+      case 'already-used': return 'Ticket Already Used';
+      case 'cancelled': return 'Ticket Cancelled';
+      case 'refunded': return 'Ticket Refunded';
+      case 'too-early': return 'Check-in Not Available';
+      case 'expired': return 'Ticket Expired';
+      case 'unauthorized': return 'Authentication Required';
+      case 'forbidden': return 'Access Denied';
+      case 'network': return 'Connection Error';
+      case 'server-error': return 'System Error';
+      default: return 'Validation Failed';
+    }
+  }
+
+  generateTicketDetails(ticketData, type, errorType) {
+    if (!ticketData) return '';
+    
+    const statusColor = type === 'success' ? 'text-green-700' : 'text-red-700';
+    
+    return `
+      <div class="mt-3 p-3 bg-white bg-opacity-50 rounded border">
+        <h4 class="font-medium text-gray-900 mb-2">Ticket Details:</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+          ${ticketData.user_name ? `<div><span class="font-medium">Attendee:</span> ${ticketData.user_name}</div>` : ''}
+          ${ticketData.event_name ? `<div><span class="font-medium">Event:</span> ${ticketData.event_name}</div>` : ''}
+          ${ticketData.ticket_type ? `<div><span class="font-medium">Type:</span> ${ticketData.ticket_type}</div>` : ''}
+          ${ticketData.seat_number ? `<div><span class="font-medium">Seat:</span> ${ticketData.seat_number}</div>` : ''}
+          ${ticketData.price ? `<div><span class="font-medium">Price:</span> ${ticketData.price}</div>` : ''}
+          ${ticketData.status ? `<div><span class="font-medium">Status:</span> <span class="${statusColor}">${ticketData.status}</span></div>` : ''}
+          ${ticketData.used_at ? `<div><span class="font-medium">Used At:</span> ${ticketData.used_at}</div>` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  generateActionButtons(type, errorType) {
+    if (type === 'loading') return '';
+    
+    let buttons = `
+      <div class="mt-4 flex flex-wrap gap-2">
+        <button onclick="window.qrScanner.clearResults()" 
+                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          Scan Another
+        </button>
+    `;
+    
+    if (type === 'success') {
+      buttons += `
+        <button onclick="window.qrScanner.printTicket()" 
+                class="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+          Print Receipt
+        </button>
+      `;
+    } else if (errorType === 'unauthorized') {
+      buttons += `
+        <button onclick="window.location.href='/users/sign_in'" 
+                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          Sign In
+        </button>
+      `;
+    } else if (errorType === 'network') {
+      buttons += `
+        <button onclick="window.qrScanner.retryLastScan()" 
+                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          Retry
+        </button>
+      `;
+    }
+    
+    buttons += '</div>';
+    return buttons;
+  }
+
+  clearResults() {
+    const resultsDiv = this.safeQuerySelector('#scan-results');
+    if (resultsDiv) {
+      resultsDiv.classList.add('hidden');
+    }
+  }
+
+  printTicket() {
+    window.print();
+  }
+
+  retryLastScan() {
+    if (this.lastScannedCode) {
+      this.validateQRCode(this.lastScannedCode);
+    }
+  }
+
+  // Store the last scanned code for retry functionality
+  storeLastScannedCode(qrCode) {
+    this.lastScannedCode = qrCode;
   }
 }
 
