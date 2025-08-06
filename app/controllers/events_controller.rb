@@ -1,7 +1,6 @@
 class EventsController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:index, :show]
   before_action :set_event, only: [:show, :edit, :update, :destroy, :attendees]
-  before_action :require_admin, only: [:new, :create, :edit, :update, :destroy]
+  # before_action :require_admin, only: [:new, :create, :edit, :update, :destroy]
   
   def index
     @events = Event.includes(:event_users, :tickets)
