@@ -32,7 +32,7 @@ class DonationsController < ApplicationController
 
       if user.persisted?
         @donation.user = user
-        # Send welcome email with temporary password for new users
+        # Send welcome email with temporary password for newly created users
         if temp_password.present?
           UserMailer.welcome_donor(user, temp_password).deliver_now
         end
@@ -48,8 +48,10 @@ class DonationsController < ApplicationController
       if current_user
         redirect_to @donation, notice: "Donation was successfully created."
       else
-        # For new users, redirect to home with instructions to check email
-        redirect_to root_path, notice: "Thank you for your donation! We've created an account for you. Please check your email for login credentials."
+        # For new users, auto-login and redirect to password setup
+        user = @donation.user
+        sign_in(user)
+        redirect_to edit_user_registration_path, notice: "Thank you for your donation! Please set up a secure password for your account."
       end
     else
       @projects = Project.all
