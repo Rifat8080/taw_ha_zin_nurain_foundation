@@ -439,50 +439,29 @@ class QRScanner {
   generateActionButtons(type, errorType) {
     if (type === 'loading') return '';
     
-    let buttons = `
-      <div class="mt-4 flex flex-wrap gap-2">
-        <button onclick="window.qrScanner.clearResults()" 
-                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-          Scan Another
-        </button>
-    `;
+    let buttons = '';
     
-    if (type === 'success') {
+    if (errorType === 'unauthorized') {
       buttons += `
-        <button onclick="window.qrScanner.printTicket()" 
-                class="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-          Print Receipt
-        </button>
-      `;
-    } else if (errorType === 'unauthorized') {
-      buttons += `
-        <button onclick="window.location.href='/users/sign_in'" 
-                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-          Sign In
-        </button>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <button onclick="window.location.href='/users/sign_in'" 
+                  class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            Sign In
+          </button>
+        </div>
       `;
     } else if (errorType === 'network') {
       buttons += `
-        <button onclick="window.qrScanner.retryLastScan()" 
-                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-          Retry
-        </button>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <button onclick="window.qrScanner.retryLastScan()" 
+                  class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            Retry
+          </button>
+        </div>
       `;
     }
     
-    buttons += '</div>';
     return buttons;
-  }
-
-  clearResults() {
-    const resultsDiv = this.safeQuerySelector('#scan-results');
-    if (resultsDiv) {
-      resultsDiv.classList.add('hidden');
-    }
-  }
-
-  printTicket() {
-    window.print();
   }
 
   retryLastScan() {
