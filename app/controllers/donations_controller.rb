@@ -29,10 +29,10 @@ class DonationsController < ApplicationController
       result = find_or_create_donor
       user = result.is_a?(Array) ? result[0] : result
       temp_password = result.is_a?(Array) ? result[1] : nil
-      
+
       if user.persisted?
         @donation.user = user
-        
+
         # Send welcome email if this is a new user
         if temp_password
           UserMailer.welcome_donor(user, temp_password).deliver_now
@@ -103,8 +103,8 @@ class DonationsController < ApplicationController
       password_confirmation: temp_password,
       role: "member"
     )
-    
+
     # Return array with user and temp_password for new users
-    [user, temp_password]
+    [ user, temp_password ]
   end
 end

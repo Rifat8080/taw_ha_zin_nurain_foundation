@@ -41,14 +41,14 @@ gem "kamal", require: false
 gem "thruster", require: false
 
 # Authentication
-gem 'devise'
+gem "devise"
 
 # QR Code generation for tickets
-gem 'rqrcode', '~> 2.0'
-gem 'chunky_png'
+gem "rqrcode", "~> 2.0"
+gem "chunky_png"
 
 # Pagination
-gem 'kaminari'
+gem "kaminari"
 
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
