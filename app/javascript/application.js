@@ -3,3 +3,8 @@ import "@hotwired/turbo-rails"
 import "controllers"
 import "flowbite";
 import "flowbite-datepicker";
+
+// Import modules
+import "modules/qr_scanner";
+import "modules/donor_modal";  
+import "modules/ticket_utils";

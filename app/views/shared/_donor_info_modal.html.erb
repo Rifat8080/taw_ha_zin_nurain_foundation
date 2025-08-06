@@ -32,19 +32,8 @@
   </div>
 </div>
 
-<script>
-function showDonorInfoModal() {
-  document.getElementById('donor-info-modal').classList.remove('hidden');
-}
-
-function hideDonorInfoModal() {
-  document.getElementById('donor-info-modal').classList.add('hidden');
-}
-
-// Auto-show modal if there's a specific flash message
 <% if flash[:notice]&.include?("check your email") %>
-  document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(showDonorInfoModal, 1000);
-  });
+  <script>
+    document.body.dataset.showDonorModal = 'true';
+  </script>
 <% end %>
-</script>
