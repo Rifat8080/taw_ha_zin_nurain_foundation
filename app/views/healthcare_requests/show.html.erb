@@ -1,0 +1,183 @@
+<<% content_for(:title, "Healthcare Request - #{@healthcare_request.patient_name}") %>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Header -->
+  <div class="mb-8">
+    <%= link_to "← Back to Healthcare Requests", healthcare_requests_path, 
+        class: "text-blue-600 hover:text-blue-800 mb-4 inline-block" %>
+    
+    <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+      <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900 mb-2"><%= @healthcare_request.patient_name %></h1>
+          <p class="text-gray-600">Requested by: <%= @healthcare_request.user.full_name %></p>
+          <p class="text-gray-600">Date: <%= @healthcare_request.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+        </div>
+        
+        <div class="flex flex-col items-end gap-3">
+          <div class="flex gap-2">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+              <%= case @healthcare_request.status
+                  when 'pending' then 'bg-yellow-100 text-yellow-800'
+                  when 'approved' then 'bg-green-100 text-green-800'
+                  when 'rejected' then 'bg-red-100 text-red-800'
+                  when 'completed' then 'bg-blue-100 text-blue-800'
+                  else 'bg-gray-100 text-gray-800'
+                  end %>">
+              <%= @healthcare_request.status.capitalize %>
+            </span>
+            <% if @healthcare_request.approved? %>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                ✓ Approved
+              </span>
+            <% end %>
+          </div>
+          
+          <!-- Action Buttons -->
+          <div class="flex gap-2">
+            <% if @healthcare_request.can_receive_donations? %>
+              <%= link_to "Make Donation", new_healthcare_request_healthcare_donation_path(@healthcare_request), 
+                  class: "px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-green-600 hover:bg-green-700" %>
+            <% end %>
+            
+            <% if current_user == @healthcare_request.user || current_user.role == 'admin' %>
+              <%= link_to "Edit", edit_healthcare_request_path(@healthcare_request), 
+                  class: "px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
+            <% end %>
+            
+            <% if current_user.role == 'admin' && @healthcare_request.status == 'pending' %>
+              <%= link_to "Approve", approve_healthcare_request_path(@healthcare_request), method: :patch,
+                  class: "px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-green-600 hover:bg-green-700",
+                  data: { confirm: "Are you sure you want to approve this request?" } %>
+              <%= link_to "Reject", reject_healthcare_request_path(@healthcare_request), method: :patch,
+                  class: "px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-red-600 hover:bg-red-700",
+                  data: { confirm: "Are you sure you want to reject this request?" } %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Main Content -->
+    <div class="lg:col-span-2">
+      <!-- Request Details -->
+      <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Request Details</h2>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Patient Name</label>
+            <p class="text-gray-900"><%= @healthcare_request.patient_name %></p>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Medical Reason</label>
+            <div class="prose prose-sm max-w-none">
+              <p class="text-gray-900 whitespace-pre-wrap"><%= @healthcare_request.reason %></p>
+            </div>
+          </div>
+          
+          <% if @healthcare_request.prescription_url.present? %>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Prescription</label>
+              <%= link_to "View Prescription", @healthcare_request.prescription_url, 
+                  target: "_blank", 
+                  class: "text-blue-600 hover:text-blue-800 underline" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Donations List -->
+      <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Recent Donations</h2>
+        
+        <% if @healthcare_donations.any? %>
+          <div class="space-y-3">
+            <% @healthcare_donations.each do |donation| %>
+              <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                <div>
+                  <p class="font-medium text-gray-900"><%= donation.user.full_name %></p>
+                  <p class="text-sm text-gray-600"><%= donation.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+                </div>
+                <div class="text-right">
+                  <p class="font-semibold text-green-600">৳<%= number_with_delimiter(donation.amount) %></p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-gray-500 text-center py-8">No donations yet. Be the first to help!</p>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="lg:col-span-1">
+      <!-- Donation Summary -->
+      <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Donation Summary</h3>
+        <div class="space-y-3">
+          <div class="flex justify-between">
+            <span class="text-gray-600">Total Raised:</span>
+            <span class="font-bold text-green-600 text-lg">৳<%= number_with_delimiter(@healthcare_request.total_donations) %></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">Number of Donors:</span>
+            <span class="font-semibold"><%= @healthcare_request.donation_count %></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">Average Donation:</span>
+            <span class="font-semibold">
+              <% if @healthcare_request.donation_count > 0 %>
+                ৳<%= number_with_delimiter((@healthcare_request.total_donations / @healthcare_request.donation_count).round) %>
+              <% else %>
+                ৳0
+              <% end %>
+            </span>
+          </div>
+        </div>
+        
+        <% if @healthcare_request.can_receive_donations? %>
+          <div class="mt-6">
+            <%= link_to "Donate Now", new_healthcare_request_healthcare_donation_path(@healthcare_request), 
+                class: "w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700" %>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Request Info -->
+      <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Request Information</h3>
+        <div class="space-y-3 text-sm">
+          <div class="flex justify-between">
+            <span class="text-gray-600">Requested by:</span>
+            <span class="font-medium"><%= @healthcare_request.user.full_name %></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">Contact:</span>
+            <span class="font-medium"><%= @healthcare_request.user.email %></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">Phone:</span>
+            <span class="font-medium"><%= @healthcare_request.user.phone_number %></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">Status:</span>
+            <span class="font-medium <%= @healthcare_request.approved? ? 'text-green-600' : 'text-yellow-600' %>">
+              <%= @healthcare_request.approved? ? 'Approved' : 'Pending Approval' %>
+            </span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">Created:</span>
+            <span class="font-medium"><%= @healthcare_request.created_at.strftime("%b %d, %Y") %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>v>
+  <h1 class="font-bold text-4xl">HealthcareRequests#show</h1>
+  <p>Find me in app/views/healthcare_requests/show.html.erb</p>
+</div>

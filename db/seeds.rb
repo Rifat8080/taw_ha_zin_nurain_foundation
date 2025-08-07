@@ -310,6 +310,70 @@ end
 
 puts "Created #{WorkOrder.count} work orders"
 
+# Create sample healthcare requests
+healthcare_requests_data = [
+  {
+    patient_name: "Ahmed Rahman",
+    reason: "Urgent heart surgery required. Patient has been diagnosed with severe coronary artery disease and needs immediate bypass surgery. The estimated cost is 500,000 BDT including surgery, hospital stay, and medications. The family cannot afford this treatment without community support.",
+    prescription_url: "https://example.com/prescription1.pdf",
+    status: "approved",
+    approved: true
+  },
+  {
+    patient_name: "Fatima Begum",
+    reason: "Cancer treatment and chemotherapy. Patient diagnosed with breast cancer and requires immediate chemotherapy sessions. Total treatment cost estimated at 300,000 BDT. Single mother with no steady income source.",
+    prescription_url: "https://example.com/prescription2.pdf",
+    status: "pending",
+    approved: false
+  },
+  {
+    patient_name: "Mohammad Ali",
+    reason: "Kidney transplant surgery needed. Patient has been on dialysis for 2 years and requires urgent kidney transplant. Surgery and post-operative care will cost approximately 800,000 BDT.",
+    prescription_url: nil,
+    status: "approved",
+    approved: true
+  },
+  {
+    patient_name: "Rashida Khatun",
+    reason: "Emergency eye surgery to prevent blindness. Patient has severe glaucoma and needs immediate surgery to save vision. Family struggling financially due to COVID-19 impact.",
+    prescription_url: "https://example.com/prescription4.pdf",
+    status: "completed",
+    approved: true
+  }
+]
+
+healthcare_requests_data.each_with_index do |req_data, index|
+  user = member_users[index % member_users.length]
+  request = HealthcareRequest.find_or_create_by!(patient_name: req_data[:patient_name]) do |hr|
+    hr.user = user
+    hr.reason = req_data[:reason]
+    hr.prescription_url = req_data[:prescription_url]
+    hr.status = req_data[:status]
+    hr.approved = req_data[:approved]
+    hr.created_at = (index + 1).days.ago
+  end
+  
+  # Add some donations to approved requests
+  if request.approved? && request.status == 'approved'
+    donation_amounts = [1000, 2500, 5000, 1500, 3000, 500, 10000]
+    rand(3..6).times do |i|
+      donor = member_users[(index + i + 1) % member_users.length]
+      unless donor == request.user
+        HealthcareDonation.find_or_create_by!(
+          user: donor,
+          healthcare_request: request,
+          amount: donation_amounts[i % donation_amounts.length]
+        ) do |donation|
+          donation.created_at = rand(0..2).days.ago
+        end
+      end
+    end
+  end
+end
+
+puts "Created #{HealthcareRequest.count} healthcare requests"
+puts "Created #{HealthcareDonation.count} healthcare donations"
+
 puts "Sample data creation completed!"
 puts "You can now test the volunteer management system with:"
 puts "- #{User.count} users (1 admin, #{member_users.count} members)"
@@ -318,3 +382,5 @@ puts "- #{Volunteer.count} volunteers"
 puts "- #{TeamAssignment.count} team assignments"
 puts "- #{Project.count} projects"
 puts "- #{WorkOrder.count} work orders"
+puts "- #{HealthcareRequest.count} healthcare requests"
+puts "- #{HealthcareDonation.count} healthcare donations"

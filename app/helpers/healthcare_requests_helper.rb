@@ -1,0 +1,2 @@
+module HealthcareRequestsHelper
+end

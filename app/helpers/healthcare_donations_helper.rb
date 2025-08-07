@@ -1,0 +1,2 @@
+module HealthcareDonationsHelper
+end

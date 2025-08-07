@@ -1,0 +1,108 @@
+<<% content_for(:title, "New Healthcare Request") %>
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Header -->
+  <div class="mb-8">
+    <%= link_to "← Back to Healthcare Requests", healthcare_requests_path, 
+        class: "text-blue-600 hover:text-blue-800 mb-4 inline-block" %>
+    
+    <h1 class="text-3xl font-bold text-gray-900">Submit Healthcare Request</h1>
+    <p class="text-gray-600 mt-2">Request financial assistance for medical treatment</p>
+  </div>
+
+  <!-- Form -->
+  <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <%= form_with model: @healthcare_request, local: true, class: "space-y-6" do |form| %>
+      <% if @healthcare_request.errors.any? %>
+        <div class="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium">Please correct the following errors:</h3>
+              <ul class="mt-2 text-sm list-disc list-inside">
+                <% @healthcare_request.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Left Column -->
+        <div class="space-y-6">
+          <div>
+            <%= form.label :patient_name, class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_field :patient_name, 
+                class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500",
+                placeholder: "Enter patient's full name",
+                required: true %>
+            <p class="mt-1 text-sm text-gray-500">Full name of the patient requiring medical assistance</p>
+          </div>
+
+          <div>
+            <%= form.label :prescription_url, "Prescription/Medical Document URL", 
+                class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.url_field :prescription_url, 
+                class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500",
+                placeholder: "https://example.com/prescription.pdf" %>
+            <p class="mt-1 text-sm text-gray-500">Link to prescription, medical reports, or related documents (optional)</p>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="space-y-6">
+          <div>
+            <%= form.label :reason, "Medical Reason & Details", 
+                class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_area :reason, 
+                rows: 8,
+                class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500",
+                placeholder: "Please provide detailed information about the medical condition, required treatment, estimated costs, and why financial assistance is needed...",
+                required: true %>
+            <p class="mt-1 text-sm text-gray-500">Provide comprehensive details about the medical situation</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Important Information Box -->
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-blue-800">Important Information</h3>
+            <div class="mt-2 text-sm text-blue-700">
+              <ul class="list-disc list-inside space-y-1">
+                <li>Your request will be reviewed by our admin team before approval</li>
+                <li>Only approved requests will be visible for donations</li>
+                <li>Please provide accurate and detailed information</li>
+                <li>You can edit your request before it's approved</li>
+                <li>Medical documents or prescriptions will help validate your request</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="flex justify-end gap-4">
+        <%= link_to "Cancel", healthcare_requests_path, 
+            class: "px-6 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
+        <%= form.submit "Submit Request", 
+            class: "px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+      </div>
+    <% end %>
+  </div>
+</div>v>
+  <h1 class="font-bold text-4xl">HealthcareRequests#new</h1>
+  <p>Find me in app/views/healthcare_requests/new.html.erb</p>
+</div>

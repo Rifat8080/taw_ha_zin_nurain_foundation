@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_05_183645) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_07_054256) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -93,6 +93,31 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_05_183645) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["project_id"], name: "index_expenses_on_project_id"
+  end
+
+  create_table "healthcare_donations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.uuid "request_id", null: false
+    t.integer "amount", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["amount"], name: "index_healthcare_donations_on_amount"
+    t.index ["request_id"], name: "index_healthcare_donations_on_request_id"
+    t.index ["user_id"], name: "index_healthcare_donations_on_user_id"
+  end
+
+  create_table "healthcare_requests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.text "patient_name", null: false
+    t.text "reason", null: false
+    t.text "prescription_url"
+    t.string "status", default: "pending"
+    t.boolean "approved", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["approved"], name: "index_healthcare_requests_on_approved"
+    t.index ["status"], name: "index_healthcare_requests_on_status"
+    t.index ["user_id"], name: "index_healthcare_requests_on_user_id"
   end
 
   create_table "payments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -205,6 +230,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_05_183645) do
   add_foreign_key "event_users", "events"
   add_foreign_key "event_users", "users"
   add_foreign_key "expenses", "projects"
+  add_foreign_key "healthcare_donations", "healthcare_requests", column: "request_id"
+  add_foreign_key "healthcare_donations", "users"
+  add_foreign_key "healthcare_requests", "users"
   add_foreign_key "payments", "projects"
   add_foreign_key "payments", "users"
   add_foreign_key "team_assignments", "volunteers"

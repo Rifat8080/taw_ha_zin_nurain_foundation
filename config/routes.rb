@@ -17,6 +17,17 @@ Rails.application.routes.draw do
   resources :volunteers_teams
   resources :team_assignments, except: [ :edit, :update ]
   resources :work_orders
+  
+  # Healthcare Management System Routes
+  resources :healthcare_requests do
+    resources :healthcare_donations, only: [:new, :create], path: 'donations'
+    member do
+      patch :approve
+      patch :reject
+    end
+  end
+  
+  resources :healthcare_donations, only: [:index, :show]
 
   # Event Management System Routes
   resources :events do

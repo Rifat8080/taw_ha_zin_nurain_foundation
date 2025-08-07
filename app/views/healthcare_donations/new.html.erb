@@ -1,0 +1,199 @@
+<% content_for(:title, "Make Healthcare Donation") %>
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Header -->
+  <div class="mb-8">
+    <%= link_to "← Back to Request", healthcare_request_path(@healthcare_request), 
+        class: "text-blue-600 hover:text-blue-800 mb-4 inline-block" %>
+    
+    <h1 class="text-3xl font-bold text-gray-900">Make a Donation</h1>
+    <p class="text-gray-600 mt-2">Support <strong><%= @healthcare_request.patient_name %></strong>'s medical treatment</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Donation Form -->
+    <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-6">Donation Amount</h2>
+      
+      <%= form_with model: [@healthcare_request, @healthcare_donation], local: true, class: "space-y-6" do |form| %>
+        <% if @healthcare_donation.errors.any? %>
+          <div class="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium">Please correct the following errors:</h3>
+                <ul class="mt-2 text-sm list-disc list-inside">
+                  <% @healthcare_donation.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Quick Amount Selection -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-3">Quick Select Amount</label>
+          <div class="grid grid-cols-3 gap-3">
+            <button type="button" onclick="setAmount(500)" class="amount-btn px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              ৳500
+            </button>
+            <button type="button" onclick="setAmount(1000)" class="amount-btn px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              ৳1,000
+            </button>
+            <button type="button" onclick="setAmount(2000)" class="amount-btn px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              ৳2,000
+            </button>
+            <button type="button" onclick="setAmount(5000)" class="amount-btn px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              ৳5,000
+            </button>
+            <button type="button" onclick="setAmount(10000)" class="amount-btn px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              ৳10,000
+            </button>
+            <button type="button" onclick="setAmount(20000)" class="amount-btn px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              ৳20,000
+            </button>
+          </div>
+        </div>
+
+        <!-- Custom Amount -->
+        <div>
+          <%= form.label :amount, "Custom Amount (৳)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.number_field :amount, 
+              id: "donation_amount",
+              min: 1,
+              step: 1,
+              class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-lg",
+              placeholder: "Enter amount in Taka",
+              required: true %>
+          <p class="mt-1 text-sm text-gray-500">Minimum donation: ৳1</p>
+        </div>
+
+        <!-- Terms -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-blue-800">Donation Information</h3>
+              <div class="mt-2 text-sm text-blue-700">
+                <ul class="list-disc list-inside space-y-1">
+                  <li>Your donation will directly support this patient's medical treatment</li>
+                  <li>All donations are recorded and tracked transparently</li>
+                  <li>You will receive a confirmation once the donation is processed</li>
+                  <li>Donations are final and non-refundable</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex justify-end gap-4">
+          <%= link_to "Cancel", healthcare_request_path(@healthcare_request), 
+              class: "px-6 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
+          <%= form.submit "Donate Now", 
+              class: "px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Request Summary -->
+    <div class="space-y-6">
+      <!-- Patient Information -->
+      <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Patient Information</h3>
+        <div class="space-y-3">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Patient Name</label>
+            <p class="text-gray-900 font-medium"><%= @healthcare_request.patient_name %></p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Medical Condition</label>
+            <p class="text-gray-900 text-sm line-clamp-3"><%= truncate(@healthcare_request.reason, length: 150) %></p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Requested by</label>
+            <p class="text-gray-900"><%= @healthcare_request.user.full_name %></p>
+          </div>
+          <% if @healthcare_request.prescription_url.present? %>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Medical Documents</label>
+              <%= link_to "View Prescription", @healthcare_request.prescription_url, 
+                  target: "_blank", 
+                  class: "text-blue-600 hover:text-blue-800 underline text-sm" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Current Donations -->
+      <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Current Donations</h3>
+        <div class="space-y-3">
+          <div class="flex justify-between">
+            <span class="text-gray-600">Total Raised:</span>
+            <span class="font-bold text-green-600 text-lg">৳<%= number_with_delimiter(@healthcare_request.total_donations) %></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">Number of Donors:</span>
+            <span class="font-semibold"><%= @healthcare_request.donation_count %></span>
+          </div>
+          <% if @healthcare_request.donation_count > 0 %>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Average Donation:</span>
+              <span class="font-semibold">৳<%= number_with_delimiter((@healthcare_request.total_donations / @healthcare_request.donation_count).round) %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Recent Donors -->
+      <% if @healthcare_request.healthcare_donations.any? %>
+        <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Donors</h3>
+          <div class="space-y-2">
+            <% @healthcare_request.healthcare_donations.includes(:user).recent.limit(5).each do |donation| %>
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-gray-700"><%= donation.user.full_name %></span>
+                <span class="font-medium text-green-600">৳<%= number_with_delimiter(donation.amount) %></span>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+function setAmount(amount) {
+  document.getElementById('donation_amount').value = amount;
+  
+  // Remove active class from all buttons
+  document.querySelectorAll('.amount-btn').forEach(btn => {
+    btn.classList.remove('bg-blue-100', 'border-blue-500', 'text-blue-700');
+    btn.classList.add('border-gray-300', 'text-gray-700', 'bg-white');
+  });
+  
+  // Add active class to clicked button
+  event.target.classList.remove('border-gray-300', 'text-gray-700', 'bg-white');
+  event.target.classList.add('bg-blue-100', 'border-blue-500', 'text-blue-700');
+}
+
+// Remove active state when custom amount is typed
+document.getElementById('donation_amount').addEventListener('input', function() {
+  document.querySelectorAll('.amount-btn').forEach(btn => {
+    btn.classList.remove('bg-blue-100', 'border-blue-500', 'text-blue-700');
+    btn.classList.add('border-gray-300', 'text-gray-700', 'bg-white');
+  });
+});
+</script>

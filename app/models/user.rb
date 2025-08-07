@@ -12,6 +12,10 @@ class User < ApplicationRecord
   has_many :event_users, dependent: :destroy
   has_many :events, through: :event_users
   has_many :tickets, dependent: :destroy
+  
+  # Healthcare system associations
+  has_many :healthcare_requests, dependent: :destroy
+  has_many :healthcare_donations, dependent: :destroy
 
   validates :first_name, presence: true
   validates :last_name, presence: true
