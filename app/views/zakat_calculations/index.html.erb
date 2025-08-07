@@ -1,0 +1,142 @@
+<<% content_for :title, "Zakat Calculator" %>
+
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Zakat Calculator</h1>
+      <p class="text-gray-600 mt-2">Calculate your Zakat obligations based on Islamic principles</p>
+    </div>
+    <%= link_to new_zakat_calculation_path, class: "btn btn-primary" do %>
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+      </svg>
+      New Calculation
+    <% end %>
+  </div>
+
+  <!-- Current Year Quick View -->
+  <% if @current_calculation %>
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-semibold text-blue-900">Current Year (<%= @current_year %>) Calculation</h2>
+          <div class="mt-2 space-y-1">
+            <p class="text-sm text-blue-700">Net Assets: <%= @current_calculation.formatted_net_assets %></p>
+            <p class="text-sm text-blue-700">Nisab Threshold: <%= @current_calculation.formatted_nisab_value %></p>
+            <p class="text-lg font-semibold text-blue-900">
+              Zakat Due: <%= @current_calculation.formatted_zakat_due %>
+              <% if @current_calculation.zakat_eligible? %>
+                <span class="text-sm font-normal text-green-600">(Eligible)</span>
+              <% else %>
+                <span class="text-sm font-normal text-gray-500">(Below Nisab)</span>
+              <% end %>
+            </p>
+          </div>
+        </div>
+        <div class="flex space-x-2">
+          <%= link_to @current_calculation, class: "btn btn-sm btn-outline" do %>View<% end %>
+          <%= link_to edit_zakat_calculation_path(@current_calculation), class: "btn btn-sm btn-primary" do %>Edit<% end %>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="bg-amber-50 border border-amber-200 rounded-lg p-6">
+      <div class="flex items-center">
+        <svg class="w-8 h-8 text-amber-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+        <div>
+          <h3 class="text-lg font-medium text-amber-900">No Calculation for Current Year</h3>
+          <p class="text-amber-700">Create a new calculation for <%= @current_year %> to determine your Zakat obligations.</p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- All Calculations -->
+  <div class="bg-white shadow-sm rounded-lg">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">All Calculations</h3>
+    </div>
+    
+    <% if @zakat_calculations.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Year</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Assets</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Liabilities</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Net Assets</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Zakat Due</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @zakat_calculations.each do |calculation| %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="font-medium text-gray-900"><%= calculation.calculation_year %></div>
+                  <% if calculation.calculation_year == @current_year %>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Current</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= number_to_currency(calculation.total_assets) %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= number_to_currency(calculation.total_liabilities) %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= calculation.formatted_net_assets %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900"><%= calculation.formatted_zakat_due %></div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <% if calculation.zakat_eligible? %>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      Zakat Due
+                    </span>
+                  <% else %>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                      Below Nisab
+                    </span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm space-x-2">
+                  <%= link_to calculation, class: "text-blue-600 hover:text-blue-900" do %>View<% end %>
+                  <%= link_to edit_zakat_calculation_path(calculation), class: "text-green-600 hover:text-green-900" do %>Edit<% end %>
+                  <%= link_to calculation, method: :delete, 
+                      confirm: "Are you sure you want to delete the calculation for #{calculation.calculation_year}?",
+                      class: "text-red-600 hover:text-red-900" do %>Delete<% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="px-6 py-12 text-center">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No calculations yet</h3>
+        <p class="mt-1 text-sm text-gray-500">Get started by creating your first Zakat calculation.</p>
+        <div class="mt-6">
+          <%= link_to new_zakat_calculation_path, class: "btn btn-primary" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            New Calculation
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>v>
+  <h1 class="font-bold text-4xl">ZakatCalculations#index</h1>
+  <p>Find me in app/views/zakat_calculations/index.html.erb</p>
+</div>

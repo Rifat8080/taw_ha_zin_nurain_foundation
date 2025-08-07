@@ -1,0 +1,211 @@
+<% content_for :title, "New Zakat Calculation" %>
+
+<div class="max-w-4xl mx-auto space-y-6">
+  <!-- Header -->
+  <div>
+    <h1 class="text-3xl font-bold text-gray-900">New Zakat Calculation</h1>
+    <p class="text-gray-600 mt-2">Calculate your Zakat obligations for the specified year</p>
+  </div>
+
+  <!-- Nisab Information -->
+  <% if @nisab_rate %>
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+      <h3 class="text-lg font-semibold text-blue-900 mb-3">Current Nisab Rates (<%= @nisab_rate.year %>)</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+        <div>
+          <p class="text-blue-700 font-medium">Gold Price</p>
+          <p class="text-blue-900"><%= @nisab_rate.formatted_gold_price %>/gram</p>
+        </div>
+        <div>
+          <p class="text-blue-700 font-medium">Silver Price</p>
+          <p class="text-blue-900"><%= @nisab_rate.formatted_silver_price %>/gram</p>
+        </div>
+        <div>
+          <p class="text-blue-700 font-medium">Gold Nisab</p>
+          <p class="text-blue-900"><%= @nisab_rate.formatted_nisab_gold %></p>
+        </div>
+        <div>
+          <p class="text-blue-700 font-medium">Silver Nisab</p>
+          <p class="text-blue-900"><%= @nisab_rate.formatted_nisab_silver %></p>
+        </div>
+      </div>
+      <div class="mt-4 p-3 bg-blue-100 rounded">
+        <p class="text-sm text-blue-800">
+          <strong>Minimum Nisab Threshold:</strong> <%= @nisab_rate.formatted_min_nisab %>
+          (Lower of gold or silver nisab, more favorable for the payer)
+        </p>
+      </div>
+    </div>
+  <% else %>
+    <div class="bg-amber-50 border border-amber-200 rounded-lg p-6">
+      <div class="flex items-center">
+        <svg class="w-8 h-8 text-amber-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+        <div>
+          <h3 class="text-lg font-medium text-amber-900">No Nisab Rates Available</h3>
+          <p class="text-amber-700">Please contact an administrator to set up current Nisab rates.</p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Form -->
+  <%= form_with model: @zakat_calculation, local: true, class: "space-y-6" do |form| %>
+    <% if @zakat_calculation.errors.any? %>
+      <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div class="flex">
+          <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-red-800">Please correct the following errors:</h3>
+            <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+              <% @zakat_calculation.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="bg-white shadow-sm rounded-lg p-6 space-y-6">
+      <!-- Basic Information -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div>
+          <%= form.label :calculation_year, class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.number_field :calculation_year, 
+              class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+              min: 1400, max: Date.current.year + 1, step: 1 %>
+        </div>
+        
+        <div>
+          <%= form.label :nisab_value, "Nisab Threshold", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.number_field :nisab_value, 
+              class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+              step: 0.01, min: 0 %>
+          <p class="text-xs text-gray-500 mt-1">Automatically set based on current rates</p>
+        </div>
+        
+        <div class="flex items-end">
+          <button type="button" id="quick-calculate" class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            Quick Calculate
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Calculation Results -->
+      <div id="quick-results" class="hidden bg-gray-50 rounded-lg p-4">
+        <h4 class="font-medium text-gray-900 mb-2">Quick Calculation Results</h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div>
+            <span class="text-gray-600">Net Assets:</span>
+            <span id="net-assets" class="font-medium text-gray-900"></span>
+          </div>
+          <div>
+            <span class="text-gray-600">Zakat Due:</span>
+            <span id="zakat-due" class="font-medium text-gray-900"></span>
+          </div>
+          <div>
+            <span class="text-gray-600">Status:</span>
+            <span id="zakat-status" class="font-medium"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Assets Section -->
+    <div class="bg-white shadow-sm rounded-lg p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Assets</h3>
+      
+      <div id="assets-section">
+        <%= form.fields_for :assets do |asset_form| %>
+          <%= render 'asset_fields', form: asset_form %>
+        <% end %>
+      </div>
+      
+      <button type="button" id="add-asset" class="mt-4 px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+        <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Add Asset
+      </button>
+    </div>
+
+    <!-- Liabilities Section -->
+    <div class="bg-white shadow-sm rounded-lg p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Liabilities</h3>
+      
+      <div id="liabilities-section">
+        <%= form.fields_for :liabilities do |liability_form| %>
+          <%= render 'liability_fields', form: liability_form %>
+        <% end %>
+      </div>
+      
+      <button type="button" id="add-liability" class="mt-4 px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+        <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Add Liability
+      </button>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center justify-between">
+      <%= link_to zakat_calculations_path, class: "px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" do %>
+        <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Back to Calculations
+      <% end %>
+      
+      <%= form.submit "Create Zakat Calculation", class: "px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
+    </div>
+  <% end %>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  let assetIndex = <%= @zakat_calculation.assets.length %>;
+  let liabilityIndex = <%= @zakat_calculation.liabilities.length %>;
+
+  // Quick Calculate
+  document.getElementById('quick-calculate').addEventListener('click', function() {
+    const assets = Array.from(document.querySelectorAll('input[name*="[assets_attributes]"][name*="[amount]"]'))
+                        .reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
+    const liabilities = Array.from(document.querySelectorAll('input[name*="[liabilities_attributes]"][name*="[amount]"]'))
+                             .reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
+    const year = document.getElementById('zakat_calculation_calculation_year').value;
+    
+    fetch('/zakat_calculations/quick_calculate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+      },
+      body: JSON.stringify({
+        total_assets: assets,
+        total_liabilities: liabilities,
+        year: year
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById('net-assets').textContent = '$' + data.net_assets.toLocaleString();
+      document.getElementById('zakat-due').textContent = '$' + data.zakat_due.toLocaleString();
+      document.getElementById('zakat-status').textContent = data.zakat_eligible ? 'Zakat Due' : 'Below Nisab';
+      document.getElementById('zakat-status').className = 'font-medium ' + 
+        (data.zakat_eligible ? 'text-green-600' : 'text-gray-600');
+      document.getElementById('quick-results').classList.remove('hidden');
+    });
+  });
+
+  // Remove buttons
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('remove-field')) {
+      e.target.closest('.field-group').remove();
+    }
+  });
+});
+</script>

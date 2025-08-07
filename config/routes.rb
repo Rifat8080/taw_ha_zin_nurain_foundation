@@ -1,6 +1,16 @@
 Rails.application.routes.draw do
   devise_for :users
   
+  # Zakat Calculator Routes
+  resources :zakat_calculations do
+    collection do
+      post :quick_calculate
+    end
+  end
+  
+  # Nisab Rates Management (Admin only)
+  resources :nisab_rates
+  
   # Admin-only user management routes
   resources :users, only: [:index, :show, :edit, :update, :destroy] do
     collection do

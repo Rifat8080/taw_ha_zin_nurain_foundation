@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  calculation_year: 1
+  total_assets: 9.99
+  total_liabilities: 9.99
+  nisab_value: 9.99
+
+two:
+  user: two
+  calculation_year: 1
+  total_assets: 9.99
+  total_liabilities: 9.99
+  nisab_value: 9.99

@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  year: 1
+  gold_price_per_gram: 9.99
+  silver_price_per_gram: 9.99
+
+two:
+  year: 1
+  gold_price_per_gram: 9.99
+  silver_price_per_gram: 9.99

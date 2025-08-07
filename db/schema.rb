@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_07_064047) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_07_074637) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -41,6 +41,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_064047) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "assets", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "zakat_calculation_id", null: false
+    t.string "category", null: false
+    t.text "description"
+    t.decimal "amount", precision: 14, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category"], name: "index_assets_on_category"
+    t.index ["zakat_calculation_id"], name: "index_assets_on_zakat_calculation_id"
+    t.check_constraint "amount >= 0::numeric", name: "check_amount_positive"
+    t.check_constraint "category::text = ANY (ARRAY['cash'::character varying, 'bank'::character varying, 'gold'::character varying, 'silver'::character varying, 'business_inventory'::character varying, 'receivables'::character varying, 'livestock'::character varying, 'agriculture'::character varying, 'investments'::character varying, 'property_rent'::character varying]::text[])", name: "check_category"
   end
 
   create_table "donations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -134,6 +147,27 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_064047) do
     t.index ["approved"], name: "index_healthcare_requests_on_approved"
     t.index ["status"], name: "index_healthcare_requests_on_status"
     t.index ["user_id"], name: "index_healthcare_requests_on_user_id"
+  end
+
+  create_table "liabilities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "zakat_calculation_id", null: false
+    t.text "description"
+    t.decimal "amount", precision: 14, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["zakat_calculation_id"], name: "index_liabilities_on_zakat_calculation_id"
+    t.check_constraint "amount >= 0::numeric", name: "check_amount_positive"
+  end
+
+  create_table "nisab_rates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "year", null: false
+    t.decimal "gold_price_per_gram", precision: 8, scale: 2, null: false
+    t.decimal "silver_price_per_gram", precision: 8, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.virtual "nisab_gold", type: :decimal, precision: 14, scale: 2, as: "(gold_price_per_gram * (85)::numeric)", stored: true
+    t.virtual "nisab_silver", type: :decimal, precision: 14, scale: 2, as: "(silver_price_per_gram * (595)::numeric)", stored: true
+    t.index ["year"], name: "index_nisab_rates_on_year", unique: true
   end
 
   create_table "payments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -239,8 +273,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_064047) do
     t.index ["team_id"], name: "index_work_orders_on_team_id"
   end
 
+  create_table "zakat_calculations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.integer "calculation_year", null: false
+    t.decimal "total_assets", precision: 14, scale: 2, default: "0.0"
+    t.decimal "total_liabilities", precision: 14, scale: 2, default: "0.0"
+    t.decimal "nisab_value", precision: 14, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.virtual "net_assets", type: :decimal, precision: 14, scale: 2, as: "(total_assets - total_liabilities)", stored: true
+    t.virtual "zakat_due", type: :decimal, precision: 14, scale: 2, as: "\nCASE\n    WHEN ((total_assets - total_liabilities) >= nisab_value) THEN round(((total_assets - total_liabilities) * 0.025), 2)\n    ELSE (0)::numeric\nEND", stored: true
+    t.index ["user_id", "calculation_year"], name: "index_zakat_calculations_on_user_id_and_calculation_year", unique: true
+    t.index ["user_id"], name: "index_zakat_calculations_on_user_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "assets", "zakat_calculations"
   add_foreign_key "donations", "projects"
   add_foreign_key "donations", "users"
   add_foreign_key "event_users", "events"
@@ -251,6 +300,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_064047) do
   add_foreign_key "healthcare_expenses", "healthcare_requests"
   add_foreign_key "healthcare_expenses", "users"
   add_foreign_key "healthcare_requests", "users"
+  add_foreign_key "liabilities", "zakat_calculations"
   add_foreign_key "payments", "projects"
   add_foreign_key "payments", "users"
   add_foreign_key "team_assignments", "volunteers"
@@ -260,4 +310,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_064047) do
   add_foreign_key "volunteers", "users"
   add_foreign_key "work_orders", "users", column: "assigned_by"
   add_foreign_key "work_orders", "volunteers_teams", column: "team_id"
+  add_foreign_key "zakat_calculations", "users"
 end

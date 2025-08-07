@@ -16,6 +16,9 @@ class User < ApplicationRecord
   # Healthcare system associations
   has_many :healthcare_requests, dependent: :destroy
   has_many :healthcare_donations, dependent: :destroy
+  
+  # Zakat Calculator associations
+  has_many :zakat_calculations, dependent: :destroy
 
   validates :first_name, presence: true
   validates :last_name, presence: true

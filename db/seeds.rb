@@ -8,6 +8,9 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+# Load Zakat Nisab rates
+load Rails.root.join('db', 'seeds', 'zakat_nisab_rates.rb')
+
 # Create sample users if they don't exist
 if User.count == 0
   admin_user = User.create!(
