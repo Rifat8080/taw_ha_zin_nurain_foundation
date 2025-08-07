@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Taw Ha Zin Nurain Foundation - Dashboard" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="bg-gray-50">
+    <div class="min-h-screen">
+      <!-- Sidebar -->
+      <div class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out" id="sidebar">
+        <div class="flex items-center justify-center h-16 bg-gray-800">
+          <%= link_to root_path, class: "flex items-center space-x-2" do %>
+            <svg class="h-8 w-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+            </svg>
+            <span class="text-white font-bold text-lg">TawHaZin</span>
+          <% end %>
+        </div>
+
+        <nav class="mt-8">
+          <div class="px-4 space-y-2">
+            <!-- Dashboard -->
+            <%= link_to root_path, class: "group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-gray-700 hover:text-white transition-colors" do %>
+              <svg class="mr-3 h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+              </svg>
+              Dashboard
+            <% end %>
+
+            <!-- Projects -->
+            <%= link_to projects_path, class: "group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-gray-700 hover:text-white transition-colors" do %>
+              <svg class="mr-3 h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+              </svg>
+              Projects
+            <% end %>
+
+            <!-- Healthcare -->
+            <div class="space-y-1">
+              <div class="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-300">
+                <svg class="mr-3 h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                </svg>
+                Healthcare
+              </div>
+              <div class="ml-6 space-y-1">
+                <%= link_to healthcare_requests_path, class: "group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-400 hover:bg-gray-700 hover:text-white transition-colors" do %>
+                  Requests
+                <% end %>
+                <%= link_to healthcare_donations_path, class: "group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-400 hover:bg-gray-700 hover:text-white transition-colors" do %>
+                  Donations
+                <% end %>
+              </div>
+            </div>
+
+            <!-- Volunteer Management -->
+            <div class="space-y-1">
+              <div class="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-300">
+                <svg class="mr-3 h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+                Volunteers
+              </div>
+              <div class="ml-6 space-y-1">
+                <%= link_to volunteers_path, class: "group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-400 hover:bg-gray-700 hover:text-white transition-colors" do %>
+                  All Volunteers
+                <% end %>
+                <%= link_to volunteers_teams_path, class: "group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-400 hover:bg-gray-700 hover:text-white transition-colors" do %>
+                  Teams
+                <% end %>
+                <%= link_to work_orders_path, class: "group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-400 hover:bg-gray-700 hover:text-white transition-colors" do %>
+                  Work Orders
+                <% end %>
+              </div>
+            </div>
+
+            <!-- Events -->
+            <div class="space-y-1">
+              <div class="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-300">
+                <svg class="mr-3 h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                Events
+              </div>
+              <div class="ml-6 space-y-1">
+                <%= link_to events_path, class: "group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-400 hover:bg-gray-700 hover:text-white transition-colors" do %>
+                  All Events
+                <% end %>
+                <%= link_to tickets_path, class: "group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-400 hover:bg-gray-700 hover:text-white transition-colors" do %>
+                  Tickets
+                <% end %>
+                <%= link_to qr_scan_tickets_path, class: "group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-400 hover:bg-gray-700 hover:text-white transition-colors" do %>
+                  QR Scanner
+                <% end %>
+              </div>
+            </div>
+
+            <!-- Financial -->
+            <div class="space-y-1">
+              <div class="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-300">
+                <svg class="mr-3 h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                </svg>
+                Finance
+              </div>
+              <div class="ml-6 space-y-1">
+                <%= link_to donations_path, class: "group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-400 hover:bg-gray-700 hover:text-white transition-colors" do %>
+                  Donations
+                <% end %>
+                <%= link_to expenses_path, class: "group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-400 hover:bg-gray-700 hover:text-white transition-colors" do %>
+                  Expenses
+                <% end %>
+              </div>
+            </div>
+
+            <% if current_user&.role == 'admin' %>
+              <!-- User Management (Admin Only) -->
+              <%= link_to users_path, class: "group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-gray-700 hover:text-white transition-colors" do %>
+                <svg class="mr-3 h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                </svg>
+                User Management
+              <% end %>
+            <% end %>
+          </div>
+        </nav>
+      </div>
+
+      <!-- Main content -->
+      <div class="lg:pl-64 flex flex-col flex-1">
+        <!-- Top navigation -->
+        <div class="sticky top-0 z-10 bg-white shadow-sm border-b border-gray-200">
+          <div class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+            <button type="button" class="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500" id="sidebar-toggle">
+              <span class="sr-only">Open sidebar</span>
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+            </button>
+
+            <div class="flex items-center space-x-4">
+              <!-- Notifications -->
+              <button type="button" class="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+                <span class="sr-only">View notifications</span>
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19H7a2 2 0 01-2-2V7a2 2 0 012-2h4m0 14V5a2 2 0 012-2h2a2 2 0 012 2v12a2 2 0 01-2 2h-2z"></path>
+                </svg>
+              </button>
+
+              <!-- Profile dropdown -->
+              <div class="relative">
+                <button type="button" class="flex items-center space-x-3 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" id="profile-menu-button">
+                  <div class="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
+                    <span class="text-white font-medium text-sm"><%= current_user&.first_name&.first || 'U' %></span>
+                  </div>
+                  <span class="hidden md:block text-gray-700 font-medium"><%= current_user&.full_name %></span>
+                  <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </button>
+
+                <!-- Profile dropdown menu -->
+                <div class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5" id="profile-menu">
+                  <div class="px-4 py-2 text-sm text-gray-500 border-b border-gray-200">
+                    <div class="font-medium"><%= current_user&.full_name %></div>
+                    <div class="text-gray-400"><%= current_user&.email %></div>
+                  </div>
+                  <%= link_to "Profile Settings", edit_user_registration_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                  <%= link_to "View Public Site", root_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                  <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flash Messages -->
+        <% if flash[:notice] %>
+          <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3" role="alert">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm font-medium"><%= flash[:notice] %></p>
+              </div>
+              <div class="ml-auto pl-3">
+                <div class="-mx-1.5 -my-1.5">
+                  <button type="button" class="inline-flex bg-green-100 rounded-md p-1.5 text-green-500 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-100 focus:ring-green-600" onclick="this.parentElement.parentElement.parentElement.parentElement.remove()">
+                    <span class="sr-only">Dismiss</span>
+                    <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <% if flash[:alert] %>
+          <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3" role="alert">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm font-medium"><%= flash[:alert] %></p>
+              </div>
+              <div class="ml-auto pl-3">
+                <div class="-mx-1.5 -my-1.5">
+                  <button type="button" class="inline-flex bg-red-100 rounded-md p-1.5 text-red-500 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-red-100 focus:ring-red-600" onclick="this.parentElement.parentElement.parentElement.parentElement.remove()">
+                    <span class="sr-only">Dismiss</span>
+                    <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Page content -->
+        <main class="flex-1 py-6">
+          <%= yield %>
+        </main>
+      </div>
+    </div>
+
+    <!-- Sidebar overlay for mobile -->
+    <div class="fixed inset-0 z-40 lg:hidden hidden" id="sidebar-overlay">
+      <div class="fixed inset-0 bg-gray-600 bg-opacity-75" id="sidebar-backdrop"></div>
+    </div>
+
+    <script>
+      // Sidebar toggle functionality
+      const sidebarToggle = document.getElementById('sidebar-toggle');
+      const sidebar = document.getElementById('sidebar');
+      const sidebarOverlay = document.getElementById('sidebar-overlay');
+      const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+
+      function toggleSidebar() {
+        sidebar.classList.toggle('-translate-x-full');
+        sidebarOverlay.classList.toggle('hidden');
+      }
+
+      sidebarToggle.addEventListener('click', toggleSidebar);
+      sidebarBackdrop.addEventListener('click', toggleSidebar);
+
+      // Profile menu toggle
+      const profileMenuButton = document.getElementById('profile-menu-button');
+      const profileMenu = document.getElementById('profile-menu');
+
+      profileMenuButton.addEventListener('click', function() {
+        profileMenu.classList.toggle('hidden');
+      });
+
+      // Close profile menu when clicking outside
+      document.addEventListener('click', function(event) {
+        if (!profileMenuButton.contains(event.target) && !profileMenu.contains(event.target)) {
+          profileMenu.classList.add('hidden');
+        }
+      });
+    </script>
+  </body>
+</html>
