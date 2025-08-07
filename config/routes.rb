@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   # Healthcare Management System Routes
   resources :healthcare_requests do
     resources :healthcare_donations, only: [:new, :create], path: 'donations'
+    resources :healthcare_expenses, path: 'expenses'
     member do
       patch :approve
       patch :reject

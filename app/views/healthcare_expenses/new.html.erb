@@ -1,0 +1,107 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">Add New Expense</h1>
+          <p class="text-gray-600 mt-1">For: <span class="font-semibold"><%= @healthcare_request.patient_name %></span></p>
+        </div>
+        <%= link_to healthcare_request_healthcare_expenses_path(@healthcare_request), 
+            class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" do %>
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Back to Expenses
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <%= form_with model: [@healthcare_request, @healthcare_expense], local: true, class: "space-y-6" do |form| %>
+        <% if @healthcare_expense.errors.any? %>
+          <div class="bg-red-50 border border-red-200 rounded-md p-4">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">Please fix the following errors:</h3>
+                <div class="mt-2 text-sm text-red-700">
+                  <ul class="list-disc space-y-1 pl-5">
+                    <% @healthcare_expense.errors.full_messages.each do |message| %>
+                      <li><%= message %></li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <%= form.label :description, class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_field :description, 
+                placeholder: "Enter expense description",
+                class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" %>
+          </div>
+
+          <div>
+            <%= form.label :category, class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.select :category, 
+                options_for_select(HealthcareExpense::CATEGORIES.map { |cat| [cat, cat] }, @healthcare_expense.category),
+                { prompt: "Select category" },
+                { class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" } %>
+          </div>
+
+          <div>
+            <%= form.label :amount, class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <div class="relative">
+              <span class="absolute left-3 top-2 text-gray-500">৳</span>
+              <%= form.number_field :amount, 
+                  step: 0.01, min: 0,
+                  placeholder: "0.00",
+                  class: "w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" %>
+            </div>
+          </div>
+
+          <div>
+            <%= form.label :expense_date, class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.date_field :expense_date, 
+                value: @healthcare_expense.expense_date || Date.current,
+                class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" %>
+          </div>
+        </div>
+
+        <div>
+          <%= form.label :receipt_url, class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.url_field :receipt_url, 
+              placeholder: "https://example.com/receipt.jpg (optional)",
+              class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" %>
+          <p class="mt-1 text-sm text-gray-500">Optional: Link to receipt or document</p>
+        </div>
+
+        <div>
+          <%= form.label :notes, class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.text_area :notes, 
+              rows: 4,
+              placeholder: "Additional notes about this expense (optional)",
+              class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" %>
+        </div>
+
+        <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
+          <%= link_to healthcare_request_healthcare_expenses_path(@healthcare_request), 
+              class: "px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" do %>
+            Cancel
+          <% end %>
+          <%= form.submit "Add Expense", 
+              class: "px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

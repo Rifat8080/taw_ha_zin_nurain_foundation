@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_07_054256) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_07_064047) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -104,6 +104,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_054256) do
     t.index ["amount"], name: "index_healthcare_donations_on_amount"
     t.index ["request_id"], name: "index_healthcare_donations_on_request_id"
     t.index ["user_id"], name: "index_healthcare_donations_on_user_id"
+  end
+
+  create_table "healthcare_expenses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "healthcare_request_id", null: false
+    t.uuid "user_id", null: false
+    t.string "description", null: false
+    t.decimal "amount", precision: 10, scale: 2, null: false
+    t.string "category"
+    t.text "notes"
+    t.string "receipt_url"
+    t.date "expense_date", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["expense_date"], name: "index_healthcare_expenses_on_expense_date"
+    t.index ["healthcare_request_id"], name: "index_healthcare_expenses_on_healthcare_request_id"
+    t.index ["user_id"], name: "index_healthcare_expenses_on_user_id"
   end
 
   create_table "healthcare_requests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -232,6 +248,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_054256) do
   add_foreign_key "expenses", "projects"
   add_foreign_key "healthcare_donations", "healthcare_requests", column: "request_id"
   add_foreign_key "healthcare_donations", "users"
+  add_foreign_key "healthcare_expenses", "healthcare_requests"
+  add_foreign_key "healthcare_expenses", "users"
   add_foreign_key "healthcare_requests", "users"
   add_foreign_key "payments", "projects"
   add_foreign_key "payments", "users"

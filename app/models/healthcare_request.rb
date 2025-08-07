@@ -1,6 +1,7 @@
 class HealthcareRequest < ApplicationRecord
   belongs_to :user
   has_many :healthcare_donations, foreign_key: :request_id, dependent: :destroy
+  has_many :healthcare_expenses, dependent: :destroy
   
   validates :patient_name, presence: true
   validates :reason, presence: true
@@ -16,6 +17,18 @@ class HealthcareRequest < ApplicationRecord
   
   def total_donations
     healthcare_donations.sum(:amount)
+  end
+  
+  def total_expenses
+    healthcare_expenses.sum(:amount)
+  end
+  
+  def balance
+    total_donations - total_expenses
+  end
+  
+  def expense_count
+    healthcare_expenses.count
   end
   
   def donation_count
@@ -44,5 +57,30 @@ class HealthcareRequest < ApplicationRecord
   
   def reject!
     update!(approved: false, status: 'rejected')
+  end
+  
+  def formatted_total_donations
+    "৳#{total_donations.to_f}"
+  end
+  
+  def formatted_total_expenses
+    "৳#{total_expenses.to_f}"
+  end
+  
+  def formatted_balance
+    balance_amount = balance
+    sign = balance_amount >= 0 ? "+" : ""
+    "#{sign}৳#{balance_amount.to_f}"
+  end
+  
+  def balance_status
+    case balance <=> 0
+    when 1
+      'surplus'
+    when 0
+      'balanced'
+    when -1
+      'deficit'
+    end
   end
 end
