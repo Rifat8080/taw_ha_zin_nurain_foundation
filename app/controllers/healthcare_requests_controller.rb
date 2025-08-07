@@ -1,17 +1,27 @@
 class HealthcareRequestsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_healthcare_request, only: [:show, :edit, :update, :destroy, :approve, :reject]
+  before_action :set_healthcare_request, only: [:show, :edit, :update, :destroy, :approve, :reject, :complete]
   
   def index
-    @healthcare_requests = HealthcareRequest.includes(:user, :healthcare_donations)
-                                          .order(created_at: :desc)
-                                          .page(params[:page])
+
+    # For regular users, only show approved requests that are visible to public
+    # For admins, show all requests for management
+    if current_user.role == 'admin'
+      @healthcare_requests = HealthcareRequest.includes(:user, :healthcare_donations)
+                                            .order(created_at: :desc)
+    else
+      @healthcare_requests = HealthcareRequest.visible_to_public
+                                            .includes(:user, :healthcare_donations)
+                                            .order(created_at: :desc)
+    end
     
-    # Filter by status if provided
-    @healthcare_requests = @healthcare_requests.by_status(params[:status]) if params[:status].present?
+    # Filter by status if provided (admin only)
+    if params[:status].present? && current_user.role == 'admin'
+      @healthcare_requests = @healthcare_requests.by_status(params[:status])
+    end
     
-    # Filter by approval status if provided
-    if params[:approved].present?
+    # Filter by approval status if provided (admin only)
+    if params[:approved].present? && current_user.role == 'admin'
       @healthcare_requests = @healthcare_requests.where(approved: params[:approved] == 'true')
     end
   end
@@ -50,7 +60,17 @@ class HealthcareRequestsController < ApplicationController
       return
     end
     
-    if @healthcare_request.update(healthcare_request_params)
+    # Get the parameters
+    request_params = healthcare_request_params
+    
+    # Auto-approve if admin sets status to approved
+    if current_user.role == 'admin' && request_params[:status] == 'approved'
+      request_params = request_params.merge(approved: true)
+    elsif current_user.role == 'admin' && request_params[:status] == 'rejected'
+      request_params = request_params.merge(approved: false)
+    end
+    
+    if @healthcare_request.update(request_params)
       redirect_to @healthcare_request, notice: 'Healthcare request was successfully updated.'
     else
       render :edit, status: :unprocessable_entity
@@ -79,6 +99,12 @@ class HealthcareRequestsController < ApplicationController
     @healthcare_request.reject!
     redirect_to @healthcare_request, notice: 'Healthcare request has been rejected.'
   end
+  
+  def complete
+    authorize_admin!
+    @healthcare_request.mark_as_completed!
+    redirect_to @healthcare_request, notice: 'Healthcare request has been marked as completed.'
+  end
 
   private
 
@@ -87,7 +113,11 @@ class HealthcareRequestsController < ApplicationController
   end
 
   def healthcare_request_params
-    params.require(:healthcare_request).permit(:patient_name, :reason, :prescription_url, :status)
+    if current_user.role == 'admin'
+      params.require(:healthcare_request).permit(:patient_name, :reason, :prescription_url, :status, :approved)
+    else
+      params.require(:healthcare_request).permit(:patient_name, :reason, :prescription_url)
+    end
   end
   
   def authorize_admin!

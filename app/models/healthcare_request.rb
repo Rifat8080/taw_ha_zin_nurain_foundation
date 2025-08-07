@@ -11,6 +11,8 @@ class HealthcareRequest < ApplicationRecord
   scope :approved_requests, -> { where(approved: true) }
   scope :pending_approval, -> { where(approved: false, status: 'pending') }
   scope :by_status, ->(status) { where(status: status) }
+  scope :visible_to_public, -> { where(approved: true, status: 'approved') }
+  scope :accepting_donations, -> { where(approved: true, status: 'approved') }
   
   def total_donations
     healthcare_donations.sum(:amount)
@@ -25,7 +27,11 @@ class HealthcareRequest < ApplicationRecord
   end
   
   def can_receive_donations?
-    approved? && (status == 'approved' || status == 'pending')
+    approved? && status == 'approved'
+  end
+  
+  def visible_to_public?
+    approved? && status == 'approved'
   end
   
   def mark_as_completed!

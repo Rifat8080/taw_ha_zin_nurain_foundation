@@ -5,6 +5,7 @@ class HomeController < ApplicationController
     @upcoming_events = Event.upcoming.limit(3)
     @donation = Donation.new
     @projects = Project.all
+    @healthcare_requests = HealthcareRequest.visible_to_public.includes(:user, :healthcare_donations).limit(6)
 
     # Add all events for events index display
     @events = Event.includes(:event_users, :tickets).order(:start_date)

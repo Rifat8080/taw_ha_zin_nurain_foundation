@@ -1,4 +1,4 @@
-<<% content_for(:title, "Healthcare Requests") %>
+<% content_for(:title, "Healthcare Requests") %>
 
 <div class="bg-white">
   <div class="mx-auto max-w-7xl px-6 py-24 lg:px-8">
@@ -12,16 +12,22 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <!-- Actions and Filters -->
   <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-    <div class="flex flex-wrap gap-2">
-      <%= link_to "All Requests", healthcare_requests_path, 
-          class: "px-4 py-2 rounded-lg #{params[:status].blank? ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
-      <%= link_to "Pending", healthcare_requests_path(status: 'pending'), 
-          class: "px-4 py-2 rounded-lg #{params[:status] == 'pending' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
-      <%= link_to "Approved", healthcare_requests_path(status: 'approved'), 
-          class: "px-4 py-2 rounded-lg #{params[:status] == 'approved' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
-      <%= link_to "Completed", healthcare_requests_path(status: 'completed'), 
-          class: "px-4 py-2 rounded-lg #{params[:status] == 'completed' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
-    </div>
+    <% if current_user.role == 'admin' %>
+      <div class="flex flex-wrap gap-2">
+        <%= link_to "All Requests", healthcare_requests_path, 
+            class: "px-4 py-2 rounded-lg #{params[:status].blank? ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
+        <%= link_to "Pending", healthcare_requests_path(status: 'pending'), 
+            class: "px-4 py-2 rounded-lg #{params[:status] == 'pending' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
+        <%= link_to "Approved", healthcare_requests_path(status: 'approved'), 
+            class: "px-4 py-2 rounded-lg #{params[:status] == 'approved' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
+        <%= link_to "Completed", healthcare_requests_path(status: 'completed'), 
+            class: "px-4 py-2 rounded-lg #{params[:status] == 'completed' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
+      </div>
+    <% else %>
+      <div class="text-sm text-gray-600">
+        Showing approved healthcare requests accepting donations
+      </div>
+    <% end %>
     
     <%= link_to "New Healthcare Request", new_healthcare_request_path, 
         class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700" %>
@@ -89,6 +95,14 @@
                   data: { confirm: "Are you sure you want to reject this request?" } %>
             </div>
           <% end %>
+          
+          <% if current_user.role == 'admin' && request.status == 'approved' && request.approved? %>
+            <div class="flex gap-1 w-full mt-2">
+              <%= link_to "Mark Completed", complete_healthcare_request_path(request), method: :patch,
+                  class: "w-full text-center px-3 py-1 border border-transparent rounded-md text-xs font-medium text-white bg-blue-600 hover:bg-blue-700",
+                  data: { confirm: "Are you sure you want to mark this request as completed?" } %>
+            </div>
+          <% end %>
         </div>
       </div>
     <% end %>
@@ -101,7 +115,4 @@
           class: "mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700" %>
     </div>
   <% end %>
-</div>v>
-  <h1 class="font-bold text-4xl">HealthcareRequests#index</h1>
-  <p>Find me in app/views/healthcare_requests/index.html.erb</p>
 </div>
