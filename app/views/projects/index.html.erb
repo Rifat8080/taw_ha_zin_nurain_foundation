@@ -62,6 +62,11 @@
 
             <!-- Project Content -->
             <div class="p-6">
+              <% if project.image.attached? %>
+                <div class="mb-4">
+                  <%= image_tag project.image, class: "w-full h-48 object-cover rounded-lg" %>
+                </div>
+              <% end %>
               <%= render project %>
             </div>
 
