@@ -16,8 +16,10 @@ class ZakatCalculationsController < ApplicationController
 
   def new
     @zakat_calculation = current_user.zakat_calculations.build(calculation_year: Date.current.year)
-    @zakat_calculation.assets.build
-    @zakat_calculation.liabilities.build
+    
+    # Build at least one asset and liability for the form
+    @zakat_calculation.assets.build if @zakat_calculation.assets.empty?
+    @zakat_calculation.liabilities.build if @zakat_calculation.liabilities.empty?
     
     # Set current nisab value if available
     current_rate = NisabRate.current_rate
@@ -33,10 +35,20 @@ class ZakatCalculationsController < ApplicationController
       @zakat_calculation.update_totals!
       @zakat_calculation.update_nisab_value! if NisabRate.current_rate
       
-      redirect_to @zakat_calculation, notice: 'Zakat calculation was successfully created.'
+      respond_to do |format|
+        format.html { redirect_to @zakat_calculation, notice: 'Zakat calculation was successfully created.' }
+        format.turbo_stream { redirect_to @zakat_calculation, notice: 'Zakat calculation was successfully created.' }
+      end
     else
+      # Build at least one asset and liability for the form if they're empty
+      @zakat_calculation.assets.build if @zakat_calculation.assets.empty?
+      @zakat_calculation.liabilities.build if @zakat_calculation.liabilities.empty?
       @nisab_rate = NisabRate.current_rate
-      render :new, status: :unprocessable_entity
+      
+      respond_to do |format|
+        format.html { render :new, status: :unprocessable_entity }
+        format.turbo_stream { render :new, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -51,10 +63,20 @@ class ZakatCalculationsController < ApplicationController
       @zakat_calculation.update_totals!
       @zakat_calculation.update_nisab_value! if NisabRate.find_by(year: @zakat_calculation.calculation_year)
       
-      redirect_to @zakat_calculation, notice: 'Zakat calculation was successfully updated.'
+      respond_to do |format|
+        format.html { redirect_to @zakat_calculation, notice: 'Zakat calculation was successfully updated.' }
+        format.turbo_stream { redirect_to @zakat_calculation, notice: 'Zakat calculation was successfully updated.' }
+      end
     else
+      # Build at least one asset and liability for the form if they're empty
+      @zakat_calculation.assets.build if @zakat_calculation.assets.empty?
+      @zakat_calculation.liabilities.build if @zakat_calculation.liabilities.empty?
       @nisab_rate = @zakat_calculation.current_nisab_rate
-      render :edit, status: :unprocessable_entity
+      
+      respond_to do |format|
+        format.html { render :edit, status: :unprocessable_entity }
+        format.turbo_stream { render :edit, status: :unprocessable_entity }
+      end
     end
   end
 

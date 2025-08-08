@@ -12,3 +12,4 @@ pin "flowbite-datepicker", to: "https://cdnjs.cloudflare.com/ajax/libs/flowbite/
 pin "modules/donor_modal", to: "modules/donor_modal.js"
 pin "modules/qr_scanner", to: "modules/qr_scanner.js"
 pin "modules/ticket_utils", to: "modules/ticket_utils.js"
+pin "modules/zakat_calculator", to: "modules/zakat_calculator.js"
