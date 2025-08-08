@@ -3,10 +3,14 @@ class Event < ApplicationRecord
   has_many :event_users, dependent: :destroy
   has_many :users, through: :event_users
   has_many :tickets, dependent: :destroy
+  has_many :guests, dependent: :destroy
   
   # Active Storage attachments
   has_one_attached :event_image
   has_one_attached :guest_image
+  
+  # Accept nested attributes for guests
+  accepts_nested_attributes_for :guests, allow_destroy: true, reject_if: :all_blank
   
   # Validations
   validates :name, presence: true, length: { minimum: 3, maximum: 200 }

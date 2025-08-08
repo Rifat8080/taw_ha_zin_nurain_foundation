@@ -9,3 +9,4 @@ import "modules/qr_scanner";
 import "modules/donor_modal";  
 import "modules/ticket_utils";
 import "modules/zakat_calculator";
+import "modules/guests";

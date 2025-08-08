@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_07_074637) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_08_113052) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -53,7 +53,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_074637) do
     t.index ["category"], name: "index_assets_on_category"
     t.index ["zakat_calculation_id"], name: "index_assets_on_zakat_calculation_id"
     t.check_constraint "amount >= 0::numeric", name: "check_amount_positive"
-    t.check_constraint "category::text = ANY (ARRAY['cash'::character varying, 'bank'::character varying, 'gold'::character varying, 'silver'::character varying, 'business_inventory'::character varying, 'receivables'::character varying, 'livestock'::character varying, 'agriculture'::character varying, 'investments'::character varying, 'property_rent'::character varying]::text[])", name: "check_category"
+    t.check_constraint "category::text = ANY (ARRAY['cash'::character varying::text, 'bank'::character varying::text, 'gold'::character varying::text, 'silver'::character varying::text, 'business_inventory'::character varying::text, 'receivables'::character varying::text, 'livestock'::character varying::text, 'agriculture'::character varying::text, 'investments'::character varying::text, 'property_rent'::character varying::text])", name: "check_category"
   end
 
   create_table "donations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -106,6 +106,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_074637) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["project_id"], name: "index_expenses_on_project_id"
+  end
+
+  create_table "guests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.string "title"
+    t.text "description"
+    t.uuid "event_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_guests_on_event_id"
   end
 
   create_table "healthcare_donations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -295,6 +305,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_074637) do
   add_foreign_key "event_users", "events"
   add_foreign_key "event_users", "users"
   add_foreign_key "expenses", "projects"
+  add_foreign_key "guests", "events"
   add_foreign_key "healthcare_donations", "healthcare_requests", column: "request_id"
   add_foreign_key "healthcare_donations", "users"
   add_foreign_key "healthcare_expenses", "healthcare_requests"

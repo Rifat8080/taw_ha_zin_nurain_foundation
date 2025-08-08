@@ -19,6 +19,7 @@ class EventsController < ApplicationController
 
   def new
     @event = Event.new
+    @event.guests.build # Build an initial guest for the form
   end
 
   def create
@@ -32,6 +33,7 @@ class EventsController < ApplicationController
   end
 
   def edit
+    @event.guests.build if @event.guests.empty?
   end
 
   def update
@@ -61,6 +63,7 @@ class EventsController < ApplicationController
   def event_params
     params.require(:event).permit(:name, :start_date, :end_date, :start_time, :end_time, 
                                   :seat_number, :venue, :guest_list, :guest_description, 
-                                  :ticket_price, :ticket_category, :event_image, :guest_image)
+                                  :ticket_price, :ticket_category, :event_image, :guest_image,
+                                  guests_attributes: [:id, :name, :title, :description, :image, :_destroy])
   end
 end
