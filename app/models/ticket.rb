@@ -13,6 +13,7 @@ class Ticket < ApplicationRecord
   # Callbacks
   before_validation :generate_qr_code, on: :create
   before_validation :set_price_from_event, on: :create
+  validate :ticket_type_availability, on: :create
 
   # Scopes
   scope :active, -> { where(status: "active") }
@@ -89,7 +90,23 @@ class Ticket < ApplicationRecord
   end
 
   def set_price_from_event
-    return if price.present? || event.nil?
-    self.price = event.ticket_price
+    return if price.present? || event.nil? || ticket_type.blank?
+    
+    # Try to get price from ticket type configuration first
+    if event.ticket_types.any?
+      ticket_type_config = event.get_ticket_type(ticket_type)
+      self.price = ticket_type_config&.dig('price') || event.ticket_price
+    else
+      # Fallback to legacy pricing
+      self.price = event.ticket_price
+    end
+  end
+
+  def ticket_type_availability
+    return unless event && ticket_type
+    
+    unless event.ticket_type_available?(ticket_type)
+      errors.add(:ticket_type, "is sold out or not available")
+    end
   end
 end

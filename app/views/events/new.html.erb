@@ -68,36 +68,101 @@
             </div>
           </div>
 
-          <!-- Ticket Information -->
+          <!-- Ticket Types Configuration -->
           <div class="space-y-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <%= form.label :seat_number, "Total Seats", class: "block text-sm font-medium text-gray-700" %>
-                <%= form.number_field :seat_number, min: 1, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
-              </div>
-              
-              <div>
-                <%= form.label :ticket_price, "Ticket Price ($)", class: "block text-sm font-medium text-gray-700" %>
-                <%= form.number_field :ticket_price, min: 0, step: 0.01, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+            <div class="flex justify-between items-center">
+              <h3 class="text-lg font-medium text-gray-900">Ticket Types</h3>
+              <button type="button" id="add-ticket-type" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Add Ticket Type
+              </button>
+            </div>
+
+            <div id="ticket-types-container">
+              <!-- Default ticket type -->
+              <div class="ticket-type-fields bg-gray-50 rounded-lg p-4 mb-4">
+                <div class="flex justify-between items-center mb-4">
+                  <h4 class="text-lg font-medium text-gray-900">Ticket Type 1</h4>
+                  <button type="button" class="remove-ticket-type text-red-600 hover:text-red-800 p-2" disabled>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                  </button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <!-- Name -->
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Type Name</label>
+                    <input type="text" name="event[ticket_types][][name]" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           placeholder="e.g., General Admission" value="General Admission" required />
+                  </div>
+                  
+                  <!-- Category -->
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                    <select name="event[ticket_types][][category]" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                      <option value="">Select category</option>
+                      <option value="general" selected>General</option>
+                      <option value="vip">VIP</option>
+                      <option value="premium">Premium</option>
+                      <option value="standard">Standard</option>
+                    </select>
+                  </div>
+                  
+                  <!-- Price -->
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Price ($)</label>
+                    <input type="number" name="event[ticket_types][][price]" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           step="0.01" min="0" placeholder="0.00" required />
+                  </div>
+                  
+                  <!-- Seats Available -->
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Seats Available</label>
+                    <input type="number" name="event[ticket_types][][seats_available]" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           min="1" placeholder="100" required oninput="updateTotalSeats()" />
+                  </div>
+                  
+                  <!-- Description -->
+                  <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
+                    <textarea name="event[ticket_types][][description]" 
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              rows="2" placeholder="Brief description of what this ticket type includes..."></textarea>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div>
-              <%= form.label :ticket_category, class: "block text-sm font-medium text-gray-700" %>
-              <%= form.select :ticket_category, 
-                  options_for_select([
-                    ['General', 'general'],
-                    ['VIP', 'vip'],
-                    ['Premium', 'premium'],
-                    ['Standard', 'standard']
-                  ]), 
-                  { prompt: 'Select category' }, 
-                  { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" } %>
+            <!-- Total Seats Summary -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div class="flex items-center">
+                <svg class="w-5 h-5 text-blue-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                <span class="text-sm font-medium text-blue-800">
+                  Total Seats: <span id="total-seats-display">0</span>
+                </span>
+              </div>
             </div>
+
+            <!-- Hidden field for backward compatibility -->
+            <%= form.hidden_field :seat_number, value: 0 %>
+            <%= form.hidden_field :ticket_price, value: 0 %>
+            <%= form.hidden_field :ticket_category, value: "general" %>
 
             <div>
               <%= form.label :event_image, "Event Image", class: "block text-sm font-medium text-gray-700" %>
               <%= form.file_field :event_image, accept: "image/*", class: "mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" %>
+            </div>
+          </div>
             </div>
           </div>
         </div>
@@ -142,3 +207,170 @@
     </div>
   </div>
 </div>
+
+<%= content_for :head do %>
+  <script>
+    // Ensure the script works with Turbo navigation
+    function initTicketTypesForm() {
+      // Prevent multiple initializations
+      if (window.ticketTypesInitialized) return;
+      
+      console.log('Initializing ticket types form...');
+      
+      let ticketTypeIndex = document.querySelectorAll('.ticket-type-fields').length;
+      
+      function addTicketType() {
+        console.log('Adding ticket type...');
+        const container = document.getElementById('ticket-types-container');
+        if (!container) {
+          console.error('Container not found');
+          return;
+        }
+        
+        const html = `
+          <div class="ticket-type-fields bg-gray-50 rounded-lg p-4 mb-4">
+            <div class="flex justify-between items-center mb-4">
+              <h4 class="text-lg font-medium text-gray-900">Ticket Type ${ticketTypeIndex + 1}</h4>
+              <button type="button" class="remove-ticket-type text-red-600 hover:text-red-800 p-2" onclick="removeTicketType(this)">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Type Name</label>
+                <input type="text" name="event[ticket_types][][name]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="e.g., General Admission, VIP, Premium" required />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                <select name="event[ticket_types][][category]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                  <option value="">Select category</option>
+                  <option value="general">General</option>
+                  <option value="vip">VIP</option>
+                  <option value="premium">Premium</option>
+                  <option value="standard">Standard</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Price ($)</label>
+                <input type="number" name="event[ticket_types][][price]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" step="0.01" min="0" placeholder="0.00" required />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Seats Available</label>
+                <input type="number" name="event[ticket_types][][seats_available]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="1" placeholder="100" required oninput="updateTotalSeats()" />
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
+                <textarea name="event[ticket_types][][description]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="2" placeholder="Brief description of what this ticket type includes..."></textarea>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        const div = document.createElement('div');
+        div.innerHTML = html;
+        container.appendChild(div.firstElementChild);
+        
+        ticketTypeIndex++;
+        updateTotalSeats();
+        console.log('Ticket type added successfully, total types:', ticketTypeIndex);
+      }
+      
+      function removeTicketType(button) {
+        const ticketFields = document.querySelectorAll('.ticket-type-fields');
+        if (ticketFields.length <= 1) {
+          alert('At least one ticket type is required');
+          return;
+        }
+        
+        const ticketTypeField = button.closest('.ticket-type-fields');
+        if (ticketTypeField) {
+          ticketTypeField.remove();
+          updateTotalSeats();
+          console.log('Ticket type removed');
+        }
+      }
+      
+      function updateTotalSeats() {
+        const seatsInputs = document.querySelectorAll('input[name*="[seats_available]"]');
+        let totalSeats = 0;
+        
+        seatsInputs.forEach(function(input) {
+          totalSeats += parseInt(input.value) || 0;
+        });
+        
+        const totalDisplay = document.getElementById('total-seats-display');
+        if (totalDisplay) {
+          totalDisplay.textContent = totalSeats;
+        }
+        
+        const legacySeatInput = document.getElementById('event_seat_number');
+        if (legacySeatInput) {
+          legacySeatInput.value = totalSeats;
+        }
+        
+        console.log('Total seats updated:', totalSeats);
+      }
+      
+      // Make functions globally available for inline handlers
+      window.addTicketType = addTicketType;
+      window.removeTicketType = removeTicketType;
+      window.updateTotalSeats = updateTotalSeats;
+      
+      // Attach event listener to the add button
+      const addButton = document.getElementById('add-ticket-type');
+      if (addButton) {
+        // Remove any existing listeners first
+        addButton.replaceWith(addButton.cloneNode(true));
+        const newAddButton = document.getElementById('add-ticket-type');
+        
+        newAddButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          console.log('Add button clicked via event listener');
+          addTicketType();
+        });
+        console.log('Event listener attached to add button');
+      } else {
+        console.error('Add button not found!');
+      }
+      
+      // Attach event delegation for seats inputs
+      document.addEventListener('input', function(e) {
+        if (e.target.matches('input[name*="[seats_available]"]')) {
+          updateTotalSeats();
+        }
+      });
+      
+      // Initial calculation
+      updateTotalSeats();
+      
+      // Mark as initialized
+      window.ticketTypesInitialized = true;
+      console.log('Ticket types form initialized successfully');
+    }
+    
+    // Reset initialization flag when navigating away
+    function resetTicketTypesForm() {
+      window.ticketTypesInitialized = false;
+      console.log('Ticket types form reset for navigation');
+    }
+    
+    // Initialize on various events for maximum compatibility
+    document.addEventListener('DOMContentLoaded', initTicketTypesForm);
+    document.addEventListener('turbo:load', initTicketTypesForm);
+    document.addEventListener('turbo:render', initTicketTypesForm);
+    
+    // Reset on navigation
+    document.addEventListener('turbo:before-cache', resetTicketTypesForm);
+    document.addEventListener('turbo:before-visit', resetTicketTypesForm);
+    
+    // Fallback initialization with slight delay
+    setTimeout(function() {
+      if (!window.ticketTypesInitialized) {
+        console.log('Fallback initialization triggered');
+        initTicketTypesForm();
+      }
+    }, 100);
+  </script>
+<% end %>

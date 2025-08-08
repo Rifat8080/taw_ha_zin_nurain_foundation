@@ -16,13 +16,26 @@ class TicketsController < ApplicationController
   def create
     @ticket = @event.tickets.build
     @ticket.user = current_user
-    @ticket.ticket_type = @event.ticket_category
+    
+    # Set ticket type from params or default to event's category
+    if params[:ticket].present? && params[:ticket][:ticket_type].present?
+      @ticket.ticket_type = params[:ticket][:ticket_type]
+    else
+      @ticket.ticket_type = @event.ticket_category
+    end
 
     # If seat_number is provided in ticket params, use it
     if params[:ticket].present? && params[:ticket][:seat_number].present?
       @ticket.seat_number = params[:ticket][:seat_number]
     end
 
+    # Check if this specific ticket type is available
+    if @event.ticket_types.any? && !@event.ticket_type_available?(@ticket.ticket_type)
+      redirect_to @event, alert: "Sorry, #{@ticket.ticket_type} tickets are sold out!"
+      return
+    end
+
+    # Check general availability for legacy events
     if @event.sold_out?
       redirect_to @event, alert: "Sorry, this event is sold out!"
       return
@@ -180,7 +193,7 @@ class TicketsController < ApplicationController
 
   def ticket_params
     return {} unless params[:ticket].present?
-    params.require(:ticket).permit(:seat_number)
+    params.require(:ticket).permit(:seat_number, :ticket_type)
   end
 
   def ticket_details_for_response(ticket, include_used_at: false)

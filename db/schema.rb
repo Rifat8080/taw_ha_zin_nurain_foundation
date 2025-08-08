@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_08_124357) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_08_134014) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -94,8 +94,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_08_124357) do
     t.string "ticket_category", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "ticket_types_config", default: []
     t.index ["start_date"], name: "index_events_on_start_date"
     t.index ["ticket_category"], name: "index_events_on_ticket_category"
+    t.index ["ticket_types_config"], name: "index_events_on_ticket_types_config", using: :gin
   end
 
   create_table "expenses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
