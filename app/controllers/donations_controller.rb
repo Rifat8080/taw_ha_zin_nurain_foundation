@@ -13,8 +13,29 @@ class DonationsController < ApplicationController
 
   def new
     @donation = Donation.new
-    @donation.project_id = params[:project_id] if params[:project_id]
-    @projects = Project.all
+    
+    # Check if project_id is provided and if the project is active
+    if params[:project_id].present?
+      project = Project.find_by(id: params[:project_id])
+      if project && project.active?
+        @donation.project_id = params[:project_id]
+      elsif project
+        redirect_to projects_path, alert: "This project is not currently accepting donations."
+        return
+      else
+        redirect_to projects_path, alert: "Project not found."
+        return
+      end
+    end
+    
+    # Only show active projects in the dropdown
+    @projects = Project.active.order(:name)
+    
+    # If no active projects exist, show a message
+    if @projects.empty?
+      redirect_to projects_path, alert: "No projects are currently accepting donations."
+      return
+    end
   end
 
   def create
@@ -38,7 +59,7 @@ class DonationsController < ApplicationController
         end
       else
         @donation.errors.add(:base, "Unable to create donor: #{user.errors.full_messages.join(', ')}")
-        @projects = Project.all
+        @projects = Project.active.order(:name)
         render :new, status: :unprocessable_entity
         return
       end
@@ -54,20 +75,20 @@ class DonationsController < ApplicationController
         redirect_to edit_user_registration_path, notice: "Thank you for your donation! Please set up a secure password for your account."
       end
     else
-      @projects = Project.all
+      @projects = Project.active.order(:name)
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    @projects = Project.all
+    @projects = Project.active.order(:name)
   end
 
   def update
     if @donation.update(donation_params)
       redirect_to @donation, notice: "Donation was successfully updated."
     else
-      @projects = Project.all
+      @projects = Project.active.order(:name)
       render :edit, status: :unprocessable_entity
     end
   end

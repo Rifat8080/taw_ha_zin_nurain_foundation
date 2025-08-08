@@ -122,15 +122,26 @@
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
         <% @projects.each do |project| %>
           <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 hover:shadow-lg transition-shadow">
-            <h3 class="text-xl font-semibold text-gray-900 mb-3"><%= project.name %></h3>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-xl font-semibold text-gray-900"><%= project.name %></h3>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= project.active? ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                <%= project.status_text %>
+              </span>
+            </div>
             <p class="text-gray-600 mb-4 line-clamp-3"><%= project.description %></p>
             
             <div class="flex items-center justify-between">
               <span class="text-sm text-gray-500">
                 <%= project.created_at.strftime("%B %Y") %>
               </span>
-              <%= link_to "Learn More", project_path(project), 
-                  class: "text-blue-600 hover:text-blue-500 text-sm font-medium" %>
+              <div class="flex space-x-2">
+                <%= link_to "Learn More", project_path(project), 
+                    class: "text-blue-600 hover:text-blue-500 text-sm font-medium" %>
+                <% if project.accepting_donations? %>
+                  <%= link_to "Donate", new_donation_path(project_id: project.id), 
+                      class: "inline-flex items-center px-3 py-1 text-xs font-medium rounded-md text-white bg-green-600 hover:bg-green-700" %>
+                <% end %>
+              </div>
             </div>
           </div>
         <% end %>

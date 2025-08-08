@@ -45,7 +45,7 @@ class HomeController < ApplicationController
 
   def render_public_homepage
     @upcoming_events = Event.upcoming.limit(3)
-    @projects = Project.limit(6)
+    @projects = Project.active.limit(6)
     @healthcare_requests = HealthcareRequest.visible_to_public
                                            .includes(:user, :healthcare_donations)
                                            .limit(6)
