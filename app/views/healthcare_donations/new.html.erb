@@ -40,22 +40,22 @@
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-3">Quick Select Amount</label>
           <div class="grid grid-cols-3 gap-3">
-            <button type="button" onclick="setAmount(500)" class="amount-btn px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="button" data-amount="500" class="amount-btn px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
               ৳500
             </button>
-            <button type="button" onclick="setAmount(1000)" class="amount-btn px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="button" data-amount="1000" class="amount-btn px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
               ৳1,000
             </button>
-            <button type="button" onclick="setAmount(2000)" class="amount-btn px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="button" data-amount="2000" class="amount-btn px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
               ৳2,000
             </button>
-            <button type="button" onclick="setAmount(5000)" class="amount-btn px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="button" data-amount="5000" class="amount-btn px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
               ৳5,000
             </button>
-            <button type="button" onclick="setAmount(10000)" class="amount-btn px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="button" data-amount="10000" class="amount-btn px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
               ৳10,000
             </button>
-            <button type="button" onclick="setAmount(20000)" class="amount-btn px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="button" data-amount="20000" class="amount-btn px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
               ৳20,000
             </button>
           </div>
@@ -173,27 +173,3 @@
     </div>
   </div>
 </div>
-
-<script>
-function setAmount(amount) {
-  document.getElementById('donation_amount').value = amount;
-  
-  // Remove active class from all buttons
-  document.querySelectorAll('.amount-btn').forEach(btn => {
-    btn.classList.remove('bg-blue-100', 'border-blue-500', 'text-blue-700');
-    btn.classList.add('border-gray-300', 'text-gray-700', 'bg-white');
-  });
-  
-  // Add active class to clicked button
-  event.target.classList.remove('border-gray-300', 'text-gray-700', 'bg-white');
-  event.target.classList.add('bg-blue-100', 'border-blue-500', 'text-blue-700');
-}
-
-// Remove active state when custom amount is typed
-document.getElementById('donation_amount').addEventListener('input', function() {
-  document.querySelectorAll('.amount-btn').forEach(btn => {
-    btn.classList.remove('bg-blue-100', 'border-blue-500', 'text-blue-700');
-    btn.classList.add('border-gray-300', 'text-gray-700', 'bg-white');
-  });
-});
-</script>
