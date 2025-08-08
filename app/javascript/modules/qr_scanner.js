@@ -6,20 +6,52 @@ class QRScanner {
     this.context = null;
     this.scanning = false;
     this.validateUrl = '';
+    this.initialized = false;
+    
+    // Bind methods to preserve context
+    this.init = this.init.bind(this);
+    this.setupElements = this.setupElements.bind(this);
+    this.destroy = this.destroy.bind(this);
     
     this.init();
   }
 
   init() {
-    // Wait for DOM to be ready
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => this.setupElements());
-    } else {
-      this.setupElements();
+    if (this.initialized) return;
+    
+    // Check if we're on a page with QR scanner
+    if (!document.querySelector('#qr-scanner')) return;
+    
+    this.setupElements();
+    this.initialized = true;
+  }
+
+  // Clean up when navigating away (Turbo compatibility)
+  destroy() {
+    if (this.scanning) {
+      this.stopScanning();
     }
+    
+    // Clean up event listeners
+    this.cleanupEventListeners();
+    
+    // Clean up global references
+    if (window.validateManualQR) {
+      delete window.validateManualQR;
+    }
+    if (window.qrScanner === this) {
+      delete window.qrScanner;
+    }
+    
+    this.initialized = false;
   }
 
   setupElements() {
+    // Clean up any existing video stream
+    if (this.video && this.video.srcObject) {
+      this.video.srcObject.getTracks().forEach(track => track.stop());
+    }
+    
     this.video = this.safeQuerySelector('#video');
     this.canvas = document.createElement('canvas');
     this.context = this.canvas?.getContext('2d');
@@ -64,29 +96,55 @@ class QRScanner {
   }
 
   bindEvents() {
+    // Clean up any existing event listeners first
+    this.cleanupEventListeners();
+    
     const startBtn = this.safeQuerySelector('#start-scan');
     const stopBtn = this.safeQuerySelector('#stop-scan');
     const manualInput = this.safeQuerySelector('#manual-qr');
 
+    // Store references for cleanup
+    this.startScanHandler = () => this.startScanning();
+    this.stopScanHandler = () => this.stopScanning();
+    this.manualInputHandler = (e) => {
+      if (e.key === 'Enter') {
+        this.validateManualQR();
+      }
+    };
+
     if (startBtn) {
-      this.addEventListenerSafe(startBtn, 'click', () => this.startScanning());
+      this.addEventListenerSafe(startBtn, 'click', this.startScanHandler);
     }
 
     if (stopBtn) {
-      this.addEventListenerSafe(stopBtn, 'click', () => this.stopScanning());
+      this.addEventListenerSafe(stopBtn, 'click', this.stopScanHandler);
     }
 
     if (manualInput) {
-      // Allow Enter key to validate manual input
-      this.addEventListenerSafe(manualInput, 'keypress', (e) => {
-        if (e.key === 'Enter') {
-          this.validateManualQR();
-        }
-      });
+      this.addEventListenerSafe(manualInput, 'keypress', this.manualInputHandler);
     }
 
     // Make function globally available for onclick handlers
     window.validateManualQR = () => this.validateManualQR();
+    window.qrScanner = this; // Make instance globally available for retry functionality
+  }
+
+  cleanupEventListeners() {
+    const startBtn = this.safeQuerySelector('#start-scan');
+    const stopBtn = this.safeQuerySelector('#stop-scan');
+    const manualInput = this.safeQuerySelector('#manual-qr');
+
+    if (startBtn && this.startScanHandler) {
+      startBtn.removeEventListener('click', this.startScanHandler);
+    }
+
+    if (stopBtn && this.stopScanHandler) {
+      stopBtn.removeEventListener('click', this.stopScanHandler);
+    }
+
+    if (manualInput && this.manualInputHandler) {
+      manualInput.removeEventListener('keypress', this.manualInputHandler);
+    }
   }
 
   async startScanning() {
@@ -136,10 +194,22 @@ class QRScanner {
     this.scanning = false;
     
     if (this.video && this.video.srcObject) {
-      this.video.srcObject.getTracks().forEach(track => track.stop());
+      // Stop all tracks to properly release the camera
+      this.video.srcObject.getTracks().forEach(track => {
+        track.stop();
+      });
+      this.video.srcObject = null;
     }
     
     this.toggleScanButtons(false);
+    
+    // Clear any scan results if still showing loading
+    const resultsDiv = this.safeQuerySelector('#scan-results');
+    const contentDiv = this.safeQuerySelector('#result-content');
+    
+    if (resultsDiv && contentDiv && contentDiv.innerHTML.includes('⏳')) {
+      resultsDiv.classList.add('hidden');
+    }
   }
 
   toggleScanButtons(scanning) {
@@ -479,9 +549,22 @@ class QRScanner {
 // Export for use in other modules
 window.QRScanner = QRScanner;
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-  if (document.querySelector('#qr-scanner')) {
-    new QRScanner();
-  }
+// Create a singleton instance
+const qrScanner = new QRScanner();
+
+// Turbo event listeners for proper initialization and cleanup
+document.addEventListener('turbo:load', () => {
+  qrScanner.init();
 });
+
+document.addEventListener('turbo:before-cache', () => {
+  qrScanner.destroy();
+});
+
+// Fallback for traditional page loads (when Turbo is disabled)
+document.addEventListener('DOMContentLoaded', () => {
+  qrScanner.init();
+});
+
+// Export for potential external use
+export default qrScanner;
