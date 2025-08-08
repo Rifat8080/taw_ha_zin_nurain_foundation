@@ -7,7 +7,6 @@ class EventTicketTypes {
 
   init() {
     if (this.initialized) {
-      console.log('Event ticket types already initialized, skipping...');
       return;
     }
 
@@ -16,7 +15,6 @@ class EventTicketTypes {
     this.updateTotalSeats();
     this.updateRemoveButtons();
     this.initialized = true;
-    console.log('Event ticket types initialized successfully');
   }
 
   attachEventListeners() {
@@ -29,7 +27,6 @@ class EventTicketTypes {
         e.stopPropagation();
         this.addTicketType();
       });
-      console.log('Add ticket type event listener attached');
     }
 
     // Event delegation for remove buttons and seats inputs
@@ -111,7 +108,6 @@ class EventTicketTypes {
 
     this.updateTotalSeats();
     this.updateRemoveButtons();
-    console.log('Ticket type added successfully, total types:', newIndex);
   }
 
   removeTicketType(ticketTypeField) {
@@ -126,7 +122,6 @@ class EventTicketTypes {
       this.updateTotalSeats();
       this.updateTicketTypeNumbers();
       this.updateRemoveButtons();
-      console.log('Ticket type removed');
     }
   }
 
@@ -148,7 +143,6 @@ class EventTicketTypes {
       legacySeatInput.value = totalSeats;
     }
 
-    console.log('Total seats updated:', totalSeats);
   }
 
   updateTicketTypeNumbers() {
@@ -186,7 +180,6 @@ class EventTicketTypes {
       addButton.removeAttribute('data-listener-added');
     }
     
-    console.log('Event ticket types reset for navigation');
   }
 }
 
@@ -217,7 +210,6 @@ document.addEventListener('turbo:before-visit', resetEventTicketTypes);
 // Fallback initialization
 setTimeout(() => {
   if (!window.eventTicketTypes && document.getElementById('ticket-types-container')) {
-    console.log('Fallback ticket types initialization triggered');
     initializeEventTicketTypes();
   }
 }, 100);
