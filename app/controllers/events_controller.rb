@@ -40,6 +40,20 @@ class EventsController < ApplicationController
     if @event.update(event_params)
       redirect_to @event, notice: 'Event was successfully updated.'
     else
+      # Collect all guest errors for better display
+      guest_errors = []
+      @event.guests.each_with_index do |guest, index|
+        if guest.errors.any?
+          guest.errors.full_messages.each do |error|
+            guest_errors << "Guest #{index + 1}: #{error}"
+          end
+        end
+      end
+      
+      if guest_errors.any?
+        flash.now[:error] = "Please fix the following issues:<br>#{guest_errors.join('<br>')}"
+      end
+      
       render :edit, status: :unprocessable_entity
     end
   end
@@ -63,7 +77,7 @@ class EventsController < ApplicationController
   def event_params
     params.require(:event).permit(:name, :start_date, :end_date, :start_time, :end_time, 
                                   :seat_number, :venue, :guest_list, :guest_description, 
-                                  :ticket_price, :ticket_category, :event_image, :guest_image,
+                                  :ticket_price, :ticket_category, :event_image,
                                   guests_attributes: [:id, :name, :title, :description, :image, :_destroy])
   end
 end

@@ -7,10 +7,11 @@ class Event < ApplicationRecord
   
   # Active Storage attachments
   has_one_attached :event_image
-  has_one_attached :guest_image
   
   # Accept nested attributes for guests
-  accepts_nested_attributes_for :guests, allow_destroy: true, reject_if: :all_blank
+  accepts_nested_attributes_for :guests, allow_destroy: true, reject_if: proc { |attributes|
+    attributes['name'].blank? && attributes['title'].blank? && attributes['description'].blank? && attributes['image'].blank?
+  }
   
   # Validations
   validates :name, presence: true, length: { minimum: 3, maximum: 200 }
