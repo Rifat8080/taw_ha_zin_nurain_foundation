@@ -12,12 +12,12 @@ class CreateNisabRates < ActiveRecord::Migration[8.0]
     reversible do |dir|
       dir.up do
         execute <<-SQL
-          ALTER TABLE nisab_rates 
+          ALTER TABLE nisab_rates#{' '}
           ADD COLUMN nisab_gold DECIMAL(14,2) GENERATED ALWAYS AS (gold_price_per_gram * 85) STORED;
         SQL
-        
+
         execute <<-SQL
-          ALTER TABLE nisab_rates 
+          ALTER TABLE nisab_rates#{' '}
           ADD COLUMN nisab_silver DECIMAL(14,2) GENERATED ALWAYS AS (silver_price_per_gram * 595) STORED;
         SQL
       end

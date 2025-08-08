@@ -6,7 +6,7 @@ class CreateZakatCalculations < ActiveRecord::Migration[8.0]
       t.decimal :total_assets, precision: 14, scale: 2, default: 0
       t.decimal :total_liabilities, precision: 14, scale: 2, default: 0
       t.decimal :nisab_value, precision: 14, scale: 2, null: false
-      
+
       t.timestamps
     end
 
@@ -14,14 +14,14 @@ class CreateZakatCalculations < ActiveRecord::Migration[8.0]
     reversible do |dir|
       dir.up do
         execute <<-SQL
-          ALTER TABLE zakat_calculations 
+          ALTER TABLE zakat_calculations#{' '}
           ADD COLUMN net_assets DECIMAL(14,2) GENERATED ALWAYS AS (total_assets - total_liabilities) STORED;
         SQL
-        
+
         execute <<-SQL
-          ALTER TABLE zakat_calculations 
+          ALTER TABLE zakat_calculations#{' '}
           ADD COLUMN zakat_due DECIMAL(14,2) GENERATED ALWAYS AS (
-            CASE WHEN (total_assets - total_liabilities) >= nisab_value 
+            CASE WHEN (total_assets - total_liabilities) >= nisab_value#{' '}
             THEN ROUND((total_assets - total_liabilities) * 0.025, 2)
             ELSE 0 END
           ) STORED;
@@ -34,6 +34,6 @@ class CreateZakatCalculations < ActiveRecord::Migration[8.0]
       end
     end
 
-    add_index :zakat_calculations, [:user_id, :calculation_year], unique: true
+    add_index :zakat_calculations, [ :user_id, :calculation_year ], unique: true
   end
 end

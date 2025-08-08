@@ -1,12 +1,11 @@
 class HealthcareRequestsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_healthcare_request, only: [:show, :edit, :update, :destroy, :approve, :reject, :complete]
-  
-  def index
+  before_action :set_healthcare_request, only: [ :show, :edit, :update, :destroy, :approve, :reject, :complete ]
 
+  def index
     # For regular users, only show approved requests that are visible to public
     # For admins, show all requests for management
-    if current_user.role == 'admin'
+    if current_user.role == "admin"
       @healthcare_requests = HealthcareRequest.includes(:user, :healthcare_donations)
                                             .order(created_at: :desc)
     else
@@ -14,15 +13,15 @@ class HealthcareRequestsController < ApplicationController
                                             .includes(:user, :healthcare_donations)
                                             .order(created_at: :desc)
     end
-    
+
     # Filter by status if provided (admin only)
-    if params[:status].present? && current_user.role == 'admin'
+    if params[:status].present? && current_user.role == "admin"
       @healthcare_requests = @healthcare_requests.by_status(params[:status])
     end
-    
+
     # Filter by approval status if provided (admin only)
-    if params[:approved].present? && current_user.role == 'admin'
-      @healthcare_requests = @healthcare_requests.where(approved: params[:approved] == 'true')
+    if params[:approved].present? && current_user.role == "admin"
+      @healthcare_requests = @healthcare_requests.where(approved: params[:approved] == "true")
     end
   end
 
@@ -37,9 +36,9 @@ class HealthcareRequestsController < ApplicationController
 
   def create
     @healthcare_request = current_user.healthcare_requests.build(healthcare_request_params)
-    
+
     if @healthcare_request.save
-      redirect_to @healthcare_request, notice: 'Healthcare request was successfully created.'
+      redirect_to @healthcare_request, notice: "Healthcare request was successfully created."
     else
       render :new, status: :unprocessable_entity
     end
@@ -47,31 +46,31 @@ class HealthcareRequestsController < ApplicationController
 
   def edit
     # Only allow users to edit their own requests or admins
-    unless @healthcare_request.user == current_user || current_user.role == 'admin'
-      redirect_to healthcare_requests_path, alert: 'You are not authorized to edit this request.'
-      return
+    unless @healthcare_request.user == current_user || current_user.role == "admin"
+      redirect_to healthcare_requests_path, alert: "You are not authorized to edit this request."
+      nil
     end
   end
 
   def update
     # Only allow users to edit their own requests or admins
-    unless @healthcare_request.user == current_user || current_user.role == 'admin'
-      redirect_to healthcare_requests_path, alert: 'You are not authorized to update this request.'
+    unless @healthcare_request.user == current_user || current_user.role == "admin"
+      redirect_to healthcare_requests_path, alert: "You are not authorized to update this request."
       return
     end
-    
+
     # Get the parameters
     request_params = healthcare_request_params
-    
+
     # Auto-approve if admin sets status to approved
-    if current_user.role == 'admin' && request_params[:status] == 'approved'
+    if current_user.role == "admin" && request_params[:status] == "approved"
       request_params = request_params.merge(approved: true)
-    elsif current_user.role == 'admin' && request_params[:status] == 'rejected'
+    elsif current_user.role == "admin" && request_params[:status] == "rejected"
       request_params = request_params.merge(approved: false)
     end
-    
+
     if @healthcare_request.update(request_params)
-      redirect_to @healthcare_request, notice: 'Healthcare request was successfully updated.'
+      redirect_to @healthcare_request, notice: "Healthcare request was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -79,31 +78,31 @@ class HealthcareRequestsController < ApplicationController
 
   def destroy
     # Only allow users to delete their own requests or admins
-    unless @healthcare_request.user == current_user || current_user.role == 'admin'
-      redirect_to healthcare_requests_path, alert: 'You are not authorized to delete this request.'
+    unless @healthcare_request.user == current_user || current_user.role == "admin"
+      redirect_to healthcare_requests_path, alert: "You are not authorized to delete this request."
       return
     end
-    
+
     @healthcare_request.destroy
-    redirect_to healthcare_requests_path, notice: 'Healthcare request was successfully deleted.'
+    redirect_to healthcare_requests_path, notice: "Healthcare request was successfully deleted."
   end
-  
+
   def approve
     authorize_admin!
     @healthcare_request.approve!
-    redirect_to @healthcare_request, notice: 'Healthcare request has been approved.'
+    redirect_to @healthcare_request, notice: "Healthcare request has been approved."
   end
-  
+
   def reject
     authorize_admin!
     @healthcare_request.reject!
-    redirect_to @healthcare_request, notice: 'Healthcare request has been rejected.'
+    redirect_to @healthcare_request, notice: "Healthcare request has been rejected."
   end
-  
+
   def complete
     authorize_admin!
     @healthcare_request.mark_as_completed!
-    redirect_to @healthcare_request, notice: 'Healthcare request has been marked as completed.'
+    redirect_to @healthcare_request, notice: "Healthcare request has been marked as completed."
   end
 
   private
@@ -113,16 +112,16 @@ class HealthcareRequestsController < ApplicationController
   end
 
   def healthcare_request_params
-    if current_user.role == 'admin'
+    if current_user.role == "admin"
       params.require(:healthcare_request).permit(:patient_name, :reason, :prescription_url, :status, :approved)
     else
       params.require(:healthcare_request).permit(:patient_name, :reason, :prescription_url)
     end
   end
-  
+
   def authorize_admin!
-    unless current_user.role == 'admin'
-      redirect_to healthcare_requests_path, alert: 'You are not authorized to perform this action.'
+    unless current_user.role == "admin"
+      redirect_to healthcare_requests_path, alert: "You are not authorized to perform this action."
     end
   end
 end

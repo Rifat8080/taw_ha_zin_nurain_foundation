@@ -8,14 +8,14 @@ class HealthcareExpense < ApplicationRecord
   validates :category, presence: true
 
   CATEGORIES = [
-    'Medicine',
-    'Doctor Consultation', 
-    'Hospital Charges',
-    'Medical Tests',
-    'Surgery',
-    'Equipment',
-    'Transportation',
-    'Other'
+    "Medicine",
+    "Doctor Consultation",
+    "Hospital Charges",
+    "Medical Tests",
+    "Surgery",
+    "Equipment",
+    "Transportation",
+    "Other"
   ].freeze
 
   validates :category, inclusion: { in: CATEGORIES }

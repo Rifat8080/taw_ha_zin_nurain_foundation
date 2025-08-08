@@ -41,7 +41,7 @@ class NisabRate < ApplicationRecord
 
   # Get the lower nisab (more favorable for the payer)
   def min_nisab
-    [nisab_gold, nisab_silver].min
+    [ nisab_gold, nisab_silver ].min
   end
 
   def formatted_min_nisab

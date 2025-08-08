@@ -2,9 +2,9 @@ class Asset < ApplicationRecord
   belongs_to :zakat_calculation
 
   CATEGORIES = [
-    'cash', 'bank', 'gold', 'silver', 'business_inventory',
-    'receivables', 'livestock', 'agriculture',
-    'investments', 'property_rent'
+    "cash", "bank", "gold", "silver", "business_inventory",
+    "receivables", "livestock", "agriculture",
+    "investments", "property_rent"
   ].freeze
 
   validates :category, presence: true, inclusion: { in: CATEGORIES }
@@ -12,28 +12,28 @@ class Asset < ApplicationRecord
   validates :description, length: { maximum: 500 }
 
   scope :by_category, ->(category) { where(category: category) }
-  scope :valuable, -> { where('amount > 0') }
+  scope :valuable, -> { where("amount > 0") }
 
   after_save :update_calculation_totals
   after_destroy :update_calculation_totals
 
   # Category display methods
   def self.category_options
-    CATEGORIES.map { |cat| [cat.humanize, cat] }
+    CATEGORIES.map { |cat| [ cat.humanize, cat ] }
   end
 
   def category_display
     case category
-    when 'cash' then 'Cash on Hand'
-    when 'bank' then 'Bank Accounts'
-    when 'gold' then 'Gold'
-    when 'silver' then 'Silver'
-    when 'business_inventory' then 'Business Inventory'
-    when 'receivables' then 'Accounts Receivable'
-    when 'livestock' then 'Livestock'
-    when 'agriculture' then 'Agricultural Products'
-    when 'investments' then 'Investments'
-    when 'property_rent' then 'Rental Property Income'
+    when "cash" then "Cash on Hand"
+    when "bank" then "Bank Accounts"
+    when "gold" then "Gold"
+    when "silver" then "Silver"
+    when "business_inventory" then "Business Inventory"
+    when "receivables" then "Accounts Receivable"
+    when "livestock" then "Livestock"
+    when "agriculture" then "Agricultural Products"
+    when "investments" then "Investments"
+    when "property_rent" then "Rental Property Income"
     else category.humanize
     end
   end

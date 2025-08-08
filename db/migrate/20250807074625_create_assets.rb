@@ -13,18 +13,18 @@ class CreateAssets < ActiveRecord::Migration[8.0]
     reversible do |dir|
       dir.up do
         execute <<-SQL
-          ALTER TABLE assets 
-          ADD CONSTRAINT check_category 
+          ALTER TABLE assets#{' '}
+          ADD CONSTRAINT check_category#{' '}
           CHECK (category IN (
-            'cash', 'bank', 'gold', 'silver', 'business_inventory', 
-            'receivables', 'livestock', 'agriculture', 
+            'cash', 'bank', 'gold', 'silver', 'business_inventory',#{' '}
+            'receivables', 'livestock', 'agriculture',#{' '}
             'investments', 'property_rent'
           ));
         SQL
-        
+
         execute <<-SQL
-          ALTER TABLE assets 
-          ADD CONSTRAINT check_amount_positive 
+          ALTER TABLE assets#{' '}
+          ADD CONSTRAINT check_amount_positive#{' '}
           CHECK (amount >= 0);
         SQL
       end

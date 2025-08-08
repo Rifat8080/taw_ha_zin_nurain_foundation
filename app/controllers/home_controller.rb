@@ -17,7 +17,7 @@ class HomeController < ApplicationController
       total_donations: Donation.sum(:amount),
       total_volunteers: Volunteer.count,
       total_healthcare_requests: HealthcareRequest.count,
-      pending_healthcare_requests: HealthcareRequest.where(status: 'pending').count,
+      pending_healthcare_requests: HealthcareRequest.where(status: "pending").count,
       total_events: Event.count,
       upcoming_events: Event.upcoming.count
     }
@@ -26,21 +26,21 @@ class HomeController < ApplicationController
                                                   .order(created_at: :desc)
                                                   .limit(5)
 
-    @recent_donations = if current_user.role == 'admin'
+    @recent_donations = if current_user.role == "admin"
                          Donation.includes(:user).order(created_at: :desc).limit(5)
-                       else
+    else
                          current_user.donations.order(created_at: :desc).limit(5)
-                     end
+    end
 
     @upcoming_events = Event.upcoming.includes(:event_users).limit(3)
-    
-    @recent_expenses = if current_user.role == 'admin'
-                        HealthcareExpense.includes(:user).order(created_at: :desc).limit(5)
-                      else
-                        []
-                    end
 
-    render 'dashboard'
+    @recent_expenses = if current_user.role == "admin"
+                        HealthcareExpense.includes(:user).order(created_at: :desc).limit(5)
+    else
+                        []
+    end
+
+    render "dashboard"
   end
 
   def render_public_homepage
@@ -50,6 +50,6 @@ class HomeController < ApplicationController
                                            .includes(:user, :healthcare_donations)
                                            .limit(6)
 
-    render 'index'
+    render "index"
   end
 end

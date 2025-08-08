@@ -1,7 +1,7 @@
 class NisabRatesController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_admin
-  before_action :set_nisab_rate, only: [:show, :edit, :update, :destroy]
+  before_action :set_nisab_rate, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @nisab_rates = NisabRate.recent.page(params[:page]).per(10)
@@ -17,9 +17,9 @@ class NisabRatesController < ApplicationController
 
   def create
     @nisab_rate = NisabRate.new(nisab_rate_params)
-    
+
     if @nisab_rate.save
-      redirect_to @nisab_rate, notice: 'Nisab rate was successfully created.'
+      redirect_to @nisab_rate, notice: "Nisab rate was successfully created."
     else
       render :new, status: :unprocessable_entity
     end
@@ -30,7 +30,7 @@ class NisabRatesController < ApplicationController
 
   def update
     if @nisab_rate.update(nisab_rate_params)
-      redirect_to @nisab_rate, notice: 'Nisab rate was successfully updated.'
+      redirect_to @nisab_rate, notice: "Nisab rate was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -53,8 +53,8 @@ class NisabRatesController < ApplicationController
   end
 
   def ensure_admin
-    unless current_user&.role == 'admin'
-      redirect_to root_path, alert: 'Access denied. Admin privileges required.'
+    unless current_user&.role == "admin"
+      redirect_to root_path, alert: "Access denied. Admin privileges required."
     end
   end
 end

@@ -7,14 +7,14 @@ class CreateHealthcareRequests < ActiveRecord::Migration[8.0]
       t.text :prescription_url
       t.string :status, default: "pending"
       t.boolean :approved, default: false
-      
+
       t.timestamps
-      
+
       t.index :user_id
       t.index :status
       t.index :approved
     end
-    
+
     add_foreign_key :healthcare_requests, :users
   end
 end

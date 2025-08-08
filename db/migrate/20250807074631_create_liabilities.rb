@@ -12,8 +12,8 @@ class CreateLiabilities < ActiveRecord::Migration[8.0]
     reversible do |dir|
       dir.up do
         execute <<-SQL
-          ALTER TABLE liabilities 
-          ADD CONSTRAINT check_amount_positive 
+          ALTER TABLE liabilities#{' '}
+          ADD CONSTRAINT check_amount_positive#{' '}
           CHECK (amount >= 0);
         SQL
       end

@@ -4,7 +4,7 @@ class Liability < ApplicationRecord
   validates :amount, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :description, presence: true, length: { maximum: 500 }
 
-  scope :valuable, -> { where('amount > 0') }
+  scope :valuable, -> { where("amount > 0") }
 
   after_save :update_calculation_totals
   after_destroy :update_calculation_totals

@@ -3,20 +3,20 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
-  
+
   has_many :donations, dependent: :destroy
   has_one :volunteer, dependent: :destroy
   has_many :assigned_work_orders, class_name: "WorkOrder", foreign_key: :assigned_by, dependent: :nullify
-  
+
   # Event management associations
   has_many :event_users, dependent: :destroy
   has_many :events, through: :event_users
   has_many :tickets, dependent: :destroy
-  
+
   # Healthcare system associations
   has_many :healthcare_requests, dependent: :destroy
   has_many :healthcare_donations, dependent: :destroy
-  
+
   # Zakat Calculator associations
   has_many :zakat_calculations, dependent: :destroy
 
@@ -41,22 +41,22 @@ class User < ApplicationRecord
     return [] unless is_volunteer?
     volunteer.volunteers_teams
   end
-  
+
   # Event management methods
   def registered_events
-    events.joins(:event_users).where(event_users: { status: 'registered' })
+    events.joins(:event_users).where(event_users: { status: "registered" })
   end
-  
+
   def attended_events
-    events.joins(:event_users).where(event_users: { status: 'attended' })
+    events.joins(:event_users).where(event_users: { status: "attended" })
   end
-  
+
   def active_tickets
-    tickets.where(status: 'active')
+    tickets.where(status: "active")
   end
-  
+
   def used_tickets
-    tickets.where(status: 'used')
+    tickets.where(status: "used")
   end
 
   # Class method to retroactively create volunteers for existing users

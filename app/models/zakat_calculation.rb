@@ -41,7 +41,7 @@ class ZakatCalculation < ApplicationRecord
     return unless rate
 
     # Use the lower of gold or silver nisab (more favorable for the payer)
-    new_nisab = [rate.nisab_gold, rate.nisab_silver].min
+    new_nisab = [ rate.nisab_gold, rate.nisab_silver ].min
     update!(nisab_value: new_nisab)
   end
 

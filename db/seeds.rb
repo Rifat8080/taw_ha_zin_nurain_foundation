@@ -115,7 +115,7 @@ if Event.count == 0
 
   # Create some sample tickets for the past event and active event
   users = User.limit(3)
-  
+
   # Past event tickets (already used)
   users.each do |user|
     ticket = past_event.tickets.create!(
@@ -124,7 +124,7 @@ if Event.count == 0
       price: past_event.ticket_price,
       status: 'used'
     )
-    
+
     # Also create event user registration
     past_event.event_users.create!(
       user: user,
@@ -141,7 +141,7 @@ if Event.count == 0
       status: 'active',
       seat_number: "A#{rand(1..25)}"
     )
-    
+
     # Also create event user registration
     active_event.event_users.create!(
       user: user,
@@ -158,7 +158,7 @@ if Event.count == 0
       status: 'active',
       seat_number: "VIP#{rand(1..50)}"
     )
-    
+
     # Also create event user registration
     upcoming_event.event_users.create!(
       user: user,
@@ -355,10 +355,10 @@ healthcare_requests_data.each_with_index do |req_data, index|
     hr.approved = req_data[:approved]
     hr.created_at = (index + 1).days.ago
   end
-  
+
   # Add some donations to approved requests
   if request.approved? && request.status == 'approved'
-    donation_amounts = [1000, 2500, 5000, 1500, 3000, 500, 10000]
+    donation_amounts = [ 1000, 2500, 5000, 1500, 3000, 500, 10000 ]
     rand(3..6).times do |i|
       donor = member_users[(index + i + 1) % member_users.length]
       unless donor == request.user
