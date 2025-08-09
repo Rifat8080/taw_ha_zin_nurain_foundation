@@ -22,6 +22,7 @@ class TicketsController < ApplicationController
 
     @ticket = @event.tickets.build
     @ticket.user = current_user
+    @ticket.registered_by = current_user
     
     # Set ticket type from params or default to event's category
     if params[:ticket].present? && params[:ticket][:ticket_type].present?
@@ -115,7 +116,8 @@ class TicketsController < ApplicationController
         quantity.times do |i|
           ticket = @event.tickets.build(
             user: current_user,
-            ticket_type: ticket_type
+            ticket_type: ticket_type,
+            registered_by: current_user
           )
 
           unless ticket.save
@@ -276,6 +278,45 @@ class TicketsController < ApplicationController
     end
   end
 
+  def spot_registration
+    # Require volunteer or admin access
+    unless current_user&.is_volunteer? || current_user&.role == 'admin'
+      redirect_to root_path, alert: "Access denied. Volunteer privileges required for spot registration."
+      return
+    end
+    
+    # Get upcoming and active events (not past events)
+    @events = Event.where("end_date >= ?", Date.current).order(:start_date)
+    @spot_registration = SpotRegistration.new
+  end
+
+  def create_spot_registration
+    # Require volunteer or admin access
+    unless current_user&.is_volunteer? || current_user&.role == 'admin'
+      redirect_to root_path, alert: "Access denied. Volunteer privileges required for spot registration."
+      return
+    end
+
+    # Get upcoming and active events (not past events)
+    @events = Event.where("end_date >= ?", Date.current).order(:start_date)
+    @spot_registration = SpotRegistration.new(spot_registration_params)
+    
+    if @spot_registration.valid?
+      # Process the spot registration
+      result = process_spot_registration(@spot_registration)
+      
+      if result[:success]
+        redirect_to spot_registration_tickets_path, 
+                    notice: "Successfully registered #{result[:user].full_name} for #{result[:event].name}. #{result[:tickets_count]} ticket(s) created."
+      else
+        flash.now[:alert] = result[:error]
+        render :spot_registration, status: :unprocessable_entity
+      end
+    else
+      render :spot_registration, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_ticket
@@ -289,6 +330,87 @@ class TicketsController < ApplicationController
   def ticket_params
     return {} unless params[:ticket].present?
     params.require(:ticket).permit(:seat_number, :ticket_type)
+  end
+
+  def spot_registration_params
+    params.require(:spot_registration).permit(:event_id, :first_name, :last_name, :email, :phone_number, :address, :ticket_type, :quantity)
+  end
+
+  def process_spot_registration(spot_registration)
+    event = Event.find(spot_registration.event_id)
+    
+    # Check if event allows registration
+    if event.event_status == 'past'
+      return { success: false, error: "Cannot register for past events." }
+    end
+    
+    # Check if event has available tickets
+    ticket_type = spot_registration.ticket_type
+    quantity = spot_registration.quantity.to_i
+    
+    if event.ticket_types.any?
+      unless event.ticket_type_available?(ticket_type, quantity)
+        return { success: false, error: "Not enough #{ticket_type} tickets available." }
+      end
+    else
+      if quantity > event.available_seats
+        return { success: false, error: "Not enough tickets available." }
+      end
+    end
+
+    # Find or create user
+    user = User.find_by(email: spot_registration.email) || 
+           User.find_by(phone_number: spot_registration.phone_number)
+    
+    if user.nil?
+      # Create new user with temporary password
+      temp_password = SecureRandom.hex(8)
+      user = User.new(
+        first_name: spot_registration.first_name,
+        last_name: spot_registration.last_name,
+        email: spot_registration.email,
+        phone_number: spot_registration.phone_number,
+        address: spot_registration.address || "Walk-in Registration",
+        password: temp_password,
+        password_confirmation: temp_password,
+        role: "member"
+      )
+      
+      unless user.save
+        return { success: false, error: "Failed to create user: #{user.errors.full_messages.join(', ')}" }
+      end
+    end
+
+    # Create tickets
+    created_tickets = []
+    quantity.times do
+      ticket = event.tickets.build(
+        user: user,
+        ticket_type: ticket_type,
+        registered_by: current_user
+      )
+      
+      if ticket.save
+        created_tickets << ticket
+      else
+        return { success: false, error: "Failed to create ticket: #{ticket.errors.full_messages.join(', ')}" }
+      end
+    end
+
+    # Create EventUser registration if it doesn't exist
+    event.event_users.find_or_create_by(user: user) do |event_user|
+      event_user.status = "registered"
+    end
+
+    { 
+      success: true, 
+      user: user, 
+      event: event, 
+      tickets: created_tickets,
+      tickets_count: created_tickets.count
+    }
+  rescue => e
+    { success: false, error: "Registration failed: #{e.message}" }
   end
 
   def ticket_details_for_response(ticket, include_used_at: false)

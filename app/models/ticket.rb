@@ -2,6 +2,7 @@ class Ticket < ApplicationRecord
   # Associations
   belongs_to :event
   belongs_to :user
+  belongs_to :registered_by, class_name: 'User', optional: true
 
   # Validations
   validates :qr_code, presence: true, uniqueness: true

@@ -1,0 +1,219 @@
+<%# Volunteer Booth Spot Registration Page %>
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-white shadow-lg rounded-lg">
+      <!-- Header -->
+      <div class="bg-blue-600 px-6 py-4 rounded-t-lg">
+        <div class="flex items-center">
+          <svg class="w-8 h-8 text-white mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <div>
+            <h1 class="text-2xl font-bold text-white">Volunteer Booth Registration</h1>
+            <p class="text-blue-100">On-site ticket registration for walk-in attendees</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Volunteer Info -->
+      <div class="px-6 py-4 bg-green-50 border-b border-green-200">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-green-800">
+              Volunteer: <%= current_user.full_name %> 
+              <span class="text-green-600">(ID: <%= current_user.id.split('-').first %>)</span>
+            </p>
+            <p class="text-xs text-green-600">Authorized for spot registration</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Registration Form -->
+      <div class="px-6 py-6">
+        <%= form_with model: @spot_registration, url: create_spot_registration_tickets_path, local: true, class: "space-y-6" do |form| %>
+          <% if @spot_registration.errors.any? %>
+            <div class="bg-red-50 border border-red-200 rounded-md p-4">
+              <div class="flex">
+                <svg class="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                </svg>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-red-800">Please correct the following errors:</h3>
+                  <ul class="mt-2 text-sm text-red-700 list-disc pl-5">
+                    <% @spot_registration.errors.full_messages.each do |message| %>
+                      <li><%= message %></li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- Event Selection -->
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Event Selection</h3>
+            <div class="grid grid-cols-1 gap-4">
+              <%= form.label :event_id, "Select Event", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.select :event_id, 
+                  options_from_collection_for_select(@events, :id, :name, @spot_registration.event_id),
+                  { prompt: "Choose an event..." },
+                  { 
+                    class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
+                    required: true,
+                    onchange: "updateTicketTypes()"
+                  } %>
+            </div>
+          </div>
+
+          <!-- Attendee Information -->
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Attendee Information</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <%= form.label :first_name, "First Name", class: "block text-sm font-medium text-gray-700" %>
+                <%= form.text_field :first_name, 
+                    class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
+                    placeholder: "John",
+                    required: true %>
+              </div>
+              
+              <div>
+                <%= form.label :last_name, "Last Name", class: "block text-sm font-medium text-gray-700" %>
+                <%= form.text_field :last_name, 
+                    class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
+                    placeholder: "Doe",
+                    required: true %>
+              </div>
+              
+              <div>
+                <%= form.label :email, "Email Address", class: "block text-sm font-medium text-gray-700" %>
+                <%= form.email_field :email, 
+                    class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
+                    placeholder: "john.doe@example.com",
+                    required: true %>
+              </div>
+              
+              <div>
+                <%= form.label :phone_number, "Phone Number", class: "block text-sm font-medium text-gray-700" %>
+                <%= form.telephone_field :phone_number, 
+                    class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
+                    placeholder: "(555) 123-4567",
+                    required: true %>
+              </div>
+              
+              <div class="md:col-span-2">
+                <%= form.label :address, "Address (Optional)", class: "block text-sm font-medium text-gray-700" %>
+                <%= form.text_area :address, 
+                    class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
+                    placeholder: "123 Main St, City, State, ZIP",
+                    rows: 2 %>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ticket Selection -->
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Ticket Selection</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <%= form.label :ticket_type, "Ticket Type", class: "block text-sm font-medium text-gray-700" %>
+                <%= form.select :ticket_type, 
+                    [
+                      ['General Admission', 'general'],
+                      ['VIP', 'vip'],
+                      ['Premium', 'premium'],
+                      ['Standard', 'standard']
+                    ],
+                    { prompt: "Select ticket type..." },
+                    { 
+                      class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
+                      required: true
+                    } %>
+              </div>
+              
+              <div>
+                <%= form.label :quantity, "Number of Tickets", class: "block text-sm font-medium text-gray-700" %>
+                <%= form.number_field :quantity, 
+                    class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
+                    min: 1,
+                    max: 10,
+                    value: @spot_registration.quantity || 1,
+                    required: true %>
+              </div>
+            </div>
+          </div>
+
+          <!-- Instructions -->
+          <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4">
+            <div class="flex">
+              <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+              </svg>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-yellow-800">Registration Instructions</h3>
+                <div class="mt-2 text-sm text-yellow-700">
+                  <ul class="list-disc pl-5 space-y-1">
+                    <li>Verify attendee information is correct before submitting</li>
+                    <li>If attendee already has an account, they will be linked automatically</li>
+                    <li>New attendees will receive a temporary password via email</li>
+                    <li>Tickets will be generated with QR codes for entry</li>
+                    <li>Payment should be collected separately according to event pricing</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex justify-between">
+            <%= link_to "Cancel", root_path, 
+                class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+            
+            <%= form.submit "Register Attendee", 
+                class: "inline-flex items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Function to update ticket types based on selected event
+function updateTicketTypes() {
+  const eventSelect = document.getElementById('spot_registration_event_id');
+  const ticketTypeSelect = document.getElementById('spot_registration_ticket_type');
+  
+  if (!eventSelect.value) {
+    return;
+  }
+  
+  // You could make an AJAX call here to get available ticket types for the selected event
+  // For now, we'll keep the static options
+}
+
+// Auto-format phone number
+document.getElementById('spot_registration_phone_number')?.addEventListener('input', function(e) {
+  let value = e.target.value.replace(/\D/g, '');
+  if (value.length >= 6) {
+    value = value.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+  } else if (value.length >= 3) {
+    value = value.replace(/(\d{3})(\d{0,3})/, '($1) $2');
+  }
+  e.target.value = value;
+});
+
+// Auto-capitalize names
+document.getElementById('spot_registration_first_name')?.addEventListener('input', function(e) {
+  e.target.value = e.target.value.replace(/\b\w/g, l => l.toUpperCase());
+});
+
+document.getElementById('spot_registration_last_name')?.addEventListener('input', function(e) {
+  e.target.value = e.target.value.replace(/\b\w/g, l => l.toUpperCase());
+});
+</script>

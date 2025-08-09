@@ -62,6 +62,8 @@ Rails.application.routes.draw do
     collection do
       get :qr_scan
       post :validate_qr
+      get :spot_registration
+      post :create_spot_registration
     end
   end
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_08_134014) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_09_183144) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -231,9 +231,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_08_134014) do
     t.string "seat_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "registered_by_id"
     t.index ["event_id", "seat_number"], name: "index_tickets_on_event_id_and_seat_number", unique: true
     t.index ["event_id"], name: "index_tickets_on_event_id"
     t.index ["qr_code"], name: "index_tickets_on_qr_code", unique: true
+    t.index ["registered_by_id"], name: "index_tickets_on_registered_by_id"
     t.index ["status"], name: "index_tickets_on_status"
     t.index ["ticket_type"], name: "index_tickets_on_ticket_type"
     t.index ["user_id"], name: "index_tickets_on_user_id"
@@ -320,6 +322,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_08_134014) do
   add_foreign_key "team_assignments", "volunteers_teams", column: "team_id"
   add_foreign_key "tickets", "events"
   add_foreign_key "tickets", "users"
+  add_foreign_key "tickets", "users", column: "registered_by_id"
   add_foreign_key "volunteers", "users"
   add_foreign_key "work_orders", "users", column: "assigned_by"
   add_foreign_key "work_orders", "volunteers_teams", column: "team_id"

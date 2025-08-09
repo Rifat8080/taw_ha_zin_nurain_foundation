@@ -48,12 +48,12 @@
                     <div class="flex-shrink-0">
                       <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
                         <span class="text-sm font-medium text-gray-700">
-                          <%= ticket.user.name.split(' ').map(&:first).join.upcase %>
+                          <%= ticket.user.full_name.split(' ').map(&:first).join.upcase %>
                         </span>
                       </div>
                     </div>
                     <div class="ml-4">
-                      <div class="text-sm font-medium text-gray-900"><%= ticket.user.name %></div>
+                      <div class="text-sm font-medium text-gray-900"><%= ticket.user.full_name %></div>
                       <div class="text-sm text-gray-500"><%= ticket.user.email %></div>
                       <div class="text-xs text-gray-400">
                         Purchased: <%= ticket.created_at.strftime("%B %d, %Y at %I:%M %p") %>

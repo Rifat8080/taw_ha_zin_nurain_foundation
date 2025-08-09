@@ -174,6 +174,16 @@
                    <span class="flex-1 ms-3 whitespace-nowrap">QR Scanner</span>
                 <% end %>
              </li>
+             <% if current_user.is_volunteer? || current_user.role == 'admin' %>
+               <li>
+                  <%= link_to spot_registration_tickets_path, class: "flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
+                     <svg class="shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M8 0a1 1 0 0 1 1 1v5.268a2 2 0 0 1 0 3.464V16a1 1 0 1 1-2 0v-6.268a2 2 0 0 1 0-3.464V1a1 1 0 0 1 1-1ZM3 7a1 1 0 0 1 1-1h1.268a2 2 0 0 1 3.464 0H16a1 1 0 1 1 0 2H8.732a2 2 0 0 1-3.464 0H4a1 1 0 0 1-1-1Z"/>
+                     </svg>
+                     <span class="flex-1 ms-3 whitespace-nowrap">Spot Registration</span>
+                  <% end %>
+               </li>
+             <% end %>
 
              <!-- Financial Section -->
              <li>
