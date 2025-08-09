@@ -154,7 +154,30 @@
 
       <!-- Action Buttons -->
       <div class="mt-8 flex flex-col gap-4">
-        <% unless @event.sold_out? %>
+        <% if @event.event_status == 'past' %>
+          <!-- Event has passed - show message instead of ticket buttons -->
+          <div class="bg-gray-50 border border-gray-300 rounded-lg p-4">
+            <div class="flex items-center">
+              <svg class="w-5 h-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <div>
+                <h3 class="text-lg font-medium text-gray-900">Event Has Ended</h3>
+                <p class="text-sm text-gray-600 mt-1">
+                  This event ended on <%= @event.end_date.strftime("%B %d, %Y") %>. 
+                  Ticket booking is no longer available.
+                </p>
+              </div>
+            </div>
+          </div>
+        <% elsif @event.sold_out? %>
+          <div class="space-y-3">
+            <h3 class="text-lg font-medium text-gray-900">Purchase Tickets</h3>
+            <button disabled class="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 bg-gray-100 cursor-not-allowed">
+              Sold Out
+            </button>
+          </div>
+        <% else %>
           <div class="space-y-3">
             <h3 class="text-lg font-medium text-gray-900">Purchase Tickets</h3>
             
@@ -208,10 +231,6 @@
               <% end %>
             <% end %>
           </div>
-        <% else %>
-          <button disabled class="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 bg-gray-100 cursor-not-allowed">
-            Sold Out
-          </button>
         <% end %>
         
         <% if @event_user %>

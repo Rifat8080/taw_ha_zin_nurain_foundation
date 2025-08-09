@@ -14,6 +14,12 @@ class TicketsController < ApplicationController
   end
 
   def create
+    # Check if event has expired
+    if @event.event_status == 'past'
+      redirect_to @event, alert: "Sorry, this event has ended and tickets are no longer available for purchase."
+      return
+    end
+
     @ticket = @event.tickets.build
     @ticket.user = current_user
     
@@ -54,6 +60,12 @@ class TicketsController < ApplicationController
   end
 
   def bulk_create
+    # Check if event has expired
+    if @event.event_status == 'past'
+      redirect_to @event, alert: "Sorry, this event has ended and tickets are no longer available for purchase."
+      return
+    end
+
     ticket_quantities = params[:ticket_quantities] || {}
     
     # Filter out zero quantities

@@ -2,7 +2,13 @@
   <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
     <!-- Modal Header -->
     <div class="flex justify-between items-center pb-4 border-b">
-      <h3 class="text-xl font-semibold text-gray-900">Purchase Tickets</h3>
+      <h3 class="text-xl font-semibold text-gray-900">
+        <% if @event.event_status == 'past' %>
+          Event Has Ended
+        <% else %>
+          Purchase Tickets
+        <% end %>
+      </h3>
       <button type="button" class="text-gray-400 hover:text-gray-600" onclick="closeTicketModal()">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -12,6 +18,31 @@
 
     <!-- Modal Body -->
     <div class="mt-4">
+      <% if @event.event_status == 'past' %>
+        <!-- Event Expired Message -->
+        <div class="text-center py-8">
+          <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <h4 class="text-lg font-medium text-gray-900 mb-2">This Event Has Ended</h4>
+          <p class="text-gray-600">
+            This event ended on <%= @event.end_date.present? ? @event.end_date.strftime("%B %d, %Y") : @event.start_date.strftime("%B %d, %Y") %>.<br>
+            Ticket booking is no longer available.
+          </p>
+        </div>
+      <% elsif @event.sold_out? %>
+        <!-- Sold Out Message -->
+        <div class="text-center py-8">
+          <svg class="w-16 h-16 text-red-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          <h4 class="text-lg font-medium text-gray-900 mb-2">Event Sold Out</h4>
+          <p class="text-gray-600">
+            All tickets for this event have been sold out.
+          </p>
+        </div>
+      <% else %>
+        <!-- Normal Ticket Selection Interface -->
       <%= form_with url: bulk_create_event_tickets_path(@event), local: true, id: "bulk-ticket-form", class: "space-y-6" do |form| %>
         
         <!-- Event Info -->
@@ -190,6 +221,7 @@
             Purchase Tickets
           </button>
         </div>
+      <% end %>
       <% end %>
     </div>
 </div>
