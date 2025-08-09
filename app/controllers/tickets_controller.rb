@@ -1,7 +1,7 @@
 class TicketsController < ApplicationController
   before_action :authenticate_user!, except: [ :qr_scan, :validate_qr ]
   before_action :set_ticket, only: [ :show, :qr_code, :use_ticket, :destroy ]
-  before_action :set_event, only: [ :create ]
+  before_action :set_event, only: [ :create, :bulk_create ]
 
   def index
     @tickets = current_user&.tickets&.includes(:event, :user) || []
@@ -50,6 +50,89 @@ class TicketsController < ApplicationController
       redirect_to ticket_path(@ticket), notice: "Ticket purchased successfully! Your QR code is ready."
     else
       redirect_to @event, alert: @ticket.errors.full_messages.join(", ")
+    end
+  end
+
+  def bulk_create
+    ticket_quantities = params[:ticket_quantities] || {}
+    
+    # Filter out zero quantities
+    ticket_quantities = ticket_quantities.select { |type, qty| qty.to_i > 0 }
+    
+    if ticket_quantities.empty?
+      redirect_to @event, alert: "Please select at least one ticket to purchase."
+      return
+    end
+
+    created_tickets = []
+    errors = []
+    total_tickets_requested = ticket_quantities.values.sum(&:to_i)
+
+    # Validate availability for all requested tickets first
+    ticket_quantities.each do |ticket_type, quantity|
+      quantity = quantity.to_i
+      next if quantity <= 0
+
+      # Check availability
+      if @event.ticket_types.any?
+        unless @event.ticket_type_available?(ticket_type, quantity)
+          type_info = @event.get_ticket_type(ticket_type)
+          available = @event.available_ticket_types.find { |t| t['category'] == ticket_type }&.dig('seats_remaining') || 0
+          errors << "#{type_info&.dig('name') || ticket_type.capitalize} tickets: requested #{quantity}, only #{available} available"
+        end
+      else
+        # Legacy event - check total availability
+        if quantity > @event.available_seats
+          errors << "Requested #{quantity} tickets, only #{@event.available_seats} available"
+        end
+      end
+    end
+
+    # If there are availability errors, don't proceed
+    if errors.any?
+      redirect_to @event, alert: "Cannot complete purchase: #{errors.join(', ')}"
+      return
+    end
+
+    # Create tickets in a transaction
+    ActiveRecord::Base.transaction do
+      ticket_quantities.each do |ticket_type, quantity|
+        quantity = quantity.to_i
+        next if quantity <= 0
+
+        quantity.times do |i|
+          ticket = @event.tickets.build(
+            user: current_user,
+            ticket_type: ticket_type
+          )
+
+          unless ticket.save
+            errors << "Failed to create ticket #{i + 1} for #{ticket_type}: #{ticket.errors.full_messages.join(', ')}"
+            raise ActiveRecord::Rollback
+          end
+
+          created_tickets << ticket
+        end
+      end
+
+      # If we got here without errors, all tickets were created successfully
+      if errors.empty?
+        # Create EventUser registration if it doesn't exist
+        @event.event_users.find_or_create_by(user: current_user) do |event_user|
+          event_user.status = "registered"
+        end
+
+        total_amount = created_tickets.sum(&:price)
+        
+        redirect_to @event, notice: "Successfully purchased #{created_tickets.count} ticket(s) for $#{total_amount}! Check your tickets in the 'Your Tickets' section below."
+      else
+        raise ActiveRecord::Rollback
+      end
+    end
+
+    # If we reach here, there were errors during ticket creation
+    if errors.any?
+      redirect_to @event, alert: "Failed to purchase tickets: #{errors.join(', ')}"
     end
   end
 

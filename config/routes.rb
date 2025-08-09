@@ -44,7 +44,11 @@ Rails.application.routes.draw do
   # Event Management System Routes
   resources :events do
     resources :event_users, only: [ :create, :destroy ], path: "registrations"
-    resources :tickets, only: [ :create, :destroy ]
+    resources :tickets, only: [ :create, :destroy ] do
+      collection do
+        post :bulk_create
+      end
+    end
     member do
       get :attendees
     end

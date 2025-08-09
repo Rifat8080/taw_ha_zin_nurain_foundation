@@ -1,0 +1,197 @@
+<div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" id="ticket-booking-modal" style="display: none;">
+  <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+    <!-- Modal Header -->
+    <div class="flex justify-between items-center pb-4 border-b">
+      <h3 class="text-xl font-semibold text-gray-900">Purchase Tickets</h3>
+      <button type="button" class="text-gray-400 hover:text-gray-600" onclick="closeTicketModal()">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="mt-4">
+      <%= form_with url: bulk_create_event_tickets_path(@event), local: true, id: "bulk-ticket-form", class: "space-y-6" do |form| %>
+        
+        <!-- Event Info -->
+        <div class="bg-gray-50 rounded-lg p-4">
+          <h4 class="font-medium text-gray-900"><%= @event.name %></h4>
+          <p class="text-sm text-gray-600">
+            <%= @event.start_date.strftime("%B %d, %Y") %> at <%= @event.start_time.strftime("%I:%M %p") %>
+          </p>
+          <p class="text-sm text-gray-600"><%= @event.venue %></p>
+          <% if @user_tickets.any? %>
+            <div class="mt-2 p-2 bg-blue-50 rounded">
+              <p class="text-xs text-blue-700">
+                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                You already have <%= @user_tickets.count %> ticket(s) for this event
+              </p>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Ticket Types Selection -->
+        <div class="space-y-4">
+          <h4 class="text-lg font-medium text-gray-900">Select Tickets</h4>
+          
+          <% if @event.ticket_types.any? %>
+            <% @event.available_ticket_types.each do |ticket_type| %>
+              <% unless ticket_type['sold_out'] %>
+                <div class="border border-gray-200 rounded-lg p-4" data-ticket-type="<%= ticket_type['category'] %>">
+                  <div class="flex justify-between items-start">
+                    <!-- Ticket Info -->
+                    <div class="flex-1">
+                      <h5 class="text-sm font-medium text-gray-900"><%= ticket_type['name'] %></h5>
+                      <p class="text-xs text-gray-500 uppercase tracking-wide"><%= ticket_type['category'] %></p>
+                      <% if ticket_type['description'].present? %>
+                        <p class="text-xs text-gray-600 mt-1"><%= ticket_type['description'] %></p>
+                      <% end %>
+                      <p class="text-sm text-gray-600 mt-1">
+                        <span class="text-lg font-bold text-gray-900">$<%= ticket_type['price'] %></span> each
+                      </p>
+                      <p class="text-xs text-green-600">
+                        <%= ticket_type['seats_remaining'] %> tickets available
+                      </p>
+                    </div>
+                    
+                    <!-- Quantity Selector -->
+                    <div class="ml-4 flex items-center space-x-3">
+                      <label for="quantity_<%= ticket_type['category'] %>" class="text-sm text-gray-600">Qty:</label>
+                      <div class="flex items-center border border-gray-300 rounded-md">
+                        <button type="button" 
+                                class="px-2 py-1 text-gray-600 hover:text-gray-800 hover:bg-gray-50 quantity-btn-minus"
+                                data-ticket-type="<%= ticket_type['category'] %>"
+                                data-action="decrease">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                          </svg>
+                        </button>
+                        <input type="number" 
+                               name="ticket_quantities[<%= ticket_type['category'] %>]"
+                               id="quantity_<%= ticket_type['category'] %>"
+                               value="0" 
+                               min="0" 
+                               max="<%= [ticket_type['seats_remaining'], 10].min %>"
+                               class="w-16 px-2 py-1 text-center border-none focus:ring-0 quantity-input"
+                               data-ticket-type="<%= ticket_type['category'] %>"
+                               data-price="<%= ticket_type['price'] %>" />
+                        <button type="button" 
+                                class="px-2 py-1 text-gray-600 hover:text-gray-800 hover:bg-gray-50 quantity-btn-plus"
+                                data-ticket-type="<%= ticket_type['category'] %>"
+                                data-action="increase">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                          </svg>
+                        </button>
+                      </div>
+                      <% if ticket_type['seats_remaining'] <= 5 %>
+                        <span class="text-xs text-orange-600 font-medium">
+                          Only <%= ticket_type['seats_remaining'] %> left!
+                        </span>
+                      <% end %>
+                    </div>
+                  </div>
+                  
+                  <!-- Subtotal for this ticket type -->
+                  <div class="mt-2 text-right">
+                    <span class="text-sm text-gray-600">Subtotal: </span>
+                    <span class="text-sm font-medium subtotal" data-ticket-type="<%= ticket_type['category'] %>">$0.00</span>
+                  </div>
+                </div>
+              <% end %>
+            <% end %>
+          <% else %>
+            <!-- Legacy single ticket type -->
+            <div class="border border-gray-200 rounded-lg p-4" data-ticket-type="<%= @event.ticket_category %>">
+              <div class="flex justify-between items-start">
+                <div class="flex-1">
+                  <h5 class="text-sm font-medium text-gray-900">General Admission</h5>
+                  <p class="text-xs text-gray-500 uppercase tracking-wide"><%= @event.ticket_category %></p>
+                  <p class="text-sm text-gray-600 mt-1">
+                    <span class="text-lg font-bold text-gray-900">$<%= @event.ticket_price %></span> each
+                  </p>
+                  <p class="text-xs text-green-600">
+                    <%= @event.available_seats %> tickets available
+                  </p>
+                </div>
+                
+                <div class="ml-4 flex items-center space-x-3">
+                  <label for="quantity_<%= @event.ticket_category %>" class="text-sm text-gray-600">Qty:</label>
+                  <div class="flex items-center border border-gray-300 rounded-md">
+                    <button type="button" 
+                            class="px-2 py-1 text-gray-600 hover:text-gray-800 hover:bg-gray-50 quantity-btn-minus"
+                            data-ticket-type="<%= @event.ticket_category %>"
+                            data-action="decrease">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                      </svg>
+                    </button>
+                    <input type="number" 
+                           name="ticket_quantities[<%= @event.ticket_category %>]"
+                           id="quantity_<%= @event.ticket_category %>"
+                           value="0" 
+                           min="0" 
+                           max="<%= [@event.available_seats, 10].min %>"
+                           class="w-16 px-2 py-1 text-center border-none focus:ring-0 quantity-input"
+                           data-ticket-type="<%= @event.ticket_category %>"
+                           data-price="<%= @event.ticket_price %>" />
+                    <button type="button" 
+                            class="px-2 py-1 text-gray-600 hover:text-gray-800 hover:bg-gray-50 quantity-btn-plus"
+                            data-ticket-type="<%= @event.ticket_category %>"
+                            data-action="increase">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                      </svg>
+                    </button>
+                  </div>
+                  <% if @event.available_seats <= 5 %>
+                    <span class="text-xs text-orange-600 font-medium">
+                      Only <%= @event.available_seats %> left!
+                    </span>
+                  <% end %>
+                </div>
+              </div>
+              
+              <div class="mt-2 text-right">
+                <span class="text-sm text-gray-600">Subtotal: </span>
+                <span class="text-sm font-medium subtotal" data-ticket-type="<%= @event.ticket_category %>">$0.00</span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="border-t pt-4">
+          <div class="flex justify-between items-center">
+            <div>
+              <span class="text-lg font-medium text-gray-900">Total: </span>
+              <span id="total-amount" class="text-2xl font-bold text-blue-600">$0.00</span>
+            </div>
+            <div class="text-sm text-gray-600">
+              <span id="total-quantity">0</span> ticket(s) selected
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-3 pt-4">
+          <button type="button" 
+                  onclick="closeTicketModal()"
+                  class="flex-1 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+            Cancel
+          </button>
+          <button type="submit" 
+                  id="purchase-btn"
+                  disabled
+                  class="flex-1 px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed">
+            Purchase Tickets
+          </button>
+        </div>
+      <% end %>
+    </div>
+</div>
+
+<!-- Fallback JavaScript is now handled by bulk_ticket_modal_fallback.js -->
