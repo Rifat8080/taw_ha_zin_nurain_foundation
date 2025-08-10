@@ -18,6 +18,7 @@
   --color-foundation-light: 248 250 252;    /* Slate-50 */
   --color-foundation-dark: 30 41 59;        /* Slate-800 */
   --color-foundationprimarygreen: 40 95 43; /* Custom Foundation Primary Green #285F2B */
+  --color-forange: 242 146 0;               /* Custom Foundation Orange #F29200 */
   
   /* Charity/Action Colors */
   --color-charity-green: 34 197 94;         /* Green-500 */
@@ -65,6 +66,11 @@
 .bg-foundationprimarygreen { background-color: rgb(var(--color-foundationprimarygreen)); }
 .border-foundationprimarygreen { border-color: rgb(var(--color-foundationprimarygreen)); }
 
+/* Foundation Orange */
+.text-forange { color: rgb(var(--color-forange)); }
+.bg-forange { background-color: rgb(var(--color-forange)); }
+.border-forange { border-color: rgb(var(--color-forange)); }
+
 /* Custom Font Classes */
 .font-body { font-family: var(--font-body); }
 .font-sans { font-family: var(--font-sans); }
@@ -74,3 +80,7 @@
 .bg-foundation-secondary\/50 { background-color: rgb(var(--color-foundation-secondary) / 0.5); }
 .bg-foundation-accent\/50 { background-color: rgb(var(--color-foundation-accent) / 0.5); }
 .bg-foundationprimarygreen\/50 { background-color: rgb(var(--color-foundationprimarygreen) / 0.5); }
+.bg-forange\/50 { background-color: rgb(var(--color-forange) / 0.5); }
+.bg-forange\/90 { background-color: rgb(var(--color-forange) / 0.9); }
+.hover\:bg-forange\/90:hover { background-color: rgb(var(--color-forange) / 0.9); }
+.focus\:ring-forange\/50:focus { --tw-ring-color: rgb(var(--color-forange) / 0.5); }

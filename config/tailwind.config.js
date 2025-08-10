@@ -7,6 +7,13 @@ module.exports = {
     './app/views/**/*',
     './node_modules/flowbite/**/*.js'
   ],
+  safelist: [
+    'bg-forange',
+    'hover:bg-forange/90',
+    'focus:ring-forange/50',
+    'text-forange',
+    'border-forange'
+  ],
   theme: {
     extend: {
       fontFamily: {
@@ -53,6 +60,8 @@ module.exports = {
         },
         // Custom Foundation Primary Green
         foundationprimarygreen: 'rgb(var(--color-foundationprimarygreen) / <alpha-value>)',
+        // Custom Foundation Orange
+        forange: 'rgb(var(--color-forange) / <alpha-value>)',
         // Charity/Action Colors
         charity: {
           green: 'rgb(var(--color-charity-green) / <alpha-value>)',
