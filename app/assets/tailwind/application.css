@@ -1,1 +1,76 @@
 @import "tailwindcss";
+
+/* Import Google Fonts - Roboto */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+/* Custom Color Definitions using CSS Custom Properties */
+/* This approach works with current Tailwind and is compatible with Tailwind 4 */
+:root {
+  /* Custom Font Families */
+  --font-body: 'Roboto', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-sans: 'Roboto', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+  /* Foundation Colors - RGB values for use with opacity */
+  --color-foundation-primary: 34 197 94;    /* Green-500 */
+  --color-foundation-secondary: 59 130 246; /* Blue-500 */
+  --color-foundation-accent: 245 158 11;    /* Amber-500 */
+  --color-foundation-neutral: 71 85 105;    /* Slate-600 */
+  --color-foundation-light: 248 250 252;    /* Slate-50 */
+  --color-foundation-dark: 30 41 59;        /* Slate-800 */
+  --color-foundationprimarygreen: 40 95 43; /* Custom Foundation Primary Green #285F2B */
+  
+  /* Charity/Action Colors */
+  --color-charity-green: 34 197 94;         /* Green-500 */
+  --color-charity-blue: 59 130 246;         /* Blue-500 */
+  --color-charity-orange: 249 115 22;       /* Orange-500 */
+  
+  /* Status Colors */
+  --color-success: 16 185 129;              /* Emerald-500 */
+  --color-warning: 245 158 11;              /* Amber-500 */
+  --color-error: 239 68 68;                 /* Red-500 */
+  --color-info: 59 130 246;                 /* Blue-500 */
+}
+
+/* Custom utility classes using the CSS variables */
+/* Foundation Primary */
+.text-foundation-primary { color: rgb(var(--color-foundation-primary)); }
+.bg-foundation-primary { background-color: rgb(var(--color-foundation-primary)); }
+.border-foundation-primary { border-color: rgb(var(--color-foundation-primary)); }
+
+/* Foundation Secondary */
+.text-foundation-secondary { color: rgb(var(--color-foundation-secondary)); }
+.bg-foundation-secondary { background-color: rgb(var(--color-foundation-secondary)); }
+.border-foundation-secondary { border-color: rgb(var(--color-foundation-secondary)); }
+
+/* Foundation Accent */
+.text-foundation-accent { color: rgb(var(--color-foundation-accent)); }
+.bg-foundation-accent { background-color: rgb(var(--color-foundation-accent)); }
+.border-foundation-accent { border-color: rgb(var(--color-foundation-accent)); }
+
+/* Charity Colors */
+.text-charity-green { color: rgb(var(--color-charity-green)); }
+.bg-charity-green { background-color: rgb(var(--color-charity-green)); }
+.border-charity-green { border-color: rgb(var(--color-charity-green)); }
+
+.text-charity-blue { color: rgb(var(--color-charity-blue)); }
+.bg-charity-blue { background-color: rgb(var(--color-charity-blue)); }
+.border-charity-blue { border-color: rgb(var(--color-charity-blue)); }
+
+.text-charity-orange { color: rgb(var(--color-charity-orange)); }
+.bg-charity-orange { background-color: rgb(var(--color-charity-orange)); }
+.border-charity-orange { border-color: rgb(var(--color-charity-orange)); }
+
+/* Foundation Primary Green */
+.text-foundationprimarygreen { color: rgb(var(--color-foundationprimarygreen)); }
+.bg-foundationprimarygreen { background-color: rgb(var(--color-foundationprimarygreen)); }
+.border-foundationprimarygreen { border-color: rgb(var(--color-foundationprimarygreen)); }
+
+/* Custom Font Classes */
+.font-body { font-family: var(--font-body); }
+.font-sans { font-family: var(--font-sans); }
+
+/* With opacity support (Tailwind 4 style) */
+.bg-foundation-primary\/50 { background-color: rgb(var(--color-foundation-primary) / 0.5); }
+.bg-foundation-secondary\/50 { background-color: rgb(var(--color-foundation-secondary) / 0.5); }
+.bg-foundation-accent\/50 { background-color: rgb(var(--color-foundation-accent) / 0.5); }
+.bg-foundationprimarygreen\/50 { background-color: rgb(var(--color-foundationprimarygreen) / 0.5); }

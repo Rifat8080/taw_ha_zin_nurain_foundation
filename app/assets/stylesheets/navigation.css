@@ -1,0 +1,38 @@
+/* Navigation Styles */
+.nav-link {
+  position: relative;
+  transition: color 0.2s ease-in-out;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: rgb(40, 95, 43); /* foundationprimarygreen */
+  transition: width 0.3s ease-in-out;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.nav-link.active::after {
+  width: 100%;
+}
+
+.nav-link:hover {
+  color: rgb(40, 95, 43); /* foundationprimarygreen */
+}
+
+.nav-link.active {
+  color: rgb(40, 95, 43); /* foundationprimarygreen */
+}
+
+@media (max-width: 768px) {
+  .nav-link::after {
+    display: none;
+  }
+}
