@@ -36,3 +36,9 @@
     display: none;
   }
 }
+
+@media (min-width: 1024px) {
+  .nav-link::after {
+    display: none;
+  }
+}
