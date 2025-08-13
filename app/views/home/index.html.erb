@@ -1,29 +1,100 @@
 <% content_for :title, "Welcome to Taw Ha Zin Nurain Foundation" %>
 
-<!-- Hero Section -->
-<div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-    <div class="text-center">
-      <h1 class="text-4xl md:text-6xl font-bold mb-6">
-        Taw Ha Zin Nurain Foundation
-      </h1>
-      <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
-        Building stronger communities through healthcare assistance, education, and charitable initiatives.
-      </p>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <%= link_to "Get Healthcare Help", healthcare_requests_path, 
-            class: "inline-flex items-center px-8 py-3 border border-transparent text-lg font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 transition duration-300" %>
-        <%= link_to "View Events", events_path, 
-            class: "inline-flex items-center px-8 py-3 border-2 border-white text-lg font-medium rounded-md text-white hover:bg-white hover:text-blue-600 transition duration-300" %>
+<!-- Category Navigation -->
+<div class="bg-forange py-3">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex overflow-x-auto scrollbar-hide gap-3 lg:gap-4 xl:gap-6 xl:flex-wrap xl:justify-center xl:overflow-x-visible">
+      <% [
+        { name: "Palestine", icon: "🌍" },
+        { name: "Orphans", icon: "👦" },
+        { name: "Food & Water Aid", icon: "💧" },
+        { name: "Countries in Crisis", icon: "🌎" },
+        { name: "Pay Zakat", icon: "💰" },
+        { name: "Sadaqah Jariyah", icon: "🤲" },
+        { name: "Limbs of Hope", icon: "🦾" },
+        { name: "Ali Banat", icon: "🧔" },
+        { name: "Zakat Calculator", icon: "🧮" },
+        { name: "Legacy", icon: "📜" },
+        { name: "Jummah Giving", icon: "🕌" }
+      ].each do |item| %>
+        <div class="text-center text-white hover:scale-105 transition transform cursor-pointer flex-shrink-0 min-w-[65px] lg:min-w-[70px] xl:min-w-[80px] xl:flex-shrink">
+          <div class="bg-white rounded-full w-12 h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 flex items-center justify-center shadow-lg hover:shadow-white/50 hover:shadow-xl hover:bg-gray-50 transition-all duration-300 mb-2 animate-pulse hover:animate-bounce mx-auto">
+            <div class="text-xl lg:text-2xl xl:text-3xl"><%= item[:icon] %></div>
+          </div>
+          <div class="text-xs lg:text-xs xl:text-sm whitespace-nowrap px-1"><%= item[:name] %></div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Donation Bar -->
+<div class="bg-white py-4 shadow-lg">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex flex-col lg:flex-row flex-wrap justify-center items-center gap-2 lg:gap-3">
+      <!-- Currency & Amount -->
+      <div class="flex gap-2 w-full lg:w-auto justify-center">
+        <select class="border rounded px-3 py-2 text-sm">
+          <option>USD</option>
+          <option>EUR</option>
+          <option>GBP</option>
+        </select>
+        <input type="number" placeholder="Amount" class="border rounded px-3 py-2 w-20 text-sm" />
+      </div>
+
+      <!-- Quick Amount Buttons -->
+      <div class="flex flex-wrap gap-2 justify-center">
+        <% [100, 150, 200, 500].each do |amount| %>
+          <button class="bg-pink-500 hover:bg-pink-600 text-white px-3 py-2 rounded text-sm">
+            $<%= amount %> USD
+          </button>
+        <% end %>
+      </div>
+
+      <!-- Project Select & Donate -->
+      <div class="flex gap-2 w-full lg:w-auto justify-center">
+        <select class="border rounded px-3 py-2 text-sm max-w-[150px] lg:max-w-none">
+          <option>Gaza Famine Meal Fund</option>
+          <option>Orphans Sponsorship</option>
+          <option>Water Wells Project</option>
+        </select>
+
+        <!-- Quick Donate -->
+        <button class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded font-bold text-sm">
+          QUICK DONATE
+        </button>
       </div>
     </div>
   </div>
 </div>
 
+<!-- Hero Section -->
+<div class="relative bg-gradient-to-r from-purple-700 via-blue-600 to-blue-500">
+  <div class="container mx-auto flex flex-col lg:flex-row items-center py-8 lg:py-12 px-4 lg:px-8">
+    <!-- Left Text -->
+    <div class="lg:w-1/2 text-white z-10">
+      <h1 class="text-4xl lg:text-5xl font-bold leading-tight">
+        SEND YOUR <span class="text-cyan-300">ZAKAT</span> TO <span class="text-pink-400">GAZA</span>
+      </h1>
+      <button class="mt-6 bg-pink-500 hover:bg-pink-600 px-6 py-3 text-lg font-semibold rounded shadow-lg">
+        GIVE NOW
+      </button>
+    </div>
+
+    <!-- Right Image -->
+    <div class="lg:w-1/2 mt-8 lg:mt-0 flex justify-center">
+      <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
+           alt="Children in need" 
+           class="rounded-lg shadow-lg max-h-96 object-cover w-full max-w-md" />
+    </div>
+  </div>
+</div>
+
+
 <!-- Quick Stats -->
-<div class="py-16 bg-gray-50">
+<div class="py-8 lg:py-16 bg-gray-50">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
       <div class="text-center">
         <div class="text-4xl font-bold text-blue-600 mb-2"><%= @projects.count %></div>
         <div class="text-gray-600">Active Projects</div>
@@ -45,10 +116,10 @@
 </div>
 
 <!-- Healthcare Assistance Section -->
-<div class="py-16 bg-white">
+<div class="py-8 lg:py-16 bg-white">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-12">
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+    <div class="text-center mb-8 lg:mb-12">
+      <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
         Healthcare <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Assistance</span>
       </h2>
       <p class="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -57,7 +128,7 @@
     </div>
 
     <% if @healthcare_requests.any? %>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mb-8">
         <% @healthcare_requests.each do |request| %>
           <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 hover:shadow-lg transition-shadow">
             <div class="flex items-center justify-between mb-4">
@@ -107,10 +178,10 @@
 </div>
 
 <!-- Projects Section -->
-<div class="py-16 bg-gray-50">
+<div class="py-8 lg:py-16 bg-gray-50">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-12">
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+    <div class="text-center mb-8 lg:mb-12">
+      <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
         Our <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Projects</span>
       </h2>
       <p class="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -119,7 +190,7 @@
     </div>
 
     <% if @projects.any? %>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mb-8">
         <% @projects.each do |project| %>
           <%= render 'projects/project_summary', project: project %>
         <% end %>
@@ -138,10 +209,10 @@
 </div>
 
 <!-- Events Section -->
-<div class="py-16 bg-white">
+<div class="py-8 lg:py-16 bg-white">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-12">
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+    <div class="text-center mb-8 lg:mb-12">
+      <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
         Upcoming <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Events</span>
       </h2>
       <p class="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -150,7 +221,7 @@
     </div>
 
     <% if @upcoming_events.any? %>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         <% @upcoming_events.each do |event| %>
           <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 hover:shadow-lg transition-shadow">
             <div class="text-sm text-blue-600 font-medium mb-2">
@@ -183,12 +254,12 @@
 </div>
 
 <!-- Call to Action -->
-<div class="py-16 bg-gradient-to-r from-blue-600 to-purple-600">
+<div class="py-8 lg:py-16 bg-gradient-to-r from-blue-600 to-purple-600">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+    <h2 class="text-3xl lg:text-4xl font-bold text-white mb-4">
       Ready to Make a Difference?
     </h2>
-    <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+    <p class="text-xl text-blue-100 mb-6 lg:mb-8 max-w-2xl mx-auto">
       Join our community of volunteers and donors working together to create positive change.
     </p>
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
@@ -201,16 +272,16 @@
 </div>
 
 <!-- Features Section -->
-<div class="py-16 bg-white">
+<div class="py-8 lg:py-16 bg-white">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-12">
+    <div class="text-center mb-8 lg:mb-12">
       <h2 class="text-3xl font-bold text-gray-900 mb-4">What We Offer</h2>
       <p class="text-lg text-gray-600 max-w-2xl mx-auto">
         Join our community and participate in meaningful events and volunteer opportunities.
       </p>
     </div>
     
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div class="text-center">
         <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
