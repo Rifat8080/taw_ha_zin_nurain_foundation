@@ -50,6 +50,13 @@ class HomeController < ApplicationController
                                            .includes(:user, :healthcare_donations)
                                            .limit(6)
 
+    # Prepare dynamic navigation data
+    @navigation_stats = {
+      total_active_projects: Project.active.count,
+      upcoming_events: Event.upcoming.count,
+      healthcare_requests: HealthcareRequest.visible_to_public.count
+    }
+
     render "index"
   end
 end

@@ -1,0 +1,40 @@
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-lg font-semibold text-gray-900">Quick Navigation Stats</h3>
+    <div class="text-sm text-gray-500">
+      Updated <%= Time.current.strftime("%B %d, %Y") %>
+    </div>
+  </div>
+  
+  <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+    <div class="text-center p-3 bg-blue-50 rounded-lg">
+      <div class="text-2xl font-bold text-blue-600"><%= @navigation_stats[:total_active_projects] %></div>
+      <div class="text-xs text-blue-700">Active Projects</div>
+    </div>
+    
+    <div class="text-center p-3 bg-green-50 rounded-lg">
+      <div class="text-2xl font-bold text-green-600"><%= Project.by_category("Palestine").active.count %></div>
+      <div class="text-xs text-green-700">Palestine</div>
+    </div>
+    
+    <div class="text-center p-3 bg-purple-50 rounded-lg">
+      <div class="text-2xl font-bold text-purple-600"><%= @navigation_stats[:healthcare_requests] %></div>
+      <div class="text-xs text-purple-700">Healthcare</div>
+    </div>
+    
+    <div class="text-center p-3 bg-yellow-50 rounded-lg">
+      <div class="text-2xl font-bold text-yellow-600"><%= @navigation_stats[:upcoming_events] %></div>
+      <div class="text-xs text-yellow-700">Events</div>
+    </div>
+    
+    <div class="text-center p-3 bg-red-50 rounded-lg">
+      <div class="text-2xl font-bold text-red-600"><%= Project.by_category("Emergency").active.count %></div>
+      <div class="text-xs text-red-700">Emergency</div>
+    </div>
+    
+    <div class="text-center p-3 bg-indigo-50 rounded-lg">
+      <div class="text-2xl font-bold text-indigo-600"><%= Project.by_category("Education").active.count %></div>
+      <div class="text-xs text-indigo-700">Education</div>
+    </div>
+  </div>
+</div>

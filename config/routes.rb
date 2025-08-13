@@ -1,7 +1,11 @@
 Rails.application.routes.draw do
   devise_for :users
 
-  # Zakat Calculator Routes
+  # Public Zakat Calculator (no authentication required)
+  get 'zakat-calculator', to: 'public#zakat_calculator', as: 'public_zakat_calculator'
+  post 'calculate-zakat', to: 'public#calculate_zakat', as: 'calculate_zakat'
+
+  # Zakat Calculator Routes (authenticated)
   resources :zakat_calculations do
     collection do
       post :quick_calculate

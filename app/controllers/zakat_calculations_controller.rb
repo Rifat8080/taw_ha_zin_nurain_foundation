@@ -1,11 +1,24 @@
 class ZakatCalculationsController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_user!, except: [:index, :quick_calculate]
   before_action :set_zakat_calculation, only: [ :show, :edit, :update, :destroy ]
 
   def index
-    @zakat_calculations = current_user.zakat_calculations.includes(:assets, :liabilities).recent
+    if user_signed_in?
+      # Authenticated user - show their saved calculations
+      @zakat_calculations = current_user.zakat_calculations.includes(:assets, :liabilities).recent
+      @current_year = Date.current.year
+      @current_calculation = @zakat_calculations.find { |calc| calc.calculation_year == @current_year }
+    else
+      # Public access - show calculator interface
+      @zakat_calculations = []
+      @current_calculation = nil
+    end
+    
+    # Common data for both authenticated and public users
     @current_year = Date.current.year
-    @current_calculation = @zakat_calculations.find { |calc| calc.calculation_year == @current_year }
+    @nisab_rate = NisabRate.current_rate
+    @quick_calculation_result = session[:quick_calculation_result]
+    session.delete(:quick_calculation_result) # Clear after displaying
   end
 
   def show
@@ -86,11 +99,11 @@ class ZakatCalculationsController < ApplicationController
     redirect_to zakat_calculations_path, notice: "Zakat calculation for #{year} was successfully deleted."
   end
 
-  # Quick calculation endpoint for AJAX
+  # Quick calculation endpoint for AJAX and public form submissions
   def quick_calculate
     total_assets = params[:total_assets].to_f
     total_liabilities = params[:total_liabilities].to_f
-    year = params[:year].to_i
+    year = params[:year]&.to_i || Date.current.year
 
     net_assets = total_assets - total_liabilities
     nisab_rate = NisabRate.find_by(year: year) || NisabRate.current_rate
@@ -98,12 +111,23 @@ class ZakatCalculationsController < ApplicationController
 
     zakat_due = net_assets >= nisab_value ? (net_assets * 0.025).round(2) : 0
 
-    render json: {
+    calculation_result = {
       net_assets: net_assets,
       nisab_value: nisab_value,
       zakat_due: zakat_due,
-      zakat_eligible: net_assets >= nisab_value
+      zakat_eligible: net_assets >= nisab_value,
+      total_assets: total_assets,
+      total_liabilities: total_liabilities
     }
+
+    respond_to do |format|
+      format.json { render json: calculation_result }
+      format.html do
+        # Store result in session and redirect back to index for non-AJAX requests
+        session[:quick_calculation_result] = calculation_result
+        redirect_to zakat_calculations_path, notice: "Zakat calculation completed successfully!"
+      end
+    end
   end
 
   private

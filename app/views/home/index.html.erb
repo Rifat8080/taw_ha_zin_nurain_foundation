@@ -4,20 +4,10 @@
 <div class="bg-forange py-3">
   <div class="max-w-7xl mx-auto px-4">
     <div class="flex overflow-x-auto scrollbar-hide gap-3 lg:gap-4 xl:gap-6 xl:flex-wrap xl:justify-center xl:overflow-x-visible">
-      <% [
-        { name: "Palestine", icon: "🌍" },
-        { name: "Orphans", icon: "👦" },
-        { name: "Food & Water Aid", icon: "💧" },
-        { name: "Countries in Crisis", icon: "🌎" },
-        { name: "Pay Zakat", icon: "💰" },
-        { name: "Sadaqah Jariyah", icon: "🤲" },
-        { name: "Limbs of Hope", icon: "🦾" },
-        { name: "Ali Banat", icon: "🧔" },
-        { name: "Zakat Calculator", icon: "🧮" },
-        { name: "Legacy", icon: "📜" },
-        { name: "Jummah Giving", icon: "🕌" }
-      ].each do |item| %>
-        <div class="group text-center text-white cursor-pointer flex-shrink-0 min-w-[65px] lg:min-w-[70px] xl:min-w-[80px] xl:flex-shrink transition-all duration-300 hover:transform hover:-translate-y-2">
+      <% navigation_categories_with_counts.each do |category| %>
+        <%= link_to category[:url], 
+           class: "group text-center text-white cursor-pointer flex-shrink-0 min-w-[65px] lg:min-w-[70px] xl:min-w-[80px] xl:flex-shrink transition-all duration-300 hover:transform hover:-translate-y-2 no-underline hover:no-underline", 
+           title: category[:description] do %>
           <!-- Glow container with proper centering -->
           <div class="relative mx-auto mb-2 w-16 h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 flex items-center justify-center">
             <!-- Background glowing rings - centered behind circles -->
@@ -34,14 +24,33 @@
               <!-- Static white circle on top - perfectly centered -->
               <div class="absolute inset-0.5 bg-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ease-in-out group-hover:shadow-2xl group-hover:shadow-white/50 group-hover:bg-gradient-to-br group-hover:from-white group-hover:to-gray-50">
                 <!-- Icon content - perfectly centered -->
-                <div class="text-lg lg:text-xl xl:text-2xl transition-transform duration-300 group-hover:scale-125 group-hover:rotate-12 flex items-center justify-center w-full h-full"><%= item[:icon] %></div>
+                <div class="text-lg lg:text-xl xl:text-2xl transition-transform duration-300 group-hover:scale-125 group-hover:rotate-12 flex items-center justify-center w-full h-full">
+                  <%= category[:icon] %>
+                </div>
               </div>
             </div>
+            
+            <!-- Count badge - positioned top-right -->
+            <% if category[:count] > 0 %>
+              <div class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 shadow-lg transform scale-90 lg:scale-100">
+                <%= category[:count] > 99 ? "99+" : category[:count] %>
+              </div>
+            <% end %>
           </div>
-          <div class="text-xs lg:text-xs xl:text-sm whitespace-nowrap px-1 transition-all duration-300 group-hover:text-yellow-200 group-hover:font-semibold group-hover:scale-105"><%= item[:name] %></div>
-        </div>
+          
+          <div class="text-xs lg:text-xs xl:text-sm whitespace-nowrap px-1 transition-all duration-300 group-hover:text-yellow-200 group-hover:font-semibold group-hover:scale-105">
+            <%= category[:name] %>
+          </div>
+        <% end %>
       <% end %>
     </div>
+  </div>
+</div>
+
+<!-- Navigation Stats -->
+<div class="bg-gray-50 py-4">
+  <div class="max-w-7xl mx-auto px-4">
+    <%= render 'shared/navigation_stats' %>
   </div>
 </div>
 

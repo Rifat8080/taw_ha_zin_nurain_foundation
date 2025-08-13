@@ -8,6 +8,21 @@ class ProjectsController < ApplicationController
     else
       @projects = Project.active
     end
+
+    # Filter by category if specified
+    if params[:filter].present? && params[:filter][:categories].present?
+      category = params[:filter][:categories]
+      @projects = @projects.where("categories ILIKE ?", "%#{category}%")
+      @filter_category = category
+    end
+
+    # Search functionality
+    if params[:search].present?
+      @projects = @projects.where("name ILIKE ? OR description ILIKE ? OR categories ILIKE ?", 
+                                  "%#{params[:search]}%", "%#{params[:search]}%", "%#{params[:search]}%")
+    end
+
+    @projects = @projects.includes(:donations).order(created_at: :desc)
   end
 
   # GET /projects/1 or /projects/1.json

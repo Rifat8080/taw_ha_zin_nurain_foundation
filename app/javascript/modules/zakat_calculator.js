@@ -2,6 +2,7 @@
  * Zakat Calculator Module
  * Handles dynamic form functionality for adding/removing assets and liabilities
  * Compatible with Turbo for SPA-like experience
+ * Updated for index page detailed calculator
  */
 
 class ZakatCalculator {
@@ -17,6 +18,8 @@ class ZakatCalculator {
     this.quickCalculate = this.quickCalculate.bind(this);
     this.updateCalculateButton = this.updateCalculateButton.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.updateCalculation = this.updateCalculation.bind(this);
+    this.toggleCalculatorMode = this.toggleCalculatorMode.bind(this);
   }
 
   // Asset template for dynamic adding
@@ -109,16 +112,26 @@ class ZakatCalculator {
   init() {
     if (this.initialized) return;
     
-    // Check if we're on the zakat calculation page
+    // Check if we're on the zakat calculation page (new form or index page)
     const form = document.querySelector('form[action*="zakat_calculations"]');
-    if (!form) return;
+    const indexForm = document.getElementById('detailed-calculator-form');
+    if (!form && !indexForm) return;
 
     // Get initial counts from existing fields
     this.assetIndex = document.querySelectorAll('.asset-fields').length;
     this.liabilityIndex = document.querySelectorAll('.liability-fields').length;
 
     this.setupEventListeners();
-    this.initializeForm();
+    
+    // Initialize based on page type
+    if (indexForm) {
+      // Index page initialization
+      this.updateCalculation();
+    } else {
+      // New form initialization
+      this.initializeForm();
+    }
+    
     this.initialized = true;
   }
 
@@ -129,16 +142,33 @@ class ZakatCalculator {
   }
 
   setupEventListeners() {
-    // Add asset button
+    // Add asset button (for both new form and index page)
     const addAssetBtn = document.getElementById('add-asset');
     if (addAssetBtn) {
-      addAssetBtn.addEventListener('click', this.addAsset);
+      // Check if we're on the index page by looking for index-specific elements
+      const isIndexPage = document.getElementById('detailed-calculator-form');
+      if (isIndexPage) {
+        addAssetBtn.addEventListener('click', this.addIndexAsset.bind(this));
+      } else {
+        addAssetBtn.addEventListener('click', this.addAsset);
+      }
     }
 
-    // Add liability button
+    // Add liability button (for both new form and index page)
     const addLiabilityBtn = document.getElementById('add-liability');
     if (addLiabilityBtn) {
-      addLiabilityBtn.addEventListener('click', this.addLiability);
+      const isIndexPage = document.getElementById('detailed-calculator-form');
+      if (isIndexPage) {
+        addLiabilityBtn.addEventListener('click', this.addIndexLiability.bind(this));
+      } else {
+        addLiabilityBtn.addEventListener('click', this.addLiability);
+      }
+    }
+
+    // Toggle calculator mode button (index page only)
+    const toggleBtn = document.getElementById('toggle-detailed');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', this.toggleCalculatorMode);
     }
 
     // Quick calculate button
@@ -192,6 +222,22 @@ class ZakatCalculator {
   }
 
   removeField(e) {
+    // Handle index page remove buttons
+    if (e.target.closest('.remove-asset')) {
+      e.preventDefault();
+      e.target.closest('.asset-fields').remove();
+      this.updateCalculation();
+      return;
+    }
+    
+    if (e.target.closest('.remove-liability')) {
+      e.preventDefault();
+      e.target.closest('.liability-fields').remove();
+      this.updateCalculation();
+      return;
+    }
+
+    // Handle new form remove buttons
     if (!e.target.closest('.remove-field')) return;
 
     e.preventDefault();
@@ -332,6 +378,178 @@ class ZakatCalculator {
     if (e.target.matches('input[name*="[amount]"]')) {
       this.updateCalculateButton();
     }
+    
+    // Handle index page calculator inputs
+    if (e.target.classList.contains('asset-amount') || e.target.classList.contains('liability-amount')) {
+      this.updateCalculation();
+    }
+  }
+
+  // New methods for index page detailed calculator
+  updateCalculation() {
+    const assetInputs = document.querySelectorAll('.asset-amount');
+    const liabilityInputs = document.querySelectorAll('.liability-amount');
+    
+    let totalAssets = 0;
+    let totalLiabilities = 0;
+    
+    assetInputs.forEach(input => {
+      const value = parseFloat(input.value) || 0;
+      totalAssets += value;
+    });
+    
+    liabilityInputs.forEach(input => {
+      const value = parseFloat(input.value) || 0;
+      totalLiabilities += value;
+    });
+    
+    const netAssets = totalAssets - totalLiabilities;
+    const nisabThreshold = 64175; // Default nisab value, should be dynamic
+    const zakatDue = netAssets >= nisabThreshold ? (netAssets * 0.025) : 0;
+    
+    // Update calculation summary if it exists
+    const summaryAssets = document.getElementById('summary-assets');
+    const summaryLiabilities = document.getElementById('summary-liabilities');
+    const summaryNet = document.getElementById('summary-net');
+    const summaryZakat = document.getElementById('summary-zakat');
+    const calculationSummary = document.getElementById('calculation-summary');
+    
+    if (summaryAssets && (totalAssets > 0 || totalLiabilities > 0)) {
+      calculationSummary.classList.remove('hidden');
+      summaryAssets.textContent = `৳${totalAssets.toLocaleString()}`;
+      summaryLiabilities.textContent = `৳${totalLiabilities.toLocaleString()}`;
+      summaryNet.textContent = `৳${netAssets.toLocaleString()}`;
+      summaryZakat.textContent = `৳${zakatDue.toLocaleString()}`;
+    } else if (calculationSummary) {
+      calculationSummary.classList.add('hidden');
+    }
+    
+    // Update form hidden fields for submission
+    this.updateFormFields(totalAssets, totalLiabilities);
+  }
+
+  updateFormFields(totalAssets, totalLiabilities) {
+    const form = document.getElementById('detailed-calculator-form');
+    if (!form) return;
+    
+    let totalAssetsField = form.querySelector('input[name="total_assets"]');
+    let totalLiabilitiesField = form.querySelector('input[name="total_liabilities"]');
+    
+    if (!totalAssetsField) {
+      totalAssetsField = document.createElement('input');
+      totalAssetsField.type = 'hidden';
+      totalAssetsField.name = 'total_assets';
+      form.appendChild(totalAssetsField);
+    }
+    
+    if (!totalLiabilitiesField) {
+      totalLiabilitiesField = document.createElement('input');
+      totalLiabilitiesField.type = 'hidden';
+      totalLiabilitiesField.name = 'total_liabilities';
+      form.appendChild(totalLiabilitiesField);
+    }
+    
+    totalAssetsField.value = totalAssets;
+    totalLiabilitiesField.value = totalLiabilities;
+  }
+
+  toggleCalculatorMode() {
+    const toggleButton = document.getElementById('toggle-detailed');
+    const simpleCalculator = document.getElementById('simple-calculator');
+    const detailedSections = document.querySelectorAll('#assets-section, #liabilities-section');
+    
+    if (!toggleButton || !simpleCalculator) return;
+    
+    let isSimpleMode = simpleCalculator.classList.contains('hidden') === false;
+    isSimpleMode = !isSimpleMode;
+    
+    if (isSimpleMode) {
+      simpleCalculator.classList.remove('hidden');
+      detailedSections.forEach(section => section.parentElement.classList.add('hidden'));
+      document.getElementById('toggle-text').textContent = 'Show Detailed Calculator';
+    } else {
+      simpleCalculator.classList.add('hidden');
+      detailedSections.forEach(section => section.parentElement.classList.remove('hidden'));
+      document.getElementById('toggle-text').textContent = 'Show Simple Calculator';
+    }
+  }
+
+  addIndexAsset() {
+    const assetsSection = document.getElementById('assets-section');
+    if (!assetsSection) return;
+    
+    const assetHTML = `
+      <div class="asset-fields bg-gray-50 rounded-lg p-4">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+          <div class="md:col-span-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+            <select name="assets[${this.assetIndex}][category]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+              <option value="">Select category</option>
+              <option value="cash">Cash</option>
+              <option value="bank">Bank</option>
+              <option value="gold">Gold</option>
+              <option value="silver">Silver</option>
+              <option value="business_inventory">Business Inventory</option>
+              <option value="receivables">Receivables</option>
+              <option value="livestock">Livestock</option>
+              <option value="agriculture">Agriculture</option>
+              <option value="investments">Investments</option>
+              <option value="property_rent">Property Rent</option>
+            </select>
+          </div>
+          <div class="md:col-span-5">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <textarea name="assets[${this.assetIndex}][description]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" rows="2" placeholder="Description (optional)"></textarea>
+          </div>
+          <div class="md:col-span-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Amount (৳)</label>
+            <input type="number" name="assets[${this.assetIndex}][amount]" step="0.01" min="0" placeholder="0.00" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm asset-amount">
+          </div>
+          <div class="md:col-span-1 flex items-end">
+            <button type="button" class="remove-asset w-full px-3 py-2 text-red-600 hover:text-red-800 focus:outline-none">
+              <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    assetsSection.insertAdjacentHTML('beforeend', assetHTML);
+    this.assetIndex++;
+    this.updateCalculation();
+  }
+
+  addIndexLiability() {
+    const liabilitiesSection = document.getElementById('liabilities-section');
+    if (!liabilitiesSection) return;
+    
+    const liabilityHTML = `
+      <div class="liability-fields bg-gray-50 rounded-lg p-4">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+          <div class="md:col-span-8">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <textarea name="liabilities[${this.liabilityIndex}][description]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" rows="2" placeholder="Describe the liability..."></textarea>
+          </div>
+          <div class="md:col-span-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Amount (৳)</label>
+            <input type="number" name="liabilities[${this.liabilityIndex}][amount]" step="0.01" min="0" placeholder="0.00" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm liability-amount">
+          </div>
+          <div class="md:col-span-1 flex items-end">
+            <button type="button" class="remove-liability w-full px-3 py-2 text-red-600 hover:text-red-800 focus:outline-none">
+              <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    liabilitiesSection.insertAdjacentHTML('beforeend', liabilityHTML);
+    this.liabilityIndex++;
+    this.updateCalculation();
   }
 
   initializeForm() {
