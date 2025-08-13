@@ -1,15 +1,15 @@
 module ApplicationHelper
   def nav_link_class(path)
-    base_classes = "nav-link block py-2 px-3 rounded lg:bg-transparent lg:p-0 lg:hover:bg-transparent dark:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent"
+    base_classes = "nav-link block py-2 px-3 font-medium transition-colors duration-200 lg:bg-transparent lg:p-0 lg:hover:bg-transparent"
     
     if current_page?(path)
-      "#{base_classes} active text-foundationprimarygreen bg-gray-50"
+      "#{base_classes} active text-foundationprimarygreen"
     else
-      "#{base_classes} text-gray-700 hover:bg-gray-100"
+      "#{base_classes} text-gray-700 hover:text-foundationprimarygreen dark:text-gray-400 dark:hover:text-white"
     end
   end
   
   def nav_link_class_static
-    "nav-link block py-2 px-3 text-gray-700 rounded hover:bg-gray-100 lg:hover:bg-transparent lg:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent"
+    "nav-link block py-2 px-3 font-medium text-gray-700 hover:text-foundationprimarygreen lg:bg-transparent lg:p-0 lg:hover:bg-transparent transition-colors duration-200 dark:text-gray-400 dark:hover:text-white"
   end
 end

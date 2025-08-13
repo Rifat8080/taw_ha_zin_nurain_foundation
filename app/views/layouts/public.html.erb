@@ -48,7 +48,7 @@
         
         
         <div class="items-center justify-between hidden w-full lg:flex lg:w-auto lg:order-1" id="navbar-sticky">
-          <ul class="flex flex-col p-4 lg:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 lg:flex-row lg:mt-0 lg:border-0 lg:bg-white lg:gap-8 dark:bg-gray-800 lg:dark:bg-gray-900 dark:border-gray-700">
+          <ul class="flex flex-col p-4 lg:p-0 mt-4 font-medium lg:flex-row lg:mt-0 lg:border-0 lg:bg-transparent lg:gap-8 dark:bg-gray-800 lg:dark:bg-transparent">
             <li>
               <%= link_to "Home", root_path, class: nav_link_class(root_path) %>
             </li>
@@ -78,11 +78,10 @@
     </nav>
 
     <!-- Sidebar -->
-    <aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full md:translate-x-0 lg:hidden" aria-label="Sidebar">
+    <aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-full transition-transform -translate-x-full md:translate-x-0 lg:hidden" aria-label="Sidebar">
       <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
         <%= link_to root_path, class: "flex items-center ps-2.5 mb-5" do %>
           <%= image_tag "Foundation_Logo_Side.png", class: "h-6 me-3 sm:h-7", alt: "Taw Ha Zin Nurain Foundation Logo" %>
-          <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">Foundation</span>
         <% end %>
         <ul class="space-y-2 font-medium">
           <li>
