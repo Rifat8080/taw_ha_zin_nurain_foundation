@@ -25,7 +25,8 @@ class ApplicationController < ActionController::Base
     devise_controllers = controller_name.start_with?("devise/")
 
     # Allow public access to certain pages
-    return true if controller_name.in?(public_controllers)
+    # Only treat home#index as public, not dashboard
+    return true if controller_name == "home" && action_name == "index"
     return true if devise_controllers
 
     # Always use public layout for these resources' index/show actions, for all users
