@@ -3,6 +3,10 @@ class HomeController < ApplicationController
     require_login_and_render_dashboard
   end
 
+  def index
+    render_public_homepage
+  end
+
   private
 
   def require_login_and_render_dashboard
@@ -12,11 +16,6 @@ class HomeController < ApplicationController
     end
     render_dashboard
   end
-  def index
-    render_public_homepage
-  end
-
-  private
 
   def render_dashboard
     @stats = {
@@ -56,6 +55,8 @@ class HomeController < ApplicationController
     @healthcare_requests = HealthcareRequest.visible_to_public
                                            .includes(:user, :healthcare_donations)
                                            .limit(6)
+    @donation = Donation.new
+    @submit_text = "Donate Now"
 
     # Prepare dynamic navigation data
     @navigation_stats = {

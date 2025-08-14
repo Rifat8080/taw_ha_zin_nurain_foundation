@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  attr_accessor :created_by_guest_donation
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
@@ -20,11 +22,11 @@ class User < ApplicationRecord
   # Zakat Calculator associations
   has_many :zakat_calculations, dependent: :destroy
 
-  validates :first_name, presence: true
-  validates :last_name, presence: true
-  validates :phone_number, presence: true, uniqueness: true
+  validates :first_name, presence: true, unless: :created_by_guest_donation
+  validates :last_name, presence: true, unless: :created_by_guest_donation
+  validates :phone_number, presence: true, uniqueness: true, unless: :created_by_guest_donation
   validates :role, presence: true, inclusion: { in: %w[admin member volunteer] }
-  validates :address, presence: true
+  validates :address, presence: true, unless: :created_by_guest_donation
 
   after_create :create_volunteer_if_needed
   after_update :create_volunteer_if_needed

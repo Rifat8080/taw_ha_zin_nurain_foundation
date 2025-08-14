@@ -14,7 +14,6 @@ class DonationsController < ApplicationController
   def new
     @donation = Donation.new
     
-    # Check if project_id is provided and if the project is active
     if params[:project_id].present?
       project = Project.find_by(id: params[:project_id])
       if project && project.active?
@@ -28,10 +27,8 @@ class DonationsController < ApplicationController
       end
     end
     
-    # Only show active projects in the dropdown
     @projects = Project.active.order(:name)
     
-    # If no active projects exist, show a message
     if @projects.empty?
       redirect_to projects_path, alert: "No projects are currently accepting donations."
       return
@@ -39,44 +36,47 @@ class DonationsController < ApplicationController
   end
 
   def create
-    @donation = Donation.new(donation_params.except(:first_name, :last_name, :email, :phone_number, :address))
+    @donation = Donation.new(donation_params.except(:email))
 
-    # Handle user assignment
     if current_user
-      # User is logged in, assign current user
       @donation.user = current_user
     else
-      # User is not logged in, find or create user
-      result = find_or_create_donor
+      email = params.dig(:donation, :email)
+      unless email.present? && email.match?(URI::MailTo::EMAIL_REGEXP)
+        @donation.errors.add(:email, "is invalid or missing for a guest donation")
+        prepare_homepage_data
+        render 'home/index', status: :unprocessable_entity
+        return
+      end
+
+      result = find_or_create_donor(email)
       user = result.is_a?(Array) ? result[0] : result
       temp_password = result.is_a?(Array) ? result[1] : nil
 
       if user.persisted?
         @donation.user = user
-        # Send welcome email with temporary password for newly created users
         if temp_password.present?
           UserMailer.welcome_donor(user, temp_password).deliver_now
         end
       else
-        @donation.errors.add(:base, "Unable to create donor: #{user.errors.full_messages.join(', ')}")
-        @projects = Project.active.order(:name)
-        render :new, status: :unprocessable_entity
+        @donation.errors.add(:base, "Unable to create donor account: #{user.errors.full_messages.join(', ')}")
+        prepare_homepage_data
+        render 'home/index', status: :unprocessable_entity
         return
       end
     end
 
     if @donation.save
-      if current_user
+      if current_user && !@donation.user.created_by_guest_donation
         redirect_to @donation, notice: "Donation was successfully created."
       else
-        # For new users, auto-login and redirect to password setup
         user = @donation.user
         sign_in(user)
         redirect_to edit_user_registration_path, notice: "Thank you for your donation! Please set up a secure password for your account."
       end
     else
-      @projects = Project.active.order(:name)
-      render :new, status: :unprocessable_entity
+      prepare_homepage_data
+      render 'home/index', status: :unprocessable_entity
     end
   end
 
@@ -105,29 +105,37 @@ class DonationsController < ApplicationController
   end
 
   def donation_params
-    params.require(:donation).permit(:amount, :project_id, :first_name, :last_name, :email, :phone_number, :address)
+    params.require(:donation).permit(:amount, :project_id, :email)
   end
 
-  def find_or_create_donor
-    # Try to find existing user by email or phone number
-    existing_user = User.find_by(email: donation_params[:email]) ||
-                   User.find_by(phone_number: donation_params[:phone_number])
+  def find_or_create_donor(email)
+    existing_user = User.find_by(email: email)
     return existing_user if existing_user
 
-    # Create new user with a temporary password
     temp_password = SecureRandom.hex(8)
-    user = User.create(
-      first_name: donation_params[:first_name],
-      last_name: donation_params[:last_name],
-      email: donation_params[:email],
-      phone_number: donation_params[:phone_number],
-      address: donation_params[:address],
+    first_name = email.split('@').first.humanize
+    
+    user = User.new(
+      first_name: first_name,
+      last_name: "User",
+      email: email,
+      phone_number: "donor-#{Time.now.to_i}-#{rand(1000)}",
+      address: "Not provided",
       password: temp_password,
       password_confirmation: temp_password,
       role: "member"
     )
+    user.created_by_guest_donation = true
+    user.save
 
-    # Return array with user and temp_password for new users
     [ user, temp_password ]
+  end
+
+  def prepare_homepage_data
+    @upcoming_events = Event.upcoming.limit(3)
+    @projects = Project.active.limit(6)
+    @healthcare_requests = HealthcareRequest.visible_to_public.includes(:user, :healthcare_donations).limit(6)
+    @submit_text = "Donate Now"
+    @donation ||= Donation.new(donation_params.except(:email))
   end
 end
