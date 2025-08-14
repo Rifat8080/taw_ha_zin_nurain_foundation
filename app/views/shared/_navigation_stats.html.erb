@@ -6,9 +6,10 @@
     </div>
   </div>
   
+  <% stats = @navigation_stats || {} %>
   <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
     <div class="text-center p-3 bg-blue-50 rounded-lg">
-      <div class="text-2xl font-bold text-blue-600"><%= @navigation_stats[:total_active_projects] %></div>
+      <div class="text-2xl font-bold text-blue-600"><%= stats[:total_active_projects] || 0 %></div>
       <div class="text-xs text-blue-700">Active Projects</div>
     </div>
     
@@ -18,12 +19,12 @@
     </div>
     
     <div class="text-center p-3 bg-purple-50 rounded-lg">
-      <div class="text-2xl font-bold text-purple-600"><%= @navigation_stats[:healthcare_requests] %></div>
+      <div class="text-2xl font-bold text-purple-600"><%= stats[:healthcare_requests] || 0 %></div>
       <div class="text-xs text-purple-700">Healthcare</div>
     </div>
     
     <div class="text-center p-3 bg-yellow-50 rounded-lg">
-      <div class="text-2xl font-bold text-yellow-600"><%= @navigation_stats[:upcoming_events] %></div>
+      <div class="text-2xl font-bold text-yellow-600"><%= stats[:upcoming_events] || 0 %></div>
       <div class="text-xs text-yellow-700">Events</div>
     </div>
     

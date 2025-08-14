@@ -10,10 +10,10 @@ class ApplicationController < ActionController::Base
   private
 
   def determine_layout
-    if user_signed_in?
-      "authenticated"
-    elsif public_action?
+    if public_action?
       "public"
+    elsif user_signed_in?
+      "authenticated"
     else
       "public"
     end
@@ -27,9 +27,11 @@ class ApplicationController < ActionController::Base
     # Allow public access to certain pages
     return true if controller_name.in?(public_controllers)
     return true if devise_controllers
-    return true if controller_name == "healthcare_requests" && action_name.in?(%w[index show]) && !user_signed_in?
-    return true if controller_name == "events" && action_name.in?(%w[index show]) && !user_signed_in?
-    return true if controller_name == "projects" && action_name.in?(%w[index show]) && !user_signed_in?
+
+    # Always use public layout for these resources' index/show actions, for all users
+    return true if controller_name == "healthcare_requests" && action_name.in?(%w[index show])
+    return true if controller_name == "events" && action_name.in?(%w[index show])
+    return true if controller_name == "projects" && action_name.in?(%w[index show])
 
     false
   end

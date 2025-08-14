@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+
+  # Dashboard route for logged-in users
+  get 'dashboard', to: 'home#dashboard', as: 'dashboard'
   devise_for :users
 
   # Public Zakat Calculator (no authentication required)

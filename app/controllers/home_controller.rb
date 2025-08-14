@@ -1,12 +1,19 @@
 class HomeController < ApplicationController
-  def index
-    if user_signed_in?
-      # Dashboard view for authenticated users
-      render_dashboard
-    else
-      # Public homepage
-      render_public_homepage
+  def dashboard
+    require_login_and_render_dashboard
+  end
+
+  private
+
+  def require_login_and_render_dashboard
+    unless user_signed_in?
+      redirect_to new_user_session_path, alert: "You must be signed in to view the dashboard."
+      return
     end
+    render_dashboard
+  end
+  def index
+    render_public_homepage
   end
 
   private
