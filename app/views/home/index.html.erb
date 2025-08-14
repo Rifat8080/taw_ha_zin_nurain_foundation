@@ -1,36 +1,36 @@
 <% content_for :title, "Welcome to Taw Ha Zin Nurain Foundation" %>
-
-<!-- Category Navigation -->
 <div class="bg-forange py-3">
   <div class="max-w-7xl mx-auto px-4">
     <div class="flex overflow-x-auto scrollbar-hide gap-3 lg:gap-4 xl:gap-6 xl:flex-wrap xl:justify-center xl:overflow-x-visible">
+      
       <% navigation_categories_with_counts.each do |category| %>
         <%= link_to category[:url], 
-           class: "group text-center text-white cursor-pointer flex-shrink-0 min-w-[65px] lg:min-w-[70px] xl:min-w-[80px] xl:flex-shrink transition-all duration-300 hover:transform hover:-translate-y-2 no-underline hover:no-underline", 
-           title: category[:description] do %>
-          <!-- Glow container with proper centering -->
-          <div class="relative mx-auto mb-2 w-16 h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 flex items-center justify-center">
-            <!-- Background glowing rings - centered behind circles -->
-            <div class="absolute inset-0 w-full h-full rounded-full bg-white/15 animate-ping" style="animation-duration: 3s;"></div>
-            <div class="absolute inset-2 w-14 h-14 lg:w-16 lg:h-16 xl:w-20 xl:h-20 rounded-full bg-white/25 animate-pulse" style="animation-duration: 2.5s;"></div>
+          class: "group text-center text-white cursor-pointer flex-shrink-0 min-w-[65px] lg:min-w-[70px] xl:min-w-[80px] xl:flex-shrink transition-all duration-300 hover:transform hover:-translate-y-2 no-underline hover:no-underline",
+          title: category[:description] do %>
+          
+          <!-- Centered circle with glow animations -->
+          <div class="relative mx-auto mb-2 flex items-center justify-center w-16 h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24">
+            <!-- Outer glow -->
+            <div class="absolute inset-0 rounded-full bg-white/15 animate-ping"></div>
+            <!-- Mid glow -->
+            <div class="absolute rounded-full bg-white/25 animate-pulse w-[85%] h-[85%]"></div>
             
-            <!-- Main green circle - perfectly centered -->
-            <div class="relative w-12 h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 rounded-full bg-foundationprimarygreen overflow-hidden group-hover:scale-110 transition-all duration-300 shadow-lg shadow-white/50 group-hover:shadow-xl group-hover:shadow-white/70 z-10">
-              <!-- Inner white glow animations -->
+            <!-- Main circle -->
+            <div class="relative rounded-full bg-foundationprimarygreen overflow-hidden group-hover:scale-110 transition-all duration-300 shadow-lg shadow-white/50 group-hover:shadow-xl group-hover:shadow-white/70 z-10 w-12 h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 flex items-center justify-center">
+              <!-- Inner glows -->
               <div class="absolute inset-0 bg-white/30 rounded-full animate-ping"></div>
-              <div class="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent rounded-full animate-spin" style="animation-duration: 8s;"></div>
+              <div class="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent rounded-full animate-spin [animation-duration:8s]"></div>
               <div class="absolute inset-0 bg-white/10 rounded-full animate-pulse"></div>
               
-              <!-- Static white circle on top - perfectly centered -->
+              <!-- Inner white circle -->
               <div class="absolute inset-0.5 bg-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ease-in-out group-hover:shadow-2xl group-hover:shadow-white/50 group-hover:bg-gradient-to-br group-hover:from-white group-hover:to-gray-50">
-                <!-- Icon content - perfectly centered -->
-                <div class="text-lg lg:text-xl xl:text-2xl transition-transform duration-300 group-hover:scale-125 group-hover:rotate-12 flex items-center justify-center w-full h-full">
+                <div class="text-lg lg:text-xl xl:text-2xl transition-transform duration-300 group-hover:scale-125 group-hover:rotate-12 flex items-center justify-center">
                   <%= category[:icon] %>
                 </div>
               </div>
             </div>
             
-            <!-- Count badge - positioned top-right -->
+            <!-- Count badge -->
             <% if category[:count] > 0 %>
               <div class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 shadow-lg transform scale-90 lg:scale-100">
                 <%= category[:count] > 99 ? "99+" : category[:count] %>
@@ -38,14 +38,19 @@
             <% end %>
           </div>
           
+          <!-- Category name -->
           <div class="text-xs lg:text-xs xl:text-sm whitespace-nowrap px-1 transition-all duration-300 group-hover:text-yellow-200 group-hover:font-semibold group-hover:scale-105">
             <%= category[:name] %>
           </div>
+          
         <% end %>
       <% end %>
+      
     </div>
   </div>
 </div>
+
+
 
 <!-- Navigation Stats -->
 <div class="bg-gray-50 py-4">
