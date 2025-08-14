@@ -1,12 +1,11 @@
 Rails.application.routes.draw do
-
   # Dashboard route for logged-in users
-  get 'dashboard', to: 'home#dashboard', as: 'dashboard'
+  get "dashboard", to: "home#dashboard", as: "dashboard"
   devise_for :users
 
   # Public Zakat Calculator (no authentication required)
-  get 'zakat-calculator', to: 'public#zakat_calculator', as: 'public_zakat_calculator'
-  post 'calculate-zakat', to: 'public#calculate_zakat', as: 'calculate_zakat'
+  get "zakat-calculator", to: "public#zakat_calculator", as: "public_zakat_calculator"
+  post "calculate-zakat", to: "public#calculate_zakat", as: "calculate_zakat"
 
   # Zakat Calculator Routes (authenticated)
   resources :zakat_calculations do
