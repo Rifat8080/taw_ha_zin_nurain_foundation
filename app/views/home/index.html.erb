@@ -58,7 +58,8 @@
             background-size: 200px;
             background-repeat: repeat;
             background-position: center;">
-  <div class="max-w-7xl mx-auto px-4 relative z-10">
+  <div class="absolute inset-0 bg-foundationprimarygreen opacity-90 z-10 pointer-events-none"></div>
+  <div class="max-w-7xl mx-auto px-4 relative z-20">
     <h2 class="text-3xl font-bold text-white text-center mb-6">Make a Quick Donation</h2>
     <%= form_with model: @donation, url: donations_path, local: true, class: "space-y-4" do |form| %>
       
@@ -113,9 +114,6 @@
       <% end %>
     <% end %>
   </div>
-
-  <!-- Optional overlay for subtle pattern opacity -->
-  <div class="absolute inset-0 bg-foundationprimarygreen opacity-90"></div>
 </div>
 
 
