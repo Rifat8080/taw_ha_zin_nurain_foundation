@@ -158,33 +158,32 @@
     <p class="text-white text-lg md:text-xl font-medium mb-6 max-w-2xl mx-auto drop-shadow">Taw Ha Zin Nurain Foundation is a non-political, non-profit government-registered organization dedicated to education, da'wah and total human welfare. Registration Number: S-13111/2019.</p>
     <div class="flex flex-col sm:flex-row gap-4 mb-8 justify-center">
       <a href="#" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded shadow transition">Know More</a>
-      <a href="#" class="px-6 py-3 bg-white hover:bg-gray-100 text-gray-900 font-semibold rounded shadow border border-gray-300 transition">All Activities</a>
+      <%= link_to "All Activities", projects_path, class: "px-6 py-3 bg-white hover:bg-gray-100 text-gray-900 font-semibold rounded shadow border border-gray-300 transition" %>
     </div>
     <!-- Donation Form Card -->
     <div class="w-full max-w-2xl bg-yellow-100 bg-opacity-95 rounded-xl shadow-lg px-6 py-6 mt-2 mx-auto flex flex-col items-center" style="background-image: url('https://www.transparenttextures.com/patterns/arabesque.png'); background-repeat: repeat;">
       <h2 class="text-xl font-bold text-gray-800 mb-3">Make Your Donation</h2>
-      <form class="w-full flex flex-col md:flex-row md:items-end gap-3 md:gap-2 justify-center">
-        <div class="flex-1 min-w-[150px]">
-          <label class="block text-sm font-semibold text-gray-800 mb-1 text-center md:text-left">Donation Fund <span class="text-red-500">*</span></label>
-          <select class="w-full rounded border border-gray-300 px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-green-500">
-            <option>Select</option>
-            <option>Zakat</option>
-            <option>Sadaqah</option>
-            <option>Fitrah</option>
-          </select>
+      <%= form_with model: @donation, url: donations_path, local: true, class: "w-full" do |form| %>
+        <div class="flex flex-col md:flex-row md:items-end gap-3 md:gap-2 justify-center">
+          <div class="flex-1 min-w-[150px]">
+            <%= form.label :project_id, "Donation Fund <span class='text-red-500'>*</span>".html_safe, class: "block text-sm font-semibold text-gray-800 mb-1 text-center md:text-left" %>
+            <%= form.select :project_id, options_from_collection_for_select(@projects, :id, :name, @donation.project_id), { prompt: "Select Fund" }, { class: "w-full rounded border border-gray-300 px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-green-500" } %>
+          </div>
+          <% unless current_user %>
+            <div class="flex-1 min-w-[150px]">
+              <%= form.label :email, "Your Email <span class='text-red-500'>*</span>".html_safe, class: "block text-sm font-semibold text-gray-800 mb-1 text-center md:text-left" %>
+              <%= form.email_field :email, placeholder: "Type your email", class: "w-full rounded border border-gray-300 px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-green-500" %>
+            </div>
+          <% end %>
+          <div class="flex-1 min-w-[150px]">
+            <%= form.label :amount, "Donation Amount <span class='text-red-500'>*</span>".html_safe, class: "block text-sm font-semibold text-gray-800 mb-1 text-center md:text-left" %>
+            <%= form.number_field :amount, step: 0.01, placeholder: "৳ Write in number", class: "w-full rounded border border-gray-300 px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-green-500" %>
+          </div>
+          <div class="flex-shrink-0 w-full md:w-auto flex items-end justify-center md:justify-end">
+            <%= form.submit "Donate", class: "w-full md:w-auto px-6 py-2 text-base font-bold bg-green-700 hover:bg-green-800 text-white rounded shadow transition" %>
+          </div>
         </div>
-        <div class="flex-1 min-w-[150px]">
-          <label class="block text-sm font-semibold text-gray-800 mb-1 text-center md:text-left">Phone / Email <span class="text-red-500">*</span></label>
-          <input type="text" class="w-full rounded border border-gray-300 px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Type mobile/email" />
-        </div>
-        <div class="flex-1 min-w-[150px]">
-          <label class="block text-sm font-semibold text-gray-800 mb-1 text-center md:text-left">Donation Amount <span class="text-red-500">*</span></label>
-          <input type="number" class="w-full rounded border border-gray-300 px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="৳ Write in number" />
-        </div>
-        <div class="flex-shrink-0 w-full md:w-auto flex items-end justify-center md:justify-end">
-          <button type="submit" class="w-full md:w-auto px-6 py-2 text-base font-bold bg-green-700 hover:bg-green-800 text-white rounded shadow transition">Donate</button>
-        </div>
-      </form>
+      <% end %>
       <p class="text-sm text-gray-800 mt-2 text-center">You will receive tax relief when you donate to Taw Ha Zin Nurain Foundation. <a href="#" class="text-green-700 underline">Click here to learn more</a></p>
     </div>
   </div>
