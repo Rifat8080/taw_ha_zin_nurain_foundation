@@ -117,7 +117,6 @@
 </div>
 
 
-<!-- Hero Section (As-Sunnah Foundation style) -->
 <div class="relative min-h-[700px] md:min-h-[850px] flex flex-col justify-end bg-cover bg-center pt-24 md:pt-32"
      style="background-image: url('<%= asset_path('hero.jpg') %>'); background-size: cover; background-repeat: no-repeat; background-position: center center;">
   <!-- Dark Overlay -->
@@ -188,7 +187,6 @@
 
 
 
-<!-- 5 Pillars of Islam Section -->
 <section class="py-20 bg-white">
   <div class="max-w-6xl mx-auto px-4">
     <h2 class="text-4xl font-bold text-center mb-4">Together for a Better Ummah</h2>
@@ -226,7 +224,6 @@
   </div>
 </section>
 
-<!-- Quote/Testimonial Section -->
 <section class="py-20 pb-16 bg-white">
   <section class="max-w-6xl mx-auto px-4 flex flex-col lg:flex-row items-center gap-12">
     <div class="flex-1">
@@ -255,55 +252,77 @@
 </section>
 
 
-<!-- Projects Section -->
-<section class="py-8 lg:py-16 bg-gray-50">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-8 lg:mb-12">
-      <h2 class="text-3xl lg:text-4xl font-bold text-foundationprimarygreen mb-4">
-        Donation Funds
-      </h2>
-      <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-Together we can uplift lives and strengthen the Ummah. Your sadaqah and zakat bring change to those in need.      </p>
-    </div>
-
+<!-- Projects Section (Donation Funds Carousel) -->
+<section class="py-16 relative" style="background-image: url('<%= asset_path('d_p.jpg') %>'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+  <!-- Overlay -->
+  <div class="absolute inset-0 bg-black/5 pointer-events-none z-10"></div>
+  <div class="relative z-20">
+    <div class="max-w-7xl mx-auto px-4">
+    <h2 class="text-4xl font-bold text-center mb-4 text-foundationprimarygreen mb-2">Donation Funds</h2>
+<p class="text-center text-lg text-black mb-10">Together we can uplift lives and strengthen the Ummah. Your sadaqah and zakat bring change to those in need.</p>
     <% if (@projects || []).any? %>
-      <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mb-8">
-        <% @projects.each do |project| %>
-          <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 hover:shadow-lg transition-shadow">
-  <% if project.image.attached? %>
-    <div class="mb-4">
-      <%= image_tag project.image, class: "w-full h-48 object-cover rounded-lg" %>
-    </div>
-  <% end %>
-  <div class="flex items-center justify-between mb-3">
-    <h3 class="text-xl font-semibold text-gray-900"><%= project.name %></h3>
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= project.active? ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
-      <%= project.status_text %>
-    </span>
-  </div>
-  <p class="text-gray-600 mb-4 line-clamp-3"><%= project.description %></p>
-  
-  <div class="flex items-center justify-between">
-    <span class="text-sm text-gray-500">
-      <%= project.created_at.strftime("%B %Y") %>
-    </span>
-    <div class="flex space-x-2">
-      <%= link_to "Learn More", project_path(project), 
-          class: "text-blue-600 hover:text-blue-500 text-sm font-medium" %>
-      <% if project.accepting_donations? %>
-        <%= link_to "Donate", new_donation_path(project_id: project.id), 
-            class: "inline-flex items-center px-3 py-1 text-xs font-medium rounded-md text-white bg-green-600 hover:bg-green-700" %>
-      <% end %>
-    </div>
-  </div>
-</div>
-
-        <% end %>
-      </div>
-      
-      <div class="text-center">
-        <%= link_to "View All Projects", projects_path, 
-            class: "inline-flex items-center px-6 py-3 border border-gray-300 rounded-md text-base font-medium text-gray-700 bg-white hover:bg-gray-50" %>
+      <div class="relative flex flex-col items-center">
+        <!-- Carousel -->
+        <div class="w-full max-w-5xl mx-auto">
+          <div class="flex items-center justify-center">
+            <button type="button" class="absolute left-0 z-10 flex items-center justify-center h-full px-2 cursor-pointer group focus:outline-none" data-carousel-prev>
+              <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/80 hover:bg-white/100 shadow-lg">
+                <svg class="w-5 h-5 text-foundationprimarygreen" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/></svg>
+                <span class="sr-only">Previous</span>
+              </span>
+            </button>
+            <div class="flex-1">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <% @projects.first(3).each do |project| %>
+                  <div class="bg-white rounded-2xl shadow-lg flex flex-col items-center p-6 relative" style="min-width:320px;">
+                    <% if project.image.attached? %>
+                      <%= image_tag project.image, class: "rounded-2xl w-full h-56 object-cover mb-4", style: "aspect-ratio: 1.5/1; object-fit: cover;" %>
+                    <% else %>
+                      <%= image_tag 'kid_image.jpg', class: "rounded-2xl w-full h-56 object-cover mb-4", style: "aspect-ratio: 1.5/1; object-fit: cover;" %>
+                    <% end %>
+                    <h3 class="text-2xl font-bold text-gray-900 text-center mb-2"><%= project.name %></h3>
+                    <p class="text-gray-700 text-center mb-2 line-clamp-3"><%= truncate(project.description, length: 120) %></p>
+                    <div class="w-full flex flex-col gap-2 mb-2">
+                      <% if project.respond_to?(:location) && project.location.present? %>
+                        <div class="flex items-center justify-center text-sm text-gray-500 gap-1">
+                          <i class="fas fa-map-marker-alt text-foundationprimarygreen"></i>
+                          <span><%= project.location %></span>
+                        </div>
+                      <% end %>
+                      <% if project.respond_to?(:goal_amount) && project.goal_amount.present? %>
+                        <div class="flex items-center justify-center text-sm text-gray-500 gap-1">
+                          <i class="fas fa-bullseye text-foundationprimarygreen"></i>
+                          <span>Goal: ৳<%= number_with_delimiter(project.goal_amount) %></span>
+                        </div>
+                      <% end %>
+                      <% if project.respond_to?(:funds_raised) && project.funds_raised.present? %>
+                        <div class="flex items-center justify-center text-sm text-gray-500 gap-1">
+                          <i class="fas fa-donate text-foundationprimarygreen"></i>
+                          <span>Raised: ৳<%= number_with_delimiter(project.funds_raised) %></span>
+                        </div>
+                      <% end %>
+                    </div>
+                    <%= link_to "Donate", new_donation_path(project_id: project.id), class: "w-full inline-block px-6 py-3 text-base font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 transition-colors text-center" %>
+                    <%= link_to "Learn More", project_path(project), class: "w-full mt-2 inline-block px-6 py-2 text-base font-semibold text-foundationprimarygreen border border-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen hover:text-white transition-colors text-center" %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+            <button type="button" class="absolute right-0 z-10 flex items-center justify-center h-full px-2 cursor-pointer group focus:outline-none" data-carousel-next>
+              <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/80 hover:bg-white/100 shadow-lg">
+                <svg class="w-5 h-5 text-foundationprimarygreen" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/></svg>
+                <span class="sr-only">Next</span>
+              </span>
+            </button>
+          </div>
+        </div>
+        <!-- All Funds Button -->
+        <div class="mt-10 flex justify-center">
+          <%= link_to projects_path, class: "inline-flex items-center px-8 py-3 text-lg font-semibold rounded-lg bg-foundationprimarygreen text-white hover:bg-green-700 transition-colors shadow" do %>
+            All Funds
+            <svg class="w-5 h-5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/></svg>
+          <% end %>
+        </div>
       </div>
     <% else %>
       <div class="text-center py-12">
@@ -311,6 +330,7 @@ Together we can uplift lives and strengthen the Ummah. Your sadaqah and zakat br
       </div>
     <% end %>
   </div>
+</div>
 </section>
 
 <!-- Navigation Stats -->
@@ -451,35 +471,7 @@ Together we can uplift lives and strengthen the Ummah. Your sadaqah and zakat br
   </div>
 </div>
 
-<!-- Call to Action -->
-<div class="py-8 lg:py-16 bg-gradient-to-r from-blue-600 to-purple-600">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-    <h2 class="text-3xl lg:text-4xl font-bold text-white mb-4">
-      Ready to Make a Difference?
-    </h2>
-    <p class="text-xl text-blue-100 mb-6 lg:mb-8 max-w-2xl mx-auto">
-      Join our community of volunteers and donors working together to create positive change.
-    </p>
-    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <%= link_to "Become a Volunteer", new_user_registration_path, 
-          class: "inline-flex items-center px-8 py-3 border border-transparent text-lg font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 transition duration-300" %>
-      <%= link_to "Request Healthcare Help", new_healthcare_request_path, 
-          class: "inline-flex items-center px-8 py-3 border-2 border-white text-lg font-medium rounded-md text-white hover:bg-white hover:text-blue-600 transition duration-300" %>
-    </div>
-  </div>
-</div>
 
-<!-- Features Section -->
-<div class="py-16 bg-gray-50">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-12">
-      <h2 class="text-4xl font-extrabold text-gray-900">What We Offer</h2>
-      <p class="mt-4 text-lg text-gray-600">
-        Join our community and participate in meaningful events and volunteer opportunities.
-      </p>
-    </div>
-    
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       <!-- Feature 1: Event Management -->
       <div class="bg-white rounded-lg shadow-lg p-8 text-center transform hover:scale-105 transition-transform duration-300">
         <div class="flex items-center justify-center h-20 w-20 rounded-full bg-foundationprimarygreen text-white mx-auto mb-6">
