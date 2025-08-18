@@ -301,10 +301,10 @@
           <!-- Swiper Pagination & Navigation -->
           <div class="swiper-pagination !bottom-0"></div>
           <button class="swiper-button-prev custom-swiper-btn !left-0" aria-label="Previous">
-            <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+            <i class="fas fa-chevron-left text-xl" aria-hidden="true"></i>
           </button>
           <button class="swiper-button-next custom-swiper-btn !right-0" aria-label="Next">
-            <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+            <i class="fas fa-chevron-right text-xl" aria-hidden="true"></i>
           </button>
         </div>
         <style>
@@ -313,14 +313,14 @@
           .donationSwiper .custom-swiper-btn {
             background: #fff;
             border-radius: 50%;
-            box-shadow: 0 2px 8px 0 rgba(0,0,0,0.08);
-            width: 48px;
-            height: 48px;
+            border: 1.5px solid #e5e7eb;
+            box-shadow: 0 2px 8px 0 rgba(34,197,94,0.10), 0 1.5px 6px 0 rgba(16,185,129,0.08);
+            width: 36px;
+            height: 36px;
             top: 50%;
             transform: translateY(-50%);
             color: #166534;
-            border: 1.5px solid #e5e7eb;
-            transition: background 0.2s, color 0.2s, border 0.2s;
+            transition: background 0.18s, color 0.18s, border 0.18s, box-shadow 0.18s;
             position: absolute;
             z-index: 10;
             display: flex;
@@ -328,23 +328,44 @@
             justify-content: center;
             opacity: 1;
             cursor: pointer;
+            outline: none;
+            margin-left: 24px;
+            margin-right: 24px;
+            font-size: 1.25rem;
+          }
+          .donationSwiper .swiper-button-next::after,
+          .donationSwiper .swiper-button-prev::after {
+            display: none !important;
+            content: none !important;
           }
           .donationSwiper .custom-swiper-btn:disabled,
           .donationSwiper .custom-swiper-btn.swiper-button-disabled {
-            opacity: 0.3;
+            opacity: 0.25;
             pointer-events: none;
             cursor: not-allowed;
+            color: #a7f3d0;
+            background: #f3f4f6;
+            border-color: #e5e7eb;
+            box-shadow: none;
           }
-          .donationSwiper .custom-swiper-btn:hover:not(:disabled) {
-            background: #f0fdf4;
+          .donationSwiper .custom-swiper-btn:hover:not(:disabled),
+          .donationSwiper .custom-swiper-btn:focus-visible:not(:disabled) {
+            background: linear-gradient(135deg, #bbf7d0 0%, #bae6fd 100%);
             color: #22c55e;
             border-color: #22c55e;
+            box-shadow: 0 6px 20px 0 rgba(34,197,94,0.18), 0 2px 8px 0 rgba(16,185,129,0.12);
+          }
+          .donationSwiper .custom-swiper-btn:active:not(:disabled) {
+            background: linear-gradient(135deg, #6ee7b7 0%, #7dd3fc 100%);
+            color: #166534;
+            border-color: #166534;
+            box-shadow: 0 2px 8px 0 rgba(34,197,94,0.10);
           }
           .donationSwiper .swiper-pagination {
             margin-bottom: 10px;
           }
-          @media (max-width: 767px) {
-            .donationSwiper .custom-swiper-btn { width: 40px; height: 40px; }
+          @media (max-width: 1023px) {
+            .donationSwiper .custom-swiper-btn { width: 28px; height: 28px; margin-left: 4px; margin-right: 4px; }
           }
         </style>
         <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
