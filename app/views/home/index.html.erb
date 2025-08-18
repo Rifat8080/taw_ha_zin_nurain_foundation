@@ -259,70 +259,144 @@
       <h2 class="text-4xl font-bold text-center mb-4 text-foundationprimarygreen mb-2">Donation Funds</h2>
       <p class="text-center text-lg text-black mb-10">Together we can uplift lives and strengthen the Ummah. Your sadaqah and zakat bring change to those in need.</p>
       <% if (@projects || []).any? %>
-        <div class="relative">
-          <!-- Carousel Controls -->
-          <button type="button" id="carousel-prev" class="absolute left-0 top-1/2 -translate-y-1/2 z-30 flex items-center justify-center h-12 w-12 rounded-full bg-white/80 hover:bg-white shadow-lg">
-            <svg class="w-5 h-5 text-foundationprimarygreen" fill="none" viewBox="0 0 6 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/></svg>
-          </button>
-          <button type="button" id="carousel-next" class="absolute right-0 top-1/2 -translate-y-1/2 z-30 flex items-center justify-center h-12 w-12 rounded-full bg-white/80 hover:bg-white shadow-lg">
-            <svg class="w-5 h-5 text-foundationprimarygreen" fill="none" viewBox="0 0 6 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/></svg>
-          </button>
-          <!-- Carousel Track -->
-          <div id="carousel-track" class="flex overflow-x-auto scroll-smooth gap-6 py-8 px-2 hide-scrollbar">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+        <div class="swiper donationSwiper relative py-8">
+          <div class="swiper-wrapper">
             <% @projects.each do |project| %>
-              <div class="min-w-[320px] max-w-xs flex-shrink-0">
-                <div class="bg-white rounded-2xl shadow-lg flex flex-col items-center p-6 relative w-full mx-auto">
+              <div class="swiper-slide flex justify-center items-stretch">
+                <div class="bg-white rounded-3xl shadow-xl flex flex-col items-center p-6 relative w-full max-w-xs mx-auto border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
                   <% if project.image.attached? %>
-                    <%= image_tag project.image, class: "rounded-2xl w-full h-56 object-cover mb-4", style: "aspect-ratio: 1.5/1; object-fit: cover;" %>
+                    <%= image_tag project.image, class: "rounded-2xl w-full h-48 object-cover mb-4 border border-gray-200", style: "aspect-ratio: 1.5/1; object-fit: cover;" %>
                   <% else %>
-                    <%= image_tag 'kid_image.jpg', class: "rounded-2xl w-full h-56 object-cover mb-4", style: "aspect-ratio: 1.5/1; object-fit: cover;" %>
+                    <%= image_tag 'kid_image.jpg', class: "rounded-2xl w-full h-48 object-cover mb-4 border border-gray-200", style: "aspect-ratio: 1.5/1; object-fit: cover;" %>
                   <% end %>
-                  <h3 class="text-2xl font-bold text-gray-900 text-center mb-2"><%= project.name %></h3>
-                  <p class="text-gray-700 text-center mb-2 line-clamp-3"><%= truncate(project.description, length: 120) %></p>
-                  <div class="w-full flex flex-col gap-2 mb-2">
+                  <h3 class="text-xl font-bold text-gray-900 text-center mb-1"><%= project.name %></h3>
+                  <p class="text-gray-600 text-center mb-2 line-clamp-3 min-h-[48px]"> <%= truncate(project.description, length: 100) %></p>
+                  <div class="w-full flex flex-col gap-1 mb-2">
                     <% if project.respond_to?(:location) && project.location.present? %>
-                      <div class="flex items-center justify-center text-sm text-gray-500 gap-1">
+                      <div class="flex items-center justify-center text-xs text-gray-500 gap-1">
                         <i class="fas fa-map-marker-alt text-foundationprimarygreen"></i>
                         <span><%= project.location %></span>
                       </div>
                     <% end %>
                     <% if project.respond_to?(:goal_amount) && project.goal_amount.present? %>
-                      <div class="flex items-center justify-center text-sm text-gray-500 gap-1">
+                      <div class="flex items-center justify-center text-xs text-gray-500 gap-1">
                         <i class="fas fa-bullseye text-foundationprimarygreen"></i>
                         <span>Goal: ৳<%= number_with_delimiter(project.goal_amount) %></span>
                       </div>
                     <% end %>
                     <% if project.respond_to?(:funds_raised) && project.funds_raised.present? %>
-                      <div class="flex items-center justify-center text-sm text-gray-500 gap-1">
+                      <div class="flex items-center justify-center text-xs text-gray-500 gap-1">
                         <i class="fas fa-donate text-foundationprimarygreen"></i>
                         <span>Raised: ৳<%= number_with_delimiter(project.funds_raised) %></span>
                       </div>
                     <% end %>
                   </div>
-                  <%= link_to "Donate", new_donation_path(project_id: project.id), class: "w-full inline-block px-6 py-3 text-base font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 transition-colors text-center" %>
-                  <%= link_to "Learn More", project_path(project), class: "w-full mt-2 inline-block px-6 py-2 text-base font-semibold text-foundationprimarygreen border border-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen hover:text-white transition-colors text-center" %>
+                  <%= link_to "Donate", new_donation_path(project_id: project.id), class: "w-full inline-block px-5 py-2 text-base font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 transition-colors text-center mt-2" %>
+                  <%= link_to "Learn More", project_path(project), class: "w-full mt-2 inline-block px-5 py-2 text-base font-semibold text-foundationprimarygreen border border-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen hover:text-white transition-colors text-center" %>
                 </div>
               </div>
             <% end %>
           </div>
+          <!-- Swiper Pagination & Navigation -->
+          <div class="swiper-pagination !bottom-0"></div>
+          <button class="swiper-button-prev custom-swiper-btn !left-0" aria-label="Previous">
+            <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+          </button>
+          <button class="swiper-button-next custom-swiper-btn !right-0" aria-label="Next">
+            <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          </button>
         </div>
+        <style>
+          .donationSwiper .swiper-pagination-bullet { background: #22c55e; opacity: 0.7; }
+          .donationSwiper .swiper-pagination-bullet-active { background: #166534; opacity: 1; }
+          .donationSwiper .custom-swiper-btn {
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px 0 rgba(0,0,0,0.08);
+            width: 48px;
+            height: 48px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #166534;
+            border: 1.5px solid #e5e7eb;
+            transition: background 0.2s, color 0.2s, border 0.2s;
+            position: absolute;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            cursor: pointer;
+          }
+          .donationSwiper .custom-swiper-btn:disabled,
+          .donationSwiper .custom-swiper-btn.swiper-button-disabled {
+            opacity: 0.3;
+            pointer-events: none;
+            cursor: not-allowed;
+          }
+          .donationSwiper .custom-swiper-btn:hover:not(:disabled) {
+            background: #f0fdf4;
+            color: #22c55e;
+            border-color: #22c55e;
+          }
+          .donationSwiper .swiper-pagination {
+            margin-bottom: 10px;
+          }
+          @media (max-width: 767px) {
+            .donationSwiper .custom-swiper-btn { width: 40px; height: 40px; }
+          }
+        </style>
+        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
         <script>
-          // Simple horizontal scroll carousel: 3 visible, slide 1 per click
           document.addEventListener('DOMContentLoaded', function() {
-            const track = document.getElementById('carousel-track');
-            const prev = document.getElementById('carousel-prev');
-            const next = document.getElementById('carousel-next');
-            const card = track.querySelector('div'); // first card
-            if (!card) return;
-            const cardWidth = card.offsetWidth + 24; // 24 = gap-6
-            prev.addEventListener('click', () => { track.scrollBy({ left: -cardWidth, behavior: 'smooth' }); });
-            next.addEventListener('click', () => { track.scrollBy({ left: cardWidth, behavior: 'smooth' }); });
+            var swiper = new Swiper('.donationSwiper', {
+              slidesPerView: 1,
+              spaceBetween: 24,
+              breakpoints: {
+                640: { slidesPerView: 1 },
+                768: { slidesPerView: 2 },
+                1024: { slidesPerView: 3 },
+              },
+              pagination: { el: '.swiper-pagination', clickable: true },
+              navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+              loop: false,
+              on: {
+                afterInit: function(swiper) {
+                  // Hide pagination if only one page
+                  var pag = swiper.pagination && swiper.pagination.el;
+                  if (pag && swiper.slides.length <= swiper.params.slidesPerView) {
+                    pag.style.display = 'none';
+                  }
+                  // Hide next/prev if not enough slides
+                  var nextBtn = swiper.navigation && swiper.navigation.nextEl;
+                  var prevBtn = swiper.navigation && swiper.navigation.prevEl;
+                  if (swiper.slides.length <= swiper.params.slidesPerView) {
+                    if (nextBtn) nextBtn.style.display = 'none';
+                    if (prevBtn) prevBtn.style.display = 'none';
+                  }
+                },
+                slideChange: function(swiper) {
+                  // Enable/disable next/prev
+                  var nextBtn = swiper.navigation && swiper.navigation.nextEl;
+                  var prevBtn = swiper.navigation && swiper.navigation.prevEl;
+                  if (nextBtn && prevBtn) {
+                    if (swiper.isBeginning) {
+                      prevBtn.classList.add('swiper-button-disabled');
+                    } else {
+                      prevBtn.classList.remove('swiper-button-disabled');
+                    }
+                    if (swiper.isEnd) {
+                      nextBtn.classList.add('swiper-button-disabled');
+                    } else {
+                      nextBtn.classList.remove('swiper-button-disabled');
+                    }
+                  }
+                }
+              }
+            });
           });
         </script>
-        <style>
-          .hide-scrollbar::-webkit-scrollbar { display: none; }
-          .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        </style>
         <!-- All Funds Button -->
         <div class="mt-10 flex justify-center">
           <%= link_to projects_path, class: "inline-flex items-center px-8 py-3 text-lg font-semibold rounded-lg bg-foundationprimarygreen text-white hover:bg-green-700 transition-colors shadow" do %>
@@ -337,7 +411,7 @@
       <% end %>
     </div>
   </div>
-</section>   
+</section>
 
 <!-- Navigation Stats -->
 <div class="bg-gray-50 py-4">
