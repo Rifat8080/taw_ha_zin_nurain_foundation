@@ -1,6 +1,24 @@
 /* app/assets/stylesheets/home_index.css */
-.donationSwiper .swiper-pagination-bullet { background: #22c55e; opacity: 0.7; }
-.donationSwiper .swiper-pagination-bullet-active { background: #166534; opacity: 1; }
+
+/* REMOVE pagination bullets completely */
+.donationSwiper .swiper-pagination,
+.donationSwiper .swiper-pagination-bullet {
+  display: none !important;
+}
+
+/* Fix cut-off / hidden cards issue */
+.donationSwiper {
+  padding-bottom: 2rem; /* add spacing below carousel */
+}
+.donationSwiper .swiper-slide {
+  display: flex;
+  height: auto !important; /* allow slides to expand naturally */
+}
+.donationSwiper .swiper-wrapper {
+  align-items: stretch; /* stretch all slides to same height */
+}
+
+/* Custom Swiper Navigation Buttons */
 .donationSwiper .custom-swiper-btn {
   background: #fff;
   border-radius: 50%;
@@ -24,11 +42,13 @@
   margin-right: 24px;
   font-size: 1.25rem;
 }
+
 .donationSwiper .swiper-button-next::after,
 .donationSwiper .swiper-button-prev::after {
-  display: none !important;
-  content: none !important;
+  display: none;
+  content: none;
 }
+
 .donationSwiper .custom-swiper-btn:disabled,
 .donationSwiper .custom-swiper-btn.swiper-button-disabled {
   opacity: 0.25;
@@ -39,6 +59,7 @@
   border-color: #e5e7eb;
   box-shadow: none;
 }
+
 .donationSwiper .custom-swiper-btn:hover:not(:disabled),
 .donationSwiper .custom-swiper-btn:focus-visible:not(:disabled) {
   background: linear-gradient(135deg, #bbf7d0 0%, #bae6fd 100%);
@@ -46,15 +67,19 @@
   border-color: #22c55e;
   box-shadow: 0 6px 20px 0 rgba(34,197,94,0.18), 0 2px 8px 0 rgba(16,185,129,0.12);
 }
+
 .donationSwiper .custom-swiper-btn:active:not(:disabled) {
   background: linear-gradient(135deg, #6ee7b7 0%, #7dd3fc 100%);
   color: #166534;
   border-color: #166534;
   box-shadow: 0 2px 8px 0 rgba(34,197,94,0.10);
 }
-.donationSwiper .swiper-pagination {
-  margin-bottom: 10px;
-}
+
 @media (max-width: 1023px) {
-  .donationSwiper .custom-swiper-btn { width: 28px; height: 28px; margin-left: 4px; margin-right: 4px; }
+  .donationSwiper .custom-swiper-btn {
+    width: 28px;
+    height: 28px;
+    margin-left: 4px;
+    margin-right: 4px;
+  }
 }
