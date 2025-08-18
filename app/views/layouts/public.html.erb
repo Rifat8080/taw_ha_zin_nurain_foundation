@@ -27,6 +27,9 @@
     <%= stylesheet_link_tag "fonts", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Swiper CSS for donation carousel -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <%= stylesheet_link_tag 'home_index', media: 'all', 'data-turbo-track': 'reload' %>
   </head>
 
   <body class="bg-gray-50 font-sans">
@@ -211,7 +214,11 @@
 
     <!-- Main Content -->
     <main class="pt-18 xl:pt-20 ">
-      <%= yield %>
+    <%= yield %>
+
+    <!-- Swiper JS for donation carousel -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <%= javascript_include_tag 'home_index', 'data-turbo-track': 'reload' %>
     </main>
 
     <!-- Footer -->
