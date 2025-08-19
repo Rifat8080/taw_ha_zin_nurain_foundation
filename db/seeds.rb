@@ -1,3 +1,47 @@
+# --- Extra Demo Seeds: 13 Projects, 13 HealthcareRequests, 13 Events ---
+if Project.count < 13
+  (Project.count...13).each do |i|
+    Project.create!(
+      name: "Demo Project #{i+1}",
+      description: "Description for Demo Project #{i+1} - supporting the Ummah.",
+      project_status_active: true
+    )
+  end
+  puts "Seeded demo projects: #{Project.count} total."
+end
+
+if HealthcareRequest.count < 13
+  demo_user = User.first
+  (HealthcareRequest.count...13).each do |i|
+    HealthcareRequest.create!(
+      patient_name: "Demo Patient #{i+1}",
+      reason: "Medical need for Demo Patient #{i+1}.",
+      status: "approved",
+      approved: true,
+      user: demo_user
+    )
+  end
+  puts "Seeded demo healthcare requests: #{HealthcareRequest.count} total."
+end
+
+if Event.count < 13
+  (Event.count...13).each do |i|
+    Event.create!(
+      name: "Demo Event #{i+1}",
+      start_date: Date.today + i.days,
+      end_date: Date.today + i.days,
+      start_time: Time.now.change(hour: 10, min: 0),
+      end_time: Time.now.change(hour: 14, min: 0),
+      seat_number: 100 + i,
+      venue: "Venue #{i+1}, City Center",
+      guest_list: "Guest Speaker #{i+1}",
+      guest_description: "Join us for Demo Event #{i+1} to support our cause.",
+      ticket_price: 100 + i * 10,
+      ticket_category: "general"
+    )
+  end
+  puts "Seeded demo events: #{Event.count} total."
+end
 # This file should ensure the existence of records required to run the application in every environment (production,
 # development, test). The code here should be idempotent so that it can be executed at any point in every environment.
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
@@ -17,7 +61,7 @@ if User.count == 0
     first_name: "John",
     last_name: "Admin",
     email: "admin@example.com",
-    phone_number: 1234567890,
+    phone_number: 1234567800,
     password: "password123",
     password_confirmation: "password123",
     role: "admin",
@@ -28,7 +72,7 @@ if User.count == 0
     first_name: "Jane",
     last_name: "Doe",
     email: "jane@example.com",
-    phone_number: 1234567891,
+    phone_number: 1234567801,
     password: "password123",
     password_confirmation: "password123",
     role: "member",
@@ -39,7 +83,7 @@ if User.count == 0
     first_name: "Bob",
     last_name: "Volunteer",
     email: "bob@example.com",
-    phone_number: 1234567892,
+    phone_number: 1234567802,
     password: "password123",
     password_confirmation: "password123",
     role: "volunteer",
@@ -50,9 +94,9 @@ if User.count == 0
 end
 
 # Create sample events
-if Event.count == 0
+if Event.count < 3
   # Upcoming event
-  upcoming_event = Event.create!(
+  Event.create!(
     name: "Annual Charity Gala",
     start_date: Date.current + 30.days,
     end_date: Date.current + 30.days,
@@ -66,11 +110,11 @@ if Event.count == 0
     ticket_category: "premium"
   )
 
-  # Active event (today)
-  active_event = Event.create!(
+  # Upcoming event 2
+  Event.create!(
     name: "Community Workshop: Digital Literacy",
-    start_date: Date.current,
-    end_date: Date.current + 2.days,
+    start_date: Date.current + 60.days,
+    end_date: Date.current + 62.days,
     start_time: Time.parse("09:00"),
     end_time: Time.parse("17:00"),
     seat_number: 50,
@@ -81,23 +125,8 @@ if Event.count == 0
     ticket_category: "general"
   )
 
-  # Past event
-  past_event = Event.create!(
-    name: "Food Drive & Community BBQ",
-    start_date: Date.current - 15.days,
-    end_date: Date.current - 15.days,
-    start_time: Time.parse("11:00"),
-    end_time: Time.parse("16:00"),
-    seat_number: 300,
-    venue: "City Park, Pavilion Area",
-    guest_list: "Special guests:\n- Mayor Jennifer Smith\n- Local band 'The Harmonics'\n- Chef Roberto from 'Taste of Home' restaurant",
-    guest_description: "A community gathering combining food donation drive with a fun family BBQ. We collected non-perishable food items for local food banks while enjoying grilled food, live music, and family activities. A great success bringing the community together!",
-    ticket_price: 0,
-    ticket_category: "standard"
-  )
-
-  # VIP Concert
-  concert_event = Event.create!(
+  # Upcoming event 3
+  Event.create!(
     name: "Live Concert: Local Artists Showcase",
     start_date: Date.current + 45.days,
     end_date: Date.current + 45.days,
@@ -112,61 +141,6 @@ if Event.count == 0
   )
 
   puts "Created #{Event.count} sample events"
-
-  # Create some sample tickets for the past event and active event
-  users = User.limit(3)
-
-  # Past event tickets (already used)
-  users.each do |user|
-    ticket = past_event.tickets.create!(
-      user: user,
-      ticket_type: past_event.ticket_category,
-      price: past_event.ticket_price,
-      status: 'used'
-    )
-
-    # Also create event user registration
-    past_event.event_users.create!(
-      user: user,
-      status: 'attended'
-    )
-  end
-
-  # Active event tickets
-  users.first(2).each do |user|
-    ticket = active_event.tickets.create!(
-      user: user,
-      ticket_type: active_event.ticket_category,
-      price: active_event.ticket_price,
-      status: 'active',
-      seat_number: "A#{rand(1..25)}"
-    )
-
-    # Also create event user registration
-    active_event.event_users.create!(
-      user: user,
-      status: 'registered'
-    )
-  end
-
-  # Upcoming event tickets
-  users.each do |user|
-    ticket = upcoming_event.tickets.create!(
-      user: user,
-      ticket_type: upcoming_event.ticket_category,
-      price: upcoming_event.ticket_price,
-      status: 'active',
-      seat_number: "VIP#{rand(1..50)}"
-    )
-
-    # Also create event user registration
-    upcoming_event.event_users.create!(
-      user: user,
-      status: 'registered'
-    )
-  end
-
-  puts "Created sample tickets and registrations"
 end
 
 puts "\nSeed data creation completed!"
@@ -181,7 +155,7 @@ puts "Creating sample users..."
 admin_user = User.find_or_create_by!(email: "admin@tawhazin.org") do |user|
   user.first_name = "Admin"
   user.last_name = "User"
-  user.phone_number = 1234567890
+  user.phone_number = 1234567810
   user.role = "admin"
   user.address = "123 Foundation St, Dhaka"
   user.password = "password123"
@@ -193,7 +167,7 @@ member_users = []
   member_user = User.find_or_create_by!(email: "member#{i+1}@tawhazin.org") do |user|
     user.first_name = "Member"
     user.last_name = "#{i+1}"
-    user.phone_number = 1234567891 + i  # Start from a different number to avoid conflicts
+    user.phone_number = 1234567811 + i  # Unique phone numbers for each member
     user.role = "member"
     user.address = "#{i+1}23 Member St, Dhaka"
     user.password = "password123"

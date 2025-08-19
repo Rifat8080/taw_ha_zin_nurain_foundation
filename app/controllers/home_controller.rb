@@ -50,11 +50,10 @@ class HomeController < ApplicationController
   end
 
   def render_public_homepage
-    @upcoming_events = Event.upcoming.limit(3)
-    @projects = Project.active.limit(6)
+    @upcoming_events = Event.upcoming
+    @projects = Project.active
     @healthcare_requests = HealthcareRequest.visible_to_public
                                            .includes(:user, :healthcare_donations)
-                                           .limit(6)
     @donation = Donation.new
     @submit_text = "Donate Now"
 
