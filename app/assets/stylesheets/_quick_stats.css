@@ -1,0 +1,24 @@
+/* Quick Stats Section (Home) */
+
+@keyframes progress {
+  from { width: 0; }
+  to { width: var(--progress-width, 100%); }
+}
+.animate-progress {
+  animation: progress 1.2s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 1.1s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.stat-card {
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  letter-spacing: -0.01em;
+}

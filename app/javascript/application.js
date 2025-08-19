@@ -17,5 +17,6 @@ import "modules/tickets";
 import "modules/event_ticket_types";
 import "modules/bulk_ticket_modal";
 import "modules/carousel";
+import "modules/stats";
 // Fallback module temporarily removed to prevent double event listeners
 // import "modules/bulk_ticket_modal_fallback";
