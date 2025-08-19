@@ -1,0 +1,23 @@
+<turbo-frame id="blog-main">
+  <section class="py-16 bg-white min-h-[60vh]">
+    <div class="max-w-3xl mx-auto px-4">
+      <div class="mb-6">
+        <%= link_to '← Back to Blogs', blogs_path, data: { turbo_frame: 'blog-main' }, class: 'text-foundationprimarygreen hover:underline' %>
+      </div>
+      <div class="bg-white rounded-2xl shadow-lg p-8">
+        <% if @blog&.images&.attached? && @blog.images.any? %>
+          <div class="flex flex-wrap gap-4 mb-6">
+            <% @blog.images.each do |img| %>
+              <%= image_tag img, class: "w-full max-w-xs h-64 object-cover rounded-xl", alt: @blog.title %>
+            <% end %>
+          </div>
+        <% end %>
+        <h1 class="text-3xl font-bold mb-2 text-foundationprimarygreen"><%= @blog.title %></h1>
+        <div class="text-sm text-gray-500 mb-4">By <%= @blog.author %> | <%= @blog.published_at&.strftime('%b %d, %Y') %></div>
+        <div class="prose max-w-none text-gray-800">
+          <%= simple_format(@blog.body) %>
+        </div>
+      </div>
+    </div>
+  </section>
+</turbo-frame>

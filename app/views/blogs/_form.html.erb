@@ -1,0 +1,42 @@
+<%= form_with(model: blog, local: true, html: {multipart: true, class: "max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8"}) do |form| %>
+  <% if blog.errors.any? %>
+    <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+      <h3 class="font-bold">Please fix the following errors:</h3>
+      <ul class="list-disc list-inside">
+        <% blog.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="mb-4">
+    <%= form.label :title, class: "block font-semibold mb-1" %>
+    <%= form.text_field :title, class: "w-full border rounded px-3 py-2" %>
+  </div>
+  <div class="mb-4">
+    <%= form.label :author, class: "block font-semibold mb-1" %>
+    <%= form.text_field :author, class: "w-full border rounded px-3 py-2" %>
+  </div>
+  <div class="mb-4">
+    <%= form.label :body, class: "block font-semibold mb-1" %>
+    <%= form.text_area :body, rows: 8, class: "w-full border rounded px-3 py-2" %>
+  </div>
+  <div class="mb-4">
+    <%= form.label :images, "Images", class: "block font-semibold mb-1" %>
+    <%= form.file_field :images, multiple: true, class: "w-full" %>
+    <% if blog.images.attached? %>
+      <div class="mt-2 flex flex-wrap gap-2">
+        <% blog.images.each do |img| %>
+          <%= image_tag img, class: "h-24 rounded" %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+  <div class="mb-4">
+    <%= form.label :published_at, class: "block font-semibold mb-1" %>
+    <%= form.datetime_select :published_at, class: "w-full" %>
+  </div>
+  <div class="flex justify-end">
+    <%= form.submit class: "px-6 py-2 bg-foundationprimarygreen text-white rounded hover:bg-green-700 font-semibold" %>
+  </div>
+<% end %>

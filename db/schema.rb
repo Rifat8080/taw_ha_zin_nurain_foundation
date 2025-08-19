@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_09_183144) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_13_095215) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -54,6 +54,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_09_183144) do
     t.index ["zakat_calculation_id"], name: "index_assets_on_zakat_calculation_id"
     t.check_constraint "amount >= 0::numeric", name: "check_amount_positive"
     t.check_constraint "category::text = ANY (ARRAY['cash'::character varying::text, 'bank'::character varying::text, 'gold'::character varying::text, 'silver'::character varying::text, 'business_inventory'::character varying::text, 'receivables'::character varying::text, 'livestock'::character varying::text, 'agriculture'::character varying::text, 'investments'::character varying::text, 'property_rent'::character varying::text])", name: "check_category"
+  end
+
+  create_table "blogs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "title", null: false
+    t.text "body", null: false
+    t.string "author", null: false
+    t.datetime "published_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "donations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -210,6 +219,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_09_183144) do
     t.boolean "project_status_active"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "icon"
   end
 
   create_table "team_assignments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

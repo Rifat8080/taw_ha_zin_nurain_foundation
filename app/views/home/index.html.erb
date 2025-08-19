@@ -554,3 +554,34 @@
     </div>
   </div>
 </section>
+
+
+
+<%# --- Blog Section: Latest Blogs as Cards --- %>
+
+<section class="py-16 bg-white">
+  <div class="max-w-7xl mx-auto px-4">
+    <h2 class="text-4xl font-bold text-center mb-8 text-foundationprimarygreen">Latest Blog Posts</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <% Blog.published.limit(6).each do |blog| %>
+        <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col overflow-hidden group transition hover:shadow-2xl">
+          <% if blog.images.attached? && blog.images.any? %>
+            <%= image_tag blog.images.first, class: "rounded-t-lg w-full h-48 object-cover", alt: blog.title %>
+          <% end %>
+          <div class="p-5 flex flex-col flex-1">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white group-hover:text-foundationprimarygreen transition"> <%= blog.title %> </h5>
+            <div class="text-xs text-gray-500 mb-2">By <%= blog.author %> | <%= blog.published_at&.strftime('%b %d, %Y') %></div>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 line-clamp-3 flex-1"><%= truncate(blog.body, length: 120) %></p>
+            <%= link_to 'Read More', blog_path(blog), class: "inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-foundationprimarygreen rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 transition mt-auto" %>
+          </div>
+        </div>
+      <% end %>
+      <% if Blog.published.limit(6).empty? %>
+        <div class="col-span-full text-center text-gray-400">No blog posts yet.</div>
+      <% end %>
+    </div>
+    <div class="mt-10 flex justify-center">
+      <%= link_to 'View All Blogs', blogs_path, class: "inline-flex items-center px-8 py-3 text-lg font-semibold rounded-lg bg-foundationprimarygreen text-white hover:bg-green-700 transition-colors shadow" %>
+    </div>
+  </div>
+</section>
