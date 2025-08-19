@@ -251,6 +251,71 @@
   </div>
 </section>
 
+
+<!-- Healthcare Assistance Section (matching Donation Funds card design, no bg image) -->
+<section class="py-16 bg-white">
+  <div class="max-w-7xl mx-auto px-4">
+    <h2 class="text-4xl font-bold text-center mb-4">Healthcare Assistance</h2>
+    <p class="text-center text-lg text-foundationprimarygreen mb-10">We provide healthcare assistance to those in need. Browse current requests and make a difference.</p>
+    <% if (@healthcare_requests || []).any? %>
+      <div class="swiper donationSwiper relative py-8">
+        <div class="swiper-wrapper">
+          <% @healthcare_requests.each do |request| %>
+            <div class="swiper-slide flex justify-center items-stretch">
+              <div class="bg-white rounded-3xl shadow-xl flex flex-col items-center p-6 relative w-full max-w-xs mx-auto border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
+                <div class="w-full flex flex-col gap-1 mb-2">
+                  <div class="flex items-center justify-center text-xs text-gray-500 gap-1 mb-2">
+                    <i class="fas fa-user-injured text-foundationprimarygreen"></i>
+                    <span class="font-bold"><%= request.patient_name %></span>
+                  </div>
+                  <div class="flex items-center justify-center text-xs text-gray-500 gap-1 mb-2">
+                    <i class="fas fa-stethoscope text-foundationprimarygreen"></i>
+                    <span>Status: <%= request.status.capitalize %></span>
+                  </div>
+                </div>
+                <p class="text-gray-600 text-center mb-2 line-clamp-3 min-h-[48px]"> <%= truncate(request.reason, length: 100) %></p>
+                <div class="w-full flex flex-col gap-1 mb-2">
+                  <div class="flex items-center justify-center text-xs text-gray-500 gap-1">
+                    <i class="fas fa-donate text-foundationprimarygreen"></i>
+                    <span>Donations: ৳<%= number_with_delimiter(request.total_donations) %></span>
+                  </div>
+                  <div class="flex items-center justify-center text-xs text-gray-500 gap-1">
+                    <i class="fas fa-users text-foundationprimarygreen"></i>
+                    <span>Donors: <%= request.donation_count %></span>
+                  </div>
+                </div>
+                <%= link_to "View Details", healthcare_request_path(request), class: "w-full inline-block px-5 py-2 text-base font-semibold text-foundationprimarygreen border border-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen hover:text-white transition-colors text-center mt-2" %>
+                <% if request.can_receive_donations? %>
+                  <%= link_to "Donate", new_healthcare_request_healthcare_donation_path(request), class: "w-full mt-2 inline-block px-5 py-2 text-base font-semibold text-white bg-foundationprimarygreen rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 transition-colors text-center" %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        <!-- Swiper Pagination & Navigation -->
+        <div class="swiper-pagination !bottom-0"></div>
+        <button class="swiper-button-prev custom-swiper-btn !left-0" aria-label="Previous">
+          <i class="fas fa-chevron-left text-xl" aria-hidden="true"></i>
+        </button>
+        <button class="swiper-button-next custom-swiper-btn !right-0" aria-label="Next">
+          <i class="fas fa-chevron-right text-xl" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="mt-10 flex justify-center">
+        <%= link_to healthcare_requests_path, class: "inline-flex items-center px-8 py-3 text-lg font-semibold rounded-lg bg-foundationprimarygreen text-white hover:bg-blue-700 transition-colors shadow" do %>
+          View All Healthcare Requests
+          <svg class="w-5 h-5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/></svg>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-12">
+        <p class="text-gray-500 mb-4">No active healthcare requests at the moment.</p>
+        <%= link_to "Create a Request", new_healthcare_request_path, class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" %>
+      </div>
+    <% end %>
+  </div>
+</section>
+
  <!-- Donation Funds Carousel: 3 cards visible, slide 1 card per click -->
 <section class="py-16 relative" style="background-image: url('<%= asset_path('foundation_pattern.jpg') %>'); background-size: cover; background-position: center; background-repeat: no-repeat;">
   <div class="absolute  pointer-events-none z-10"></div>
@@ -291,7 +356,7 @@
                       </div>
                     <% end %>
                   </div>
-                  <%= link_to "Donate", new_donation_path(project_id: project.id), class: "w-full inline-block px-5 py-2 text-base font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 transition-colors text-center mt-2" %>
+                  <%= link_to "Donate", new_donation_path(project_id: project.id), class: "w-full inline-block px-5 py-2 text-base font-semibold text-white bg-foundationprimarygreen rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 transition-colors text-center mt-2" %>
                   <%= link_to "Learn More", project_path(project), class: "w-full mt-2 inline-block px-5 py-2 text-base font-semibold text-foundationprimarygreen border border-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen hover:text-white transition-colors text-center" %>
                 </div>
               </div>
@@ -319,72 +384,6 @@
         </div>
       <% end %>
     </div>
-  </div>
-</section>
-
-
-
-<!-- Healthcare Assistance Section (matching Donation Funds card design, no bg image) -->
-<section class="py-16 bg-white">
-  <div class="max-w-7xl mx-auto px-4">
-    <h2 class="text-4xl font-bold text-center mb-4">Healthcare Assistance</h2>
-    <p class="text-center text-lg text-foundationprimarygreen mb-10">We provide healthcare assistance to those in need. Browse current requests and make a difference.</p>
-    <% if (@healthcare_requests || []).any? %>
-      <div class="swiper donationSwiper relative py-8">
-        <div class="swiper-wrapper">
-          <% @healthcare_requests.each do |request| %>
-            <div class="swiper-slide flex justify-center items-stretch">
-              <div class="bg-white rounded-3xl shadow-xl flex flex-col items-center p-6 relative w-full max-w-xs mx-auto border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
-                <div class="w-full flex flex-col gap-1 mb-2">
-                  <div class="flex items-center justify-center text-xs text-gray-500 gap-1 mb-2">
-                    <i class="fas fa-user-injured text-foundationprimarygreen"></i>
-                    <span class="font-bold"><%= request.patient_name %></span>
-                  </div>
-                  <div class="flex items-center justify-center text-xs text-gray-500 gap-1 mb-2">
-                    <i class="fas fa-stethoscope text-foundationprimarygreen"></i>
-                    <span>Status: <%= request.status.capitalize %></span>
-                  </div>
-                </div>
-                <p class="text-gray-600 text-center mb-2 line-clamp-3 min-h-[48px]"> <%= truncate(request.reason, length: 100) %></p>
-                <div class="w-full flex flex-col gap-1 mb-2">
-                  <div class="flex items-center justify-center text-xs text-gray-500 gap-1">
-                    <i class="fas fa-donate text-foundationprimarygreen"></i>
-                    <span>Donations: ৳<%= number_with_delimiter(request.total_donations) %></span>
-                  </div>
-                  <div class="flex items-center justify-center text-xs text-gray-500 gap-1">
-                    <i class="fas fa-users text-foundationprimarygreen"></i>
-                    <span>Donors: <%= request.donation_count %></span>
-                  </div>
-                </div>
-                <%= link_to "View Details", healthcare_request_path(request), class: "w-full inline-block px-5 py-2 text-base font-semibold text-foundationprimarygreen border border-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen hover:text-white transition-colors text-center mt-2" %>
-                <% if request.can_receive_donations? %>
-                  <%= link_to "Donate", new_healthcare_request_healthcare_donation_path(request), class: "w-full mt-2 inline-block px-5 py-2 text-base font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 transition-colors text-center" %>
-                <% end %>
-              </div>
-            </div>
-          <% end %>
-        </div>
-        <!-- Swiper Pagination & Navigation -->
-        <div class="swiper-pagination !bottom-0"></div>
-        <button class="swiper-button-prev custom-swiper-btn !left-0" aria-label="Previous">
-          <i class="fas fa-chevron-left text-xl" aria-hidden="true"></i>
-        </button>
-        <button class="swiper-button-next custom-swiper-btn !right-0" aria-label="Next">
-          <i class="fas fa-chevron-right text-xl" aria-hidden="true"></i>
-        </button>
-      </div>
-      <div class="mt-10 flex justify-center">
-        <%= link_to healthcare_requests_path, class: "inline-flex items-center px-8 py-3 text-lg font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow" do %>
-          View All Healthcare Requests
-          <svg class="w-5 h-5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/></svg>
-        <% end %>
-      </div>
-    <% else %>
-      <div class="text-center py-12">
-        <p class="text-gray-500 mb-4">No active healthcare requests at the moment.</p>
-        <%= link_to "Create a Request", new_healthcare_request_path, class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" %>
-      </div>
-    <% end %>
   </div>
 </section>
 
