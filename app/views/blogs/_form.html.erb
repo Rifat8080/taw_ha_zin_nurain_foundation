@@ -1,42 +1,42 @@
-<%= form_with(model: blog, local: true, html: {multipart: true, class: "max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8"}) do |form| %>
-  <% if blog.errors.any? %>
-    <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-      <h3 class="font-bold">Please fix the following errors:</h3>
-      <ul class="list-disc list-inside">
-        <% blog.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-  <div class="mb-4">
-    <%= form.label :title, class: "block font-semibold mb-1" %>
-    <%= form.text_field :title, class: "w-full border rounded px-3 py-2" %>
+<%= form_with model: @blog, local: true, html: {multipart: true, class: "max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8 space-y-6"} do |f| %>
+  <div>
+    <%= f.label :title, class: "block font-semibold mb-1 text-gray-800" %>
+    <%= f.text_field :title, class: "w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen" %>
   </div>
-  <div class="mb-4">
-    <%= form.label :author, class: "block font-semibold mb-1" %>
-    <%= form.text_field :author, class: "w-full border rounded px-3 py-2" %>
+
+  <div>
+    <%= f.label :author, class: "block font-semibold mb-1 text-gray-800" %>
+    <%= f.text_field :author, class: "w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen" %>
   </div>
-  <div class="mb-4">
-    <%= form.label :body, class: "block font-semibold mb-1" %>
-    <%= form.text_area :body, rows: 8, class: "w-full border rounded px-3 py-2" %>
+
+  <div>
+    <%= f.label :body, class: "block font-semibold mb-1 text-gray-800" %>
+    <%= f.text_area :body, rows: 8, class: "w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen" %>
   </div>
-  <div class="mb-4">
-    <%= form.label :images, "Images", class: "block font-semibold mb-1" %>
-    <%= form.file_field :images, multiple: true, class: "w-full" %>
-    <% if blog.images.attached? %>
-      <div class="mt-2 flex flex-wrap gap-2">
-        <% blog.images.each do |img| %>
-          <%= image_tag img, class: "h-24 rounded" %>
+
+  <div>
+    <%= f.label :images, "Upload Images", class: "block font-semibold mb-1 text-gray-800" %>
+    <%= f.file_field :images, multiple: true, class: "w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen" %>
+  </div>
+
+  <% if @blog.images.attached? %>
+    <div class="mt-4">
+      <h3 class="font-semibold mb-2 text-gray-700">Existing Images</h3>
+      <div class="flex flex-wrap gap-4">
+        <% @blog.images.each do |img| %>
+          <div class="relative group">
+            <%= image_tag img.variant(resize_to_limit: [150, 150]), class: "rounded shadow border border-gray-200" %>
+            <label class="absolute top-1 right-1 bg-white/80 rounded px-2 py-1 text-xs font-semibold text-red-600 shadow group-hover:bg-red-100 cursor-pointer">
+              <%= check_box_tag "remove_image_ids[]", img.id, false, class: "mr-1 align-middle" %>
+              Remove
+            </label>
+          </div>
         <% end %>
       </div>
-    <% end %>
-  </div>
-  <div class="mb-4">
-    <%= form.label :published_at, class: "block font-semibold mb-1" %>
-    <%= form.datetime_select :published_at, class: "w-full" %>
-  </div>
+    </div>
+  <% end %>
+
   <div class="flex justify-end">
-    <%= form.submit class: "px-6 py-2 bg-foundationprimarygreen text-white rounded hover:bg-green-700 font-semibold" %>
+    <%= f.submit class: "px-6 py-2 bg-foundationprimarygreen text-white rounded hover:bg-green-700 font-semibold transition" %>
   </div>
 <% end %>

@@ -3,7 +3,7 @@ class BlogsController < ApplicationController
 
   layout :resolve_layout
 
-  # ✅ Actions must be public (above private)
+  # Public actions
   def index
     @blogs = Blog.published
   end
@@ -29,12 +29,24 @@ class BlogsController < ApplicationController
   end
 
   def update
-    if @blog.update(blog_params)
-      redirect_to @blog, notice: 'Blog was successfully updated.'
-    else
-      render :edit, status: :unprocessable_entity
+  # Purge selected images if user asked
+  if params[:remove_image_ids].present?
+    params[:remove_image_ids].each do |id|
+      @blog.images.find(id).purge
     end
   end
+
+  if @blog.update(blog_params.except(:images))
+    # ✅ Append new images (if any)
+    if blog_params[:images].present?
+      @blog.images.attach(blog_params[:images])
+    end
+
+    redirect_to @blog, notice: 'Blog was successfully updated.'
+  else
+    render :edit, status: :unprocessable_entity
+  end
+end
 
   def destroy
     @blog.destroy
@@ -56,6 +68,19 @@ class BlogsController < ApplicationController
   end
 
   def blog_params
-    params.require(:blog).permit(:title, :body, :author, :published_at, images: [])
+    permitted = params.require(:blog).permit(
+      :title,
+      :body,
+      :author,
+      :published_at,
+      images: [] # multiple uploads
+    )
+
+    # ✅ Clean up empty file inputs
+    if permitted[:images].is_a?(Array)
+      permitted[:images] = permitted[:images].reject(&:blank?)
+    end
+
+    permitted
   end
 end
