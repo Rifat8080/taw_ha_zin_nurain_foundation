@@ -1,5 +1,5 @@
 class BlogsController < ApplicationController
-  before_action :set_blog, only: [:show, :edit, :update, :destroy]
+  before_action :set_blog, only: [ :show, :edit, :update, :destroy ]
 
   layout :resolve_layout
 
@@ -19,7 +19,7 @@ class BlogsController < ApplicationController
     @blog = Blog.new(blog_params)
     @blog.published_at ||= Time.current
     if @blog.save
-      redirect_to @blog, notice: 'Blog was successfully created.'
+      redirect_to @blog, notice: "Blog was successfully created."
     else
       render :new, status: :unprocessable_entity
     end
@@ -42,7 +42,7 @@ class BlogsController < ApplicationController
       @blog.images.attach(blog_params[:images])
     end
 
-    redirect_to @blog, notice: 'Blog was successfully updated.'
+    redirect_to @blog, notice: "Blog was successfully updated."
   else
     render :edit, status: :unprocessable_entity
   end
@@ -50,16 +50,16 @@ end
 
   def destroy
     @blog.destroy
-    redirect_to blogs_path, notice: 'Blog was successfully deleted.'
+    redirect_to blogs_path, notice: "Blog was successfully deleted."
   end
 
   private
 
   def resolve_layout
     if %w[index show].include?(action_name)
-      'public'
+      "public"
     else
-      'authenticated'
+      "authenticated"
     end
   end
 
