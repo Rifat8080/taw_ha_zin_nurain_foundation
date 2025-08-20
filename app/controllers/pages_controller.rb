@@ -1,8 +1,13 @@
-class PagesController < ApplicationController
+ class PagesController < ApplicationController
   layout "public"
 
   def about
   end
+  
+
+   def contact
+   end
+
 
   def gallery
     # You can add/remove categories as needed. Images are loaded from app/assets/images/gallery/<category>/
@@ -42,3 +47,5 @@ class PagesController < ApplicationController
     end
   end
 end
+
+

@@ -1,4 +1,3 @@
-
 Rails.application.routes.draw do
   # Dashboard route for logged-in users
   get "dashboard", to: "home#dashboard", as: "dashboard"
@@ -78,4 +77,5 @@ Rails.application.routes.draw do
   root "home#index"
     get 'about', to: 'pages#about'
     get 'gallery', to: 'pages#gallery'
+    get 'contact', to: 'pages#contact'
 end
