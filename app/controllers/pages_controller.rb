@@ -3,7 +3,7 @@
 
   def about
   end
-  
+
 
    def contact
    end
@@ -14,19 +14,19 @@
     @gallery_categories = [
       {
         name: "Events",
-        images: Dir.glob(Rails.root.join('app/assets/images/gallery/events/*.{jpg,jpeg,png,webp,gif}')).map { |f| "gallery/events/#{File.basename(f)}" }
+        images: Dir.glob(Rails.root.join("app/assets/images/gallery/events/*.{jpg,jpeg,png,webp,gif}")).map { |f| "gallery/events/#{File.basename(f)}" }
       },
       {
         name: "Projects",
-        images: Dir.glob(Rails.root.join('app/assets/images/gallery/projects/*.{jpg,jpeg,png,webp,gif}')).map { |f| "gallery/projects/#{File.basename(f)}" }
+        images: Dir.glob(Rails.root.join("app/assets/images/gallery/projects/*.{jpg,jpeg,png,webp,gif}")).map { |f| "gallery/projects/#{File.basename(f)}" }
       },
       {
         name: "Volunteers",
-        images: Dir.glob(Rails.root.join('app/assets/images/gallery/volunteers/*.{jpg,jpeg,png,webp,gif}')).map { |f| "gallery/volunteers/#{File.basename(f)}" }
+        images: Dir.glob(Rails.root.join("app/assets/images/gallery/volunteers/*.{jpg,jpeg,png,webp,gif}")).map { |f| "gallery/volunteers/#{File.basename(f)}" }
       },
         {
         name: "Volunteers Gaza",
-        images: Dir.glob(Rails.root.join('app/assets/images/gallery/volunteers_gaza/*.{jpg,jpeg,png,webp,gif}')).map { |f| "gallery/volunteers_gaza/#{File.basename(f)}" }
+        images: Dir.glob(Rails.root.join("app/assets/images/gallery/volunteers_gaza/*.{jpg,jpeg,png,webp,gif}")).map { |f| "gallery/volunteers_gaza/#{File.basename(f)}" }
       }
     ]
     # Pagination logic: 25 images per page per category
@@ -46,6 +46,4 @@
       cat[:images] = cat[:images].slice((page_param - 1) * per_page, per_page) || []
     end
   end
-end
-
-
+ end
