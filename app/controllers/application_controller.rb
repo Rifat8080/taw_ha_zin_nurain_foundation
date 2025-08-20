@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
 
   def public_action?
     # Define which controllers/actions should use the public layout
-    public_controllers = %w[home]
+    public_controllers = %w[home pages]
     devise_controllers = controller_name.start_with?("devise/")
 
     # Allow public access to certain pages
@@ -33,6 +33,11 @@ class ApplicationController < ActionController::Base
     return true if controller_name == "healthcare_requests" && action_name.in?(%w[index show])
     return true if controller_name == "events" && action_name.in?(%w[index show])
     return true if controller_name == "projects" && action_name.in?(%w[index show])
+
+    # Allow public access to about, gallery, and contact pages
+    if controller_name == "pages" && action_name.in?(%w[about gallery contact])
+      return true
+    end
 
     false
   end

@@ -1,27 +1,25 @@
 class HealthcareRequestsController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_user!, except: [:index, :show]
   before_action :set_healthcare_request, only: [ :show, :edit, :update, :destroy, :approve, :reject, :complete ]
 
   def index
     # For regular users, only show approved requests that are visible to public
     # For admins, show all requests for management
-    if current_user.role == "admin"
+    if current_user&.role == "admin"
       @healthcare_requests = HealthcareRequest.includes(:user, :healthcare_donations)
                                             .order(created_at: :desc)
+      # Filter by status if provided (admin only)
+      if params[:status].present?
+        @healthcare_requests = @healthcare_requests.by_status(params[:status])
+      end
+      # Filter by approval status if provided (admin only)
+      if params[:approved].present?
+        @healthcare_requests = @healthcare_requests.where(approved: params[:approved] == "true")
+      end
     else
       @healthcare_requests = HealthcareRequest.visible_to_public
                                             .includes(:user, :healthcare_donations)
                                             .order(created_at: :desc)
-    end
-
-    # Filter by status if provided (admin only)
-    if params[:status].present? && current_user.role == "admin"
-      @healthcare_requests = @healthcare_requests.by_status(params[:status])
-    end
-
-    # Filter by approval status if provided (admin only)
-    if params[:approved].present? && current_user.role == "admin"
-      @healthcare_requests = @healthcare_requests.where(approved: params[:approved] == "true")
     end
   end
 

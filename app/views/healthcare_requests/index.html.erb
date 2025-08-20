@@ -12,7 +12,7 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <!-- Actions and Filters -->
   <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-    <% if current_user.role == 'admin' %>
+  <% if current_user&.role == 'admin' %>
       <div class="flex flex-wrap gap-2">
         <%= link_to "All Requests", healthcare_requests_path, 
             class: "px-4 py-2 rounded-lg #{params[:status].blank? ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
@@ -95,12 +95,12 @@
                 class: "flex-1 text-center px-3 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-green-600 hover:bg-green-700" %>
           <% end %>
           
-          <% if current_user.role == 'admin' || request.user == current_user %>
+          <% if current_user&.role == 'admin' || request.user == current_user %>
             <%= link_to "Expenses", healthcare_request_healthcare_expenses_path(request), 
                 class: "flex-1 text-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
           <% end %>
           
-          <% if current_user.role == 'admin' && request.status == 'pending' %>
+          <% if current_user&.role == 'admin' && request.status == 'pending' %>
             <div class="flex gap-1 w-full mt-2">
               <%= link_to "Approve", approve_healthcare_request_path(request), method: :patch,
                   class: "flex-1 text-center px-3 py-1 border border-transparent rounded-md text-xs font-medium text-white bg-green-600 hover:bg-green-700",
@@ -111,7 +111,7 @@
             </div>
           <% end %>
           
-          <% if current_user.role == 'admin' && request.status == 'approved' && request.approved? %>
+          <% if current_user&.role == 'admin' && request.status == 'approved' && request.approved? %>
             <div class="flex gap-1 w-full mt-2">
               <%= link_to "Mark Completed", complete_healthcare_request_path(request), method: :patch,
                   class: "w-full text-center px-3 py-1 border border-transparent rounded-md text-xs font-medium text-white bg-blue-600 hover:bg-blue-700",
