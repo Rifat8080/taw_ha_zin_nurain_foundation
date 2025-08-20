@@ -8,7 +8,7 @@ pin_all_from "app/javascript/controllers", under: "controllers"
 pin "flowbite", to: "https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.turbo.min.js"
 pin "flowbite-datepicker", to: "https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/datepicker.turbo.min.js"
 
-# Pin custom JavaScript modules with explicit mappings
+ # Pin custom JavaScript modules with explicit mappings
 pin "modules/donor_modal", to: "modules/donor_modal.js"
 pin "modules/qr_scanner", to: "modules/qr_scanner.js"
 pin "modules/ticket_utils", to: "modules/ticket_utils.js"
@@ -23,3 +23,4 @@ pin "modules/bulk_ticket_modal", to: "modules/bulk_ticket_modal.js"
 pin "modules/bulk_ticket_modal_fallback", to: "modules/bulk_ticket_modal_fallback.js"
 pin "modules/carousel", to: "modules/carousel.js"
 pin "modules/stats", to: "modules/stats.js"
+pin "modules/gallery_tabs", to: "modules/gallery_tabs.js"

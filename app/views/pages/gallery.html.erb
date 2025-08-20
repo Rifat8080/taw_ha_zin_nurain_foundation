@@ -1,0 +1,53 @@
+<% content_for :title, "Gallery | Taw Ha Zin Nurain Foundation" %>
+
+<section class="bg-white py-20 min-h-[60vh]">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="mb-10 text-center">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-foundationprimarygreen mb-4">Gallery</h1>
+      <p class="text-lg text-gray-700 max-w-2xl mx-auto">Explore our work and events through categorized photo galleries.</p>
+    </div>
+    <% if @gallery_categories.present? %>
+      <div class="mb-8 flex flex-wrap justify-center gap-4">
+        <% @gallery_categories.each_with_index do |cat, idx| %>
+          <button type="button" class="gallery-tab px-5 py-2 rounded-lg font-semibold text-foundationprimarygreen bg-forange/10 hover:bg-forange/20 border border-forange/30 transition" data-category="gallery-<%= idx %>"><%= cat[:name] %></button>
+        <% end %>
+      </div>
+      <% @gallery_categories.each_with_index do |cat, idx| %>
+        <div class="gallery-category mb-12" id="gallery-<%= idx %>" style="display: <%= idx == 0 ? 'block' : 'none' %>;">
+          <h2 class="text-2xl font-bold text-forange mb-4"><%= cat[:name] %></h2>
+          <% if cat[:images].present? %>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              <% cat[:images].each do |img| %>
+                <div class="rounded-xl overflow-hidden shadow border border-gray-100 bg-white">
+                  <%= image_tag img, class: "w-full h-48 object-cover transition hover:scale-105 duration-300", loading: "lazy" %>
+                </div>
+              <% end %>
+            </div>
+              <% if cat[:total_pages] > 1 %>
+                <div class="flex justify-center mt-8">
+                  <nav class="flex items-center space-x-1" aria-label="Pagination">
+                    <% prev_page = cat[:current_page] - 1 %>
+                    <% next_page = cat[:current_page] + 1 %>
+                    <% base_params = params.permit!.to_h.except(*@gallery_categories.each_index.map { |i| "page_#{i}" }) %>
+                    <% prev_url = url_for(base_params.merge("page_#{idx}" => prev_page, only_path: true)) if cat[:current_page] > 1 %>
+                    <% next_url = url_for(base_params.merge("page_#{idx}" => next_page, only_path: true)) if cat[:current_page] < cat[:total_pages] %>
+                    <%= link_to '«', prev_url || '#', class: "px-3 py-2 rounded-l-lg border border-gray-200 bg-white text-foundationprimarygreen hover:bg-forange/10 transition #{cat[:current_page] == 1 ? 'opacity-50 cursor-not-allowed' : ''}", aria: { disabled: cat[:current_page] == 1 }, tabindex: (cat[:current_page] == 1 ? -1 : 0) %>
+                    <% 1.upto(cat[:total_pages]) do |page| %>
+                      <% page_url = url_for(base_params.merge("page_#{idx}" => page, only_path: true)) %>
+                      <%= link_to page, page_url, class: "px-3 py-2 border-t border-b border-gray-200 #{cat[:current_page] == page ? 'bg-forange text-white font-bold' : 'bg-white text-foundationprimarygreen hover:bg-forange/10'} transition" %>
+                    <% end %>
+                    <%= link_to '»', next_url || '#', class: "px-3 py-2 rounded-r-lg border border-gray-200 bg-white text-foundationprimarygreen hover:bg-forange/10 transition #{cat[:current_page] == cat[:total_pages] ? 'opacity-50 cursor-not-allowed' : ''}", aria: { disabled: cat[:current_page] == cat[:total_pages] }, tabindex: (cat[:current_page] == cat[:total_pages] ? -1 : 0) %>
+                  </nav>
+                </div>
+            <% end %>
+          <% else %>
+            <div class="text-gray-400 italic">No images in this category yet.</div>
+          <% end %>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="text-center text-gray-400">No gallery categories found.</div>
+    <% end %>
+  </div>
+</section>
+<!-- JS moved to app/assets/javascripts/gallery_tabs.js and loaded via asset pipeline/importmap -->
