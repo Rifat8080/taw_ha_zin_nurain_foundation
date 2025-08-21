@@ -1,4 +1,4 @@
-<% content_for :title, "Welcome to Taw Ha Zin Nurain Foundation" %>
+<% content_for :title, t(".welcome_title") %>
 <div class="bg-forange py-3">
   <div class="max-w-7xl mx-auto px-4">
     <div class="flex overflow-x-auto overflow-y-visible scrollbar-hide gap-3 lg:gap-4 xl:gap-6 xl:flex-wrap xl:justify-center xl:overflow-x-visible">
@@ -60,12 +60,12 @@
             background-position: center;">
   <div class="absolute inset-0 bg-foundationprimarygreen opacity-90 z-10 pointer-events-none"></div>
   <div class="max-w-7xl mx-auto px-4 relative z-20">
-    <h2 class="text-3xl font-bold text-white text-center mb-6">Make a Quick Donation</h2>
+    <h2 class="text-3xl font-bold text-white text-center mb-6"><%= t('.quick_donation_title') %></h2>
     <%= form_with model: @donation, url: donations_path, local: true, class: "space-y-4" do |form| %>
       
       <% if @donation.errors.any? %>
         <div class="w-full bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          <h3 class="font-bold">Error! Please fix the following issues:</h3>
+          <h3 class="font-bold"><%= t('.error_intro') %></h3>
           <ul class="list-disc list-inside">
             <% @donation.errors.full_messages.each do |message| %>
               <li><%= message %></li>
@@ -79,7 +79,7 @@
         <div class="flex-1 w-full lg:w-auto">
           <div class="relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">$</span>
-            <%= form.number_field :amount, step: 0.01, placeholder: "Amount", id: "donation_amount", class: "w-full h-12 pl-8 pr-4 text-lg border-2 border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-forange" %>
+            <%= form.number_field :amount, step: 0.01, placeholder: t('.amount_placeholder'), id: "donation_amount", class: "w-full h-12 pl-8 pr-4 text-lg border-2 border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-forange" %>
           </div>
         </div>
 
@@ -94,23 +94,23 @@
 
         <!-- Project Field -->
         <div class="flex-1 w-full lg:w-auto">
-          <%= form.select :project_id, options_from_collection_for_select(@projects, :id, :name, @donation.project_id), { prompt: "Select Project" }, { class: "w-full h-12 px-4 text-lg border-2 border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-forange" } %>
+          <%= form.select :project_id, options_from_collection_for_select(@projects, :id, :name, @donation.project_id), { prompt: t('.select_project_prompt') }, { class: "w-full h-12 px-4 text-lg border-2 border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-forange" } %>
         </div>
 
         <!-- Email Field (for guests) -->
         <% unless current_user %>
           <div class="flex-1 w-full lg:w-auto">
-            <%= form.email_field :email, placeholder: "Your Email", class: "w-full h-12 px-4 text-lg border-2 border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-forange" %>
+            <%= form.email_field :email, placeholder: t('.email_placeholder'), class: "w-full h-12 px-4 text-lg border-2 border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-forange" %>
           </div>
         <% end %>
 
         <!-- Submit Button -->
         <div class="flex-shrink-0">
-          <%= form.submit "Donate Now", class: "w-full lg:w-auto h-12 px-8 text-lg font-bold text-white bg-forange rounded-md hover:bg-opacity-90 transition-colors" %>
+          <%= form.submit t('.donate_now_button'), class: "w-full lg:w-auto h-12 px-8 text-lg font-bold text-white bg-forange rounded-md hover:bg-opacity-90 transition-colors" %>
         </div>
       </div>
       <% if current_user %>
-        <p class="text-center text-white mt-2">You are donating as <%= current_user.full_name %>.</p>
+        <p class="text-center text-white mt-2"><%= t('.donating_as', user_name: current_user.full_name) %></p>
       <% end %>
     <% end %>
   </div>
@@ -150,37 +150,37 @@
   </div>
   <!-- Hero Content -->
   <div class="relative z-30 max-w-4xl mx-auto w-full flex flex-col items-center justify-center text-center pb-12 px-4">
-    <h1 class="text-white text-4xl md:text-5xl font-extrabold mb-4 drop-shadow-lg">Taw Ha Zin Nurain Foundation</h1>
-    <p class="text-white text-lg md:text-xl font-medium mb-6 max-w-2xl mx-auto drop-shadow">Taw Ha Zin Nurain Foundation is a non-political, non-profit government-registered organization dedicated to education, da'wah and total human welfare. Registration Number: S-13111/2019.</p>
+    <h1 class="text-white text-4xl md:text-5xl font-extrabold mb-4 drop-shadow-lg"><%= t('.hero_title') %></h1>
+    <p class="text-white text-lg md:text-xl font-medium mb-6 max-w-2xl mx-auto drop-shadow"><%= t('.hero_subtitle') %></p>
     <div class="flex flex-col sm:flex-row gap-4 mb-8 justify-center">
-      <a href="#" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded shadow transition">Know More</a>
-      <%= link_to "All Activities", projects_path, class: "px-6 py-3 bg-white hover:bg-gray-100 text-gray-900 font-semibold rounded shadow border border-gray-300 transition" %>
+      <%= link_to t('.know_more_button'), "#", class: "px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded shadow transition" %>
+      <%= link_to t('.all_activities_button'), projects_path, class: "px-6 py-3 bg-white hover:bg-gray-100 text-gray-900 font-semibold rounded shadow border border-gray-300 transition" %>
     </div>
     <!-- Donation Form Card -->
     <div class="w-full max-w-2xl bg-yellow-100 bg-opacity-95 rounded-xl shadow-lg px-6 py-6 mt-2 mx-auto flex flex-col items-center" style="background-image: url('https://www.transparenttextures.com/patterns/arabesque.png'); background-repeat: repeat;">
-      <h2 class="text-xl font-bold text-gray-800 mb-3">Make Your Donation</h2>
+      <h2 class="text-xl font-bold text-gray-800 mb-3"><%= t('.donation_form_title') %></h2>
       <%= form_with model: @donation, url: donations_path, local: true, class: "w-full" do |form| %>
         <div class="flex flex-col md:flex-row md:items-end gap-3 md:gap-2 justify-center">
           <div class="flex-1 min-w-[150px]">
-            <%= form.label :project_id, "Donation Fund <span class='text-red-500'>*</span>".html_safe, class: "block text-sm font-semibold text-gray-800 mb-1 text-center md:text-left" %>
-            <%= form.select :project_id, options_from_collection_for_select(@projects, :id, :name, @donation.project_id), { prompt: "Select Fund" }, { class: "w-full rounded border border-gray-300 px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-green-500" } %>
+            <%= form.label :project_id, t('.donation_fund_label').html_safe, class: "block text-sm font-semibold text-gray-800 mb-1 text-center md:text-left" %>
+            <%= form.select :project_id, options_from_collection_for_select(@projects, :id, :name, @donation.project_id), { prompt: t('.select_project_prompt') }, { class: "w-full rounded border border-gray-300 px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-green-500" } %>
           </div>
           <% unless current_user %>
             <div class="flex-1 min-w-[150px]">
-              <%= form.label :email, "Your Email <span class='text-red-500'>*</span>".html_safe, class: "block text-sm font-semibold text-gray-800 mb-1 text-center md:text-left" %>
-              <%= form.email_field :email, placeholder: "Type your email", class: "w-full rounded border border-gray-300 px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-green-500" %>
+              <%= form.label :email, t('.your_email_label').html_safe, class: "block text-sm font-semibold text-gray-800 mb-1 text-center md:text-left" %>
+              <%= form.email_field :email, placeholder: t('.email_placeholder'), class: "w-full rounded border border-gray-300 px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-green-500" %>
             </div>
           <% end %>
           <div class="flex-1 min-w-[150px]">
-            <%= form.label :amount, "Donation Amount <span class='text-red-500'>*</span>".html_safe, class: "block text-sm font-semibold text-gray-800 mb-1 text-center md:text-left" %>
-            <%= form.number_field :amount, step: 0.01, placeholder: "৳ Write in number", class: "w-full rounded border border-gray-300 px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-green-500" %>
+            <%= form.label :amount, t('.donation_amount_label').html_safe, class: "block text-sm font-semibold text-gray-800 mb-1 text-center md:text-left" %>
+            <%= form.number_field :amount, step: 0.01, placeholder: t('.amount_placeholder_bdt'), class: "w-full rounded border border-gray-300 px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-green-500" %>
           </div>
           <div class="flex-shrink-0 w-full md:w-auto flex items-end justify-center md:justify-end">
-            <%= form.submit "Donate", class: "w-full md:w-auto px-6 py-2 text-base font-bold bg-green-700 hover:bg-green-800 text-white rounded shadow transition" %>
+            <%= form.submit t('.donate_button'), class: "w-full md:w-auto px-6 py-2 text-base font-bold bg-green-700 hover:bg-green-800 text-white rounded shadow transition" %>
           </div>
         </div>
       <% end %>
-      <p class="text-sm text-gray-800 mt-2 text-center">You will receive tax relief when you donate to Taw Ha Zin Nurain Foundation. <a href="#" class="text-green-700 underline">Click here to learn more</a></p>
+      <p class="text-sm text-gray-800 mt-2 text-center"><%= t('.tax_relief_text', link: link_to(t('.click_here_link'), '#', class: "text-green-700 underline")) %></p>
     </div>
   </div>
 </div>
@@ -189,34 +189,34 @@
 
 <section class="py-20 bg-white">
   <div class="max-w-6xl mx-auto px-4">
-    <h2 class="text-4xl font-bold text-center mb-4">Together for a Better Ummah</h2>
-    <p class="text-center text-foundationprimarygreen max-w-2xl mx-auto text-lg">Faith in Action  From Education to Healthcare, for the Ummah and Beyond</p>
+    <h2 class="text-4xl font-bold text-center mb-4"><%= t('.better_ummah_title') %></h2>
+    <p class="text-center text-foundationprimarygreen max-w-2xl mx-auto text-lg"><%= t('.faith_in_action_subtitle') %></p>
     <div class="flex flex-col md:flex-row md:justify-between md:items-stretch gap-6 mt-6">
       <!-- Islamic Centers Card -->
       <div class="max-w-sm w-full p-6 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col items-center mx-auto flex-1 dark:bg-gray-800 dark:border-gray-700">
         <i class="fas fa-mosque text-green-600 text-4xl mb-3 mx-auto"></i>
         <div class="w-full text-center">
-          <h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">Islamic Centers</h5>
-          <p class="mb-3 font-normal text-gray-500 dark:text-gray-400">Providing a place for worship, community, and spiritual growth for all ages and backgrounds. Our Islamic Centers serve as a hub for religious activities, educational programs, and social gatherings, fostering unity and support within the community.</p>
-          <span class="inline-block text-green-600 text-sm font-medium">(Faith)</span>
+          <h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white"><%= t('.islamic_centers_title') %></h5>
+          <p class="mb-3 font-normal text-gray-500 dark:text-gray-400"><%= t('.islamic_centers_text') %></p>
+          <span class="inline-block text-green-600 text-sm font-medium"><%= t('.faith_tag') %></span>
         </div>
       </div>
       <!-- Madrasah Card (now Charity Projects info) -->
       <div class="max-w-sm w-full p-6 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col items-center mx-auto flex-1 dark:bg-gray-800 dark:border-gray-700">
         <i class="fas fa-hands-helping text-green-600 text-4xl mb-3 mx-auto"></i>
         <div class="w-full text-center">
-          <h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">Serving Humanity</h5>
-          <p class="mb-3 font-normal text-gray-500 dark:text-gray-400">Supporting those in need through zakat, sadaqah, and community-driven initiatives. Our charity projects address urgent needs, provide relief to the underprivileged, and create sustainable solutions for a better future.</p>
-          <span class="inline-block text-green-600 text-sm font-medium">(Alms)</span>
+          <h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white"><%= t('.serving_humanity_title') %></h5>
+          <p class="mb-3 font-normal text-gray-500 dark:text-gray-400"><%= t('.serving_humanity_text') %></p>
+          <span class="inline-block text-green-600 text-sm font-medium"><%= t('.alms_tag') %></span>
         </div>
       </div>
       <!-- Serving Humanity Card (now Madrasah info) -->
       <div class="max-w-sm w-full p-6 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col items-center mx-auto flex-1 dark:bg-gray-800 dark:border-gray-700">
         <i class="fas fa-book-open text-green-600 text-4xl mb-3 mx-auto"></i>
         <div class="w-full text-center">
-          <h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">Madrasah</h5>
-          <p class="mb-3 font-normal text-gray-500 dark:text-gray-400">Empowering the next generation with quality Islamic and academic education. Our Madrasahs offer structured learning environments, experienced teachers, and a curriculum that nurtures both faith and intellect for lifelong success.</p>
-          <span class="inline-block text-green-600 text-sm font-medium">(Education)</span>
+          <h5 class="mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white"><%= t('.madrasah_title') %></h5>
+          <p class="mb-3 font-normal text-gray-500 dark:text-gray-400"><%= t('.madrasah_text') %></p>
+          <span class="inline-block text-green-600 text-sm font-medium"><%= t('.education_tag') %></span>
         </div>
       </div>
     </div>
@@ -229,21 +229,21 @@
     <div class="flex-1">
       <div class="flex items-center mb-4">
         <i class="fas fa-quote-left text-green-700 text-5xl mr-4"></i>
-        <h3 class="text-3xl font-bold text-gray-900"> "The most beloved people to Allah are those who are most beneficial to others."</h3>
+        <h3 class="text-3xl font-bold text-gray-900"><%= t('.prophet_quote') %></h3>
 
       </div>
-                  <p class="italic text-gray-600 mb-8">— Prophet Muhammad ﷺ (Reported in Al-Mu’jam Al-Awsat)</p>
+                  <p class="italic text-gray-600 mb-8"><%= t('.prophet_name') %></p>
 
-<p class="font-bold text-2xl text-foundationprimarygreen mb-6">Principles of Taw Ha Zin Nurain Foundation</p>
+<p class="font-bold text-2xl text-foundationprimarygreen mb-6"><%= t('.principles_title') %></p>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-6 text-gray-700 text-sm">
-        <div class="flex items-center"><i class="fas fa-praying-hands text-foundationprimarygreen mr-2"></i> Faith-Centered Service</div>
-        <div class="flex items-center"><i class="fas fa-graduation-cap text-foundationprimarygreen mr-2"></i> Education for All</div>
-        <div class="flex items-center"><i class="fas fa-hands-helping text-foundationprimarygreen mr-2"></i> Compassion in Action</div>
-        <div class="flex items-center"><i class="fas fa-balance-scale text-foundationprimarygreen mr-2"></i> Integrity and Trust</div>
-        <div class="flex items-center"><i class="fas fa-people-group text-foundationprimarygreen mr-2"></i> Unity of the Ummah</div>
+        <div class="flex items-center"><i class="fas fa-praying-hands text-foundationprimarygreen mr-2"></i> <%= t('.faith_centered_service') %></div>
+        <div class="flex items-center"><i class="fas fa-graduation-cap text-foundationprimarygreen mr-2"></i> <%= t('.education_for_all') %></div>
+        <div class="flex items-center"><i class="fas fa-hands-helping text-foundationprimarygreen mr-2"></i> <%= t('.compassion_in_action') %></div>
+        <div class="flex items-center"><i class="fas fa-balance-scale text-foundationprimarygreen mr-2"></i> <%= t('.integrity_and_trust') %></div>
+        <div class="flex items-center"><i class="fas fa-people-group text-foundationprimarygreen mr-2"></i> <%= t('.unity_of_ummah') %></div>
       </div>
-      <p class="text-gray-600 mb-6">At Taw Ha Zin Nurain Foundation, we serve with sincerity, compassion, and excellence, guided by knowledge, trust, and solidarity. Our mission is to empower communities, spread Islamic values, and make a lasting positive impact.</p>
-      <button class="bg-green-700 hover:bg-green-800 text-white font-semibold px-8 py-3 rounded shadow transition mb-8">Read More</button>
+      <p class="text-gray-600 mb-6"><%= t('.mission_statement') %></p>
+      <button class="bg-green-700 hover:bg-green-800 text-white font-semibold px-8 py-3 rounded shadow transition mb-8"><%= t('.read_more_button') %></button>
     </div>
     <div class="flex-1 flex justify-center">
       <img src="<%= asset_path('kid_image.jpg') %>" alt="Kid" class="rounded-[120px] rounded-br-none shadow-2xl w-full max-w-md object-cover" style="aspect-ratio: 1/1.1;" />
@@ -255,8 +255,8 @@
 <!-- Healthcare Assistance Section (matching Donation Funds card design, no bg image) -->
 <section class="py-16 bg-white">
   <div class="max-w-7xl mx-auto px-4">
-    <h2 class="text-4xl font-bold text-center mb-4">Healthcare Assistance</h2>
-    <p class="text-center text-lg text-foundationprimarygreen mb-10">We provide healthcare assistance to those in need. Browse current requests and make a difference.</p>
+    <h2 class="text-4xl font-bold text-center mb-4"><%= t('.healthcare_assistance_title') %></h2>
+    <p class="text-center text-lg text-foundationprimarygreen mb-10"><%= t('.healthcare_assistance_subtitle') %></p>
     <% if (@healthcare_requests || []).any? %>
       <div class="swiper donationSwiper relative py-8">
         <div class="swiper-wrapper">
@@ -270,23 +270,23 @@
                   </div>
                   <div class="flex items-center justify-center text-xs text-gray-500 gap-1 mb-2">
                     <i class="fas fa-stethoscope text-foundationprimarygreen"></i>
-                    <span>Status: <%= request.status.capitalize %></span>
+                    <span><%= t('.status') %>: <%= request.status.capitalize %></span>
                   </div>
                 </div>
                 <p class="text-gray-600 text-center mb-2 line-clamp-3 min-h-[48px]"> <%= truncate(request.reason, length: 100) %></p>
                 <div class="w-full flex flex-col gap-1 mb-2">
                   <div class="flex items-center justify-center text-xs text-gray-500 gap-1">
                     <i class="fas fa-donate text-foundationprimarygreen"></i>
-                    <span>Donations: ৳<%= number_with_delimiter(request.total_donations) %></span>
+                    <span><%= t('.donations') %>: ৳<%= number_with_delimiter(request.total_donations) %></span>
                   </div>
                   <div class="flex items-center justify-center text-xs text-gray-500 gap-1">
                     <i class="fas fa-users text-foundationprimarygreen"></i>
-                    <span>Donors: <%= request.donation_count %></span>
+                    <span><%= t('.donors') %>: <%= request.donation_count %></span>
                   </div>
                 </div>
-                <%= link_to "View Details", healthcare_request_path(request), class: "w-full inline-block px-5 py-2 text-base font-semibold text-foundationprimarygreen border border-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen hover:text-white transition-colors text-center mt-2" %>
+                <%= link_to t('.view_details_button'), healthcare_request_path(request), class: "w-full inline-block px-5 py-2 text-base font-semibold text-foundationprimarygreen border border-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen hover:text-white transition-colors text-center mt-2" %>
                 <% if request.can_receive_donations? %>
-                  <%= link_to "Donate", new_healthcare_request_healthcare_donation_path(request), class: "w-full mt-2 inline-block px-5 py-2 text-base font-semibold text-white bg-foundationprimarygreen rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 transition-colors text-center" %>
+                  <%= link_to t('.donate_button_card'), new_healthcare_request_healthcare_donation_path(request), class: "w-full mt-2 inline-block px-5 py-2 text-base font-semibold text-white bg-foundationprimarygreen rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 transition-colors text-center" %>
                 <% end %>
               </div>
             </div>
@@ -303,14 +303,14 @@
       </div>
       <div class="mt-10 flex justify-center">
         <%= link_to healthcare_requests_path, class: "inline-flex items-center px-8 py-3 text-lg font-semibold rounded-lg bg-foundationprimarygreen text-white hover:bg-blue-700 transition-colors shadow" do %>
-          View All Healthcare Requests
+          <%= t('.view_all_healthcare_requests_button') %>
           <svg class="w-5 h-5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/></svg>
         <% end %>
       </div>
     <% else %>
       <div class="text-center py-12">
-        <p class="text-gray-500 mb-4">No active healthcare requests at the moment.</p>
-        <%= link_to "Create a Request", new_healthcare_request_path, class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" %>
+        <p class="text-gray-500 mb-4"><%= t('.no_healthcare_requests') %></p>
+        <%= link_to t('.create_request_button'), new_healthcare_request_path, class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" %>
       </div>
     <% end %>
   </div>
@@ -321,8 +321,8 @@
   <div class="absolute  pointer-events-none z-10"></div>
   <div class="relative z-20">
     <div class="max-w-7xl mx-auto px-4">
-      <h2 class="text-4xl font-bold text-center mb-4">Donation Funds</h2>
-      <p class="text-center text-lg text-foundationprimarygreen mb-10">Together we can uplift lives and strengthen the Ummah. Your sadaqah and zakat bring change to those in need.</p>
+      <h2 class="text-4xl font-bold text-center mb-4"><%= t('.donation_funds_title') %></h2>
+      <p class="text-center text-lg text-foundationprimarygreen mb-10"><%= t('.donation_funds_subtitle') %></p>
       <% if (@projects || []).any? %>
         <div class="swiper donationSwiper relative py-8">
           <div class="swiper-wrapper">
@@ -346,18 +346,18 @@
                     <% if project.respond_to?(:goal_amount) && project.goal_amount.present? %>
                       <div class="flex items-center justify-center text-xs text-gray-500 gap-1">
                         <i class="fas fa-bullseye text-foundationprimarygreen"></i>
-                        <span>Goal: ৳<%= number_with_delimiter(project.goal_amount) %></span>
+                        <span><%= t('.goal') %>: ৳<%= number_with_delimiter(project.goal_amount) %></span>
                       </div>
                     <% end %>
                     <% if project.respond_to?(:funds_raised) && project.funds_raised.present? %>
                       <div class="flex items-center justify-center text-xs text-gray-500 gap-1">
                         <i class="fas fa-donate text-foundationprimarygreen"></i>
-                        <span>Raised: ৳<%= number_with_delimiter(project.funds_raised) %></span>
+                        <span><%= t('.raised') %>: ৳<%= number_with_delimiter(project.funds_raised) %></span>
                       </div>
                     <% end %>
                   </div>
-                  <%= link_to "Donate", new_donation_path(project_id: project.id), class: "w-full inline-block px-5 py-2 text-base font-semibold text-white bg-foundationprimarygreen rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 transition-colors text-center mt-2" %>
-                  <%= link_to "Learn More", project_path(project), class: "w-full mt-2 inline-block px-5 py-2 text-base font-semibold text-foundationprimarygreen border border-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen hover:text-white transition-colors text-center" %>
+                  <%= link_to t('.donate_button_card'), new_donation_path(project_id: project.id), class: "w-full inline-block px-5 py-2 text-base font-semibold text-white bg-foundationprimarygreen rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 transition-colors text-center mt-2" %>
+                  <%= link_to t('.learn_more_button'), project_path(project), class: "w-full mt-2 inline-block px-5 py-2 text-base font-semibold text-foundationprimarygreen border border-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen hover:text-white transition-colors text-center" %>
                 </div>
               </div>
             <% end %>
@@ -374,13 +374,13 @@
         <!-- All Funds Button -->
         <div class="mt-10 flex justify-center">
           <%= link_to projects_path, class: "inline-flex items-center px-8 py-3 text-lg font-semibold rounded-lg bg-foundationprimarygreen text-white hover:bg-green-700 transition-colors shadow" do %>
-            All Funds
+            <%= t('.all_funds_button') %>
             <svg class="w-5 h-5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/></svg>
           <% end %>
         </div>
       <% else %>
         <div class="text-center py-12">
-          <p class="text-gray-500">No projects available at the moment.</p>
+          <p class="text-gray-500"><%= t('.no_projects') %></p>
         </div>
       <% end %>
     </div>
@@ -391,8 +391,8 @@
 <!-- Events Section (matching card design) -->
 <section class="py-16 bg-white">
   <div class="max-w-7xl mx-auto px-4">
-    <h2 class="text-4xl font-bold text-center mb-4">Upcoming Events</h2>
-    <p class="text-center text-lg text-foundationprimarygreen mb-10">Join us in our community events and make meaningful connections while supporting our causes.</p>
+    <h2 class="text-4xl font-bold text-center mb-4"><%= t('.upcoming_events_title') %></h2>
+    <p class="text-center text-lg text-foundationprimarygreen mb-10"><%= t('.upcoming_events_subtitle') %></p>
     <% if (@upcoming_events || []).any? %>
       <div class="swiper donationSwiper relative py-8">
         <div class="swiper-wrapper">
@@ -410,10 +410,10 @@
                 <div class="w-full flex flex-col gap-1 mb-2">
                   <div class="flex items-center justify-center text-xs text-gray-500 gap-1">
                     <i class="fas fa-users text-foundationprimarygreen"></i>
-                    <span>Max Attendees: <%= event.seat_number %></span>
+                    <span><%= t('.max_attendees') %>: <%= event.seat_number %></span>
                   </div>
                 </div>
-                <%= link_to "View Event", event_path(event), class: "w-full inline-block px-5 py-2 text-base font-semibold text-foundationprimarygreen border border-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen hover:text-white transition-colors text-center mt-2" %>
+                <%= link_to t('.view_event_button'), event_path(event), class: "w-full inline-block px-5 py-2 text-base font-semibold text-foundationprimarygreen border border-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen hover:text-white transition-colors text-center mt-2" %>
               </div>
             </div>
           <% end %>
@@ -429,13 +429,13 @@
       </div>
       <div class="mt-10 flex justify-center">
         <%= link_to events_path, class: "inline-flex items-center px-8 py-3 text-lg font-semibold rounded-lg bg-foundationprimarygreen text-white hover:bg-green-700 transition-colors shadow" do %>
-          View All Events
+          <%= t('.view_all_events_button') %>
           <svg class="w-5 h-5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/></svg>
         <% end %>
       </div>
     <% else %>
       <div class="text-center py-12">
-        <p class="text-gray-500">No upcoming events at the moment.</p>
+        <p class="text-gray-500"><%= t('.no_upcoming_events') %></p>
       </div>
     <% end %>
   </div>
@@ -446,8 +446,8 @@
 <section class="py-20 lg:py-28 bg-gradient-to-tr from-foundationprimarygreen/20 via-white/80 to-forange/20 relative overflow-hidden">
   <div class="absolute inset-0 pointer-events-none z-0" style="background: linear-gradient(120deg, rgba(34,197,94,0.08) 0%, rgba(255,186,59,0.07) 100%);"></div>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-    <h2 class="text-4xl font-bold text-center mb-4 ">Our Impact in Numbers</h2>
-    <p class="text-lg text-foundationprimarygreen text-center mb-8">A snapshot of our ongoing projects, healthcare assistance, events, and dedicated volunteers.</p>
+    <h2 class="text-4xl font-bold text-center mb-4 "><%= t('.impact_title') %></h2>
+    <p class="text-lg text-foundationprimarygreen text-center mb-8"><%= t('.impact_subtitle') %></p>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
       <!-- Ongoing Projects -->
   <div class="stat-card group relative text-center rounded-3xl shadow-2xl border border-foundationprimarygreen/30 p-10 bg-white/60 backdrop-blur-xl transition-transform hover:-translate-y-3 hover:shadow-[0_8px_40px_0_rgba(34,197,94,0.15)] hover:border-foundationprimarygreen/60 overflow-hidden fade-in flex flex-col">
@@ -462,14 +462,14 @@
         <!-- Glass reflection -->
         <div class="absolute left-1/2 top-8 -translate-x-1/2 w-32 h-6 bg-white/40 rounded-full blur-md opacity-40 z-20"></div>
         <div class="text-5xl font-extrabold text-foundationprimarygreen mb-2 count-up font-sans tracking-tight" data-count="<%= (@projects || []).count %>" aria-label="Ongoing Projects"><%= (@projects || []).count %></div>
-        <div class="text-foundationprimarygreen font-semibold text-lg tracking-wide">Ongoing Projects</div>
-        <div class="text-xs text-gray-500 mt-1">Making a difference</div>
+        <div class="text-foundationprimarygreen font-semibold text-lg tracking-wide"><%= t('.ongoing_projects') %></div>
+        <div class="text-xs text-gray-500 mt-1"><%= t('.making_a_difference') %></div>
         <div class="w-3/4 mx-auto mt-6 h-2 rounded-full bg-foundationprimarygreen/10 overflow-hidden">
           <div class="h-2 rounded-full bg-gradient-to-r from-foundationprimarygreen via-forange to-foundationprimarygreen animate-progress" style="width: <%= [(@projects || []).count * 7, 100].min %>%"></div>
         </div>
         <div class="flex-1"></div>
         <div class="flex justify-center mt-8 mb-2">
-          <%= link_to "View Projects", projects_path, class: "inline-block px-6 py-2 rounded-lg bg-foundationprimarygreen text-white font-semibold shadow hover:bg-green-700 transition-colors text-base" %>
+          <%= link_to t('.view_projects_button'), projects_path, class: "inline-block px-6 py-2 rounded-lg bg-foundationprimarygreen text-white font-semibold shadow hover:bg-green-700 transition-colors text-base" %>
         </div>
       </div>
       <!-- Patients Assisted -->
@@ -482,14 +482,14 @@
         </div>
         <div class="absolute left-1/2 top-8 -translate-x-1/2 w-32 h-6 bg-white/40 rounded-full blur-md opacity-40 z-20"></div>
         <div class="text-5xl font-extrabold text-forange mb-2 count-up font-sans tracking-tight" data-count="<%= (@healthcare_requests || []).count %>" aria-label="Patients Assisted"><%= (@healthcare_requests || []).count %></div>
-        <div class="text-forange font-semibold text-lg tracking-wide">Patients Assisted</div>
-        <div class="text-xs text-gray-500 mt-1">Healthcare requests</div>
+        <div class="text-forange font-semibold text-lg tracking-wide"><%= t('.patients_assisted') %></div>
+        <div class="text-xs text-gray-500 mt-1"><%= t('.healthcare_requests') %></div>
         <div class="w-3/4 mx-auto mt-6 h-2 rounded-full bg-forange/10 overflow-hidden">
           <div class="h-2 rounded-full bg-gradient-to-r from-forange via-foundationprimarygreen to-forange animate-progress" style="width: <%= [(@healthcare_requests || []).count * 7, 100].min %>%"></div>
         </div>
         <div class="flex-1"></div>
         <div class="flex justify-center mt-8 mb-2">
-          <%= link_to "Support", healthcare_requests_path, class: "inline-block px-6 py-2 rounded-lg bg-forange text-white font-semibold shadow hover:bg-yellow-500 transition-colors text-base" %>
+          <%= link_to t('.support_button'), healthcare_requests_path, class: "inline-block px-6 py-2 rounded-lg bg-forange text-white font-semibold shadow hover:bg-yellow-500 transition-colors text-base" %>
         </div>
       </div>
       <!-- Upcoming Events -->
@@ -502,14 +502,14 @@
         </div>
         <div class="absolute left-1/2 top-8 -translate-x-1/2 w-32 h-6 bg-white/40 rounded-full blur-md opacity-40 z-20"></div>
         <div class="text-5xl font-extrabold text-foundationprimarygreen mb-2 count-up font-sans tracking-tight" data-count="<%= (@upcoming_events || []).count %>" aria-label="Upcoming Events"><%= (@upcoming_events || []).count %></div>
-        <div class="text-foundationprimarygreen font-semibold text-lg tracking-wide">Upcoming Events</div>
-        <div class="text-xs text-gray-500 mt-1">Join & participate</div>
+        <div class="text-foundationprimarygreen font-semibold text-lg tracking-wide"><%= t('.upcoming_events') %></div>
+        <div class="text-xs text-gray-500 mt-1"><%= t('.join_and_participate') %></div>
         <div class="w-3/4 mx-auto mt-6 h-2 rounded-full bg-foundationprimarygreen/10 overflow-hidden">
           <div class="h-2 rounded-full bg-gradient-to-r from-foundationprimarygreen via-forange to-foundationprimarygreen animate-progress" style="width: <%= [(@upcoming_events || []).count * 7, 100].min %>%"></div>
         </div>
         <div class="flex-1"></div>
         <div class="flex justify-center mt-8 mb-2">
-          <%= link_to "View Events", events_path, class: "inline-block px-6 py-2 rounded-lg bg-foundationprimarygreen text-white font-semibold shadow hover:bg-green-700 transition-colors text-base" %>
+          <%= link_to t('.view_events_button'), events_path, class: "inline-block px-6 py-2 rounded-lg bg-foundationprimarygreen text-white font-semibold shadow hover:bg-green-700 transition-colors text-base" %>
         </div>
       </div>
       <!-- Volunteers -->
@@ -522,14 +522,14 @@
         </div>
         <div class="absolute left-1/2 top-8 -translate-x-1/2 w-32 h-6 bg-white/40 rounded-full blur-md opacity-40 z-20"></div>
         <div class="text-5xl font-extrabold text-forange mb-2 count-up font-sans tracking-tight" data-count="<%= defined?(@volunteers_count) ? @volunteers_count : '100+' %>" aria-label="Volunteers"><%= defined?(@volunteers_count) ? @volunteers_count : '100+' %></div>
-        <div class="text-forange font-semibold text-lg tracking-wide">Volunteers</div>
-        <div class="text-xs text-gray-500 mt-1">Active supporters</div>
+        <div class="text-forange font-semibold text-lg tracking-wide"><%= t('.volunteers') %></div>
+        <div class="text-xs text-gray-500 mt-1"><%= t('.active_supporters') %></div>
         <div class="w-3/4 mx-auto mt-6 h-2 rounded-full bg-forange/10 overflow-hidden">
           <div class="h-2 rounded-full bg-gradient-to-r from-forange via-foundationprimarygreen to-forange animate-progress" style="width: <%= [(defined?(@volunteers_count) ? @volunteers_count : 100) * 1, 100].min %>%"></div>
         </div>
         <div class="flex-1"></div>
         <div class="flex justify-center mt-8 mb-2">
-          <%= link_to "Join as Volunteer", new_volunteer_path, class: "inline-block px-6 py-2 rounded-lg bg-forange text-white font-semibold shadow hover:bg-yellow-500 transition-colors text-base" %>
+          <%= link_to t('.join_as_volunteer_button'), new_volunteer_path, class: "inline-block px-6 py-2 rounded-lg bg-forange text-white font-semibold shadow hover:bg-yellow-500 transition-colors text-base" %>
         </div>
       </div>
     </div>
@@ -539,8 +539,8 @@
 <!-- Our Institutions Section -->
 <section class="py-20 bg-white">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h2 class="text-4xl font-bold text-center mb-4">Our Institutions</h2>
-    <p class="text-lg text-foundationprimarygreen text-center mb-10">Proudly presenting the institutions under Taw Ha Zin Nurain Foundation.</p>
+    <h2 class="text-4xl font-bold text-center mb-4"><%= t('.our_institutions_title') %></h2>
+    <p class="text-lg text-foundationprimarygreen text-center mb-10"><%= t('.our_institutions_subtitle') %></p>
     <div class="flex flex-wrap justify-center gap-8 md:gap-12 lg:gap-16 items-center">
       <% Dir.glob(Rails.root.join('app/assets/images/institutions/*.{png,jpg,jpeg,svg,webp,gif}')).each do |logo_path| %>
         <% logo_file = File.basename(logo_path) %>
@@ -549,7 +549,7 @@
         </div>
       <% end %>
       <% if Dir.glob(Rails.root.join('app/assets/images/institutions/*.{png,jpg,jpeg,svg,webp,gif}')).empty? %>
-        <div class="text-gray-400 text-center w-full">No institution logos uploaded yet.</div>
+        <div class="text-gray-400 text-center w-full"><%= t('.no_institution_logos') %></div>
       <% end %>
     </div>
   </div>
@@ -561,8 +561,8 @@
 
 <section class="py-16 bg-white">
   <div class="max-w-7xl mx-auto px-4">
-  <h2 class="text-4xl font-bold text-center mb-2 ">Latest Blog Posts</h2>
-  <p class="text-lg text-center text-foundationprimarygreen mb-8">Insights, stories, and updates from our foundation and community.</p>
+  <h2 class="text-4xl font-bold text-center mb-2 "><%= t('.latest_blog_posts_title') %></h2>
+  <p class="text-lg text-center text-foundationprimarygreen mb-8"><%= t('.latest_blog_posts_subtitle') %></p>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
       <% Blog.published.limit(6).each do |blog| %>
         <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col overflow-hidden group transition hover:shadow-2xl">
@@ -571,18 +571,18 @@
           <% end %>
           <div class="p-5 flex flex-col flex-1">
             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white group-hover:text-foundationprimarygreen transition"> <%= blog.title %> </h5>
-            <div class="text-xs text-gray-500 mb-2">By <%= blog.author %> | <%= blog.published_at&.strftime('%b %d, %Y') %></div>
+            <div class="text-xs text-gray-500 mb-2"><%= t('.by_author', author: blog.author) %> | <%= blog.published_at&.strftime('%b %d, %Y') %></div>
             <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 line-clamp-3 flex-1"><%= truncate(blog.body, length: 120) %></p>
-            <%= link_to 'Read More', blog_path(blog), class: "inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-foundationprimarygreen rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 transition mt-auto" %>
+            <%= link_to t('.read_more_blog_button'), blog_path(blog), class: "inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-foundationprimarygreen rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 transition mt-auto" %>
           </div>
         </div>
       <% end %>
       <% if Blog.published.limit(6).empty? %>
-        <div class="col-span-full text-center text-gray-400">No blog posts yet.</div>
+        <div class="col-span-full text-center text-gray-400"><%= t('.no_blog_posts') %></div>
       <% end %>
     </div>
     <div class="mt-10 flex justify-center">
-      <%= link_to 'View All Blogs', blogs_path, class: "inline-flex items-center px-8 py-3 text-lg font-semibold rounded-lg bg-foundationprimarygreen text-white hover:bg-green-700 transition-colors shadow" %>
+      <%= link_to t('.view_all_blogs_button'), blogs_path, class: "inline-flex items-center px-8 py-3 text-lg font-semibold rounded-lg bg-foundationprimarygreen text-white hover:bg-green-700 transition-colors shadow" %>
     </div>
   </div>
 </section>

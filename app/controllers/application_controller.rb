@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  include LocaleAware
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
@@ -6,6 +7,11 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
 
   layout :determine_layout
+
+  def switch_language
+    session[:locale] = params[:locale]
+    redirect_back(fallback_location: root_path)
+  end
 
   private
 

@@ -42,12 +42,18 @@
         
         <div class="flex lg:order-2 items-center space-x-3 lg:space-x-0 rtl:space-x-reverse">
 
+          <div class="flex items-center ml-3">
+            <%= form_tag switch_language_path, method: :post, class: "inline" do %>
+              <%= select_tag :locale, options_for_select([['English', 'en'], ['বাংলা', 'bn']], I18n.locale), onchange: "this.form.submit();", class: "block w-full px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm" %>
+            <% end %>
+          </div>
+
           <%= link_to new_user_session_path, class: "hidden lg:block flex items-center justify-center rounded-lg bg-forange shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-gray-600 mr-2 border border-gray-200 px-4 py-2 text-sm h-10" do %>
             <i class="fa-solid fa-user text-sm sm:text-base lg:text-lg xl:text-xl text-white "></i>
           <% end %>
-          <%= link_to "Donate", projects_path, class: " text-sm sm:text-base lg:text-lg xl:text-xl ml-2 text-white bg-foundationprimarygreen hover:bg-foundationprimarygreen/90 focus:ring-4 focus:outline-none focus:ring-foundationprimarygreen/50 font-medium rounded-lg  px-4 py-2 text-center transition-all duration-200 ease-in-out" %>
+          <%= link_to t('.navbar.donate'), projects_path, class: " text-sm sm:text-base lg:text-lg xl:text-xl ml-2 text-white bg-foundationprimarygreen hover:bg-foundationprimarygreen/90 focus:ring-4 focus:outline-none focus:ring-foundationprimarygreen/50 font-medium rounded-lg  px-4 py-2 text-center transition-all duration-200 ease-in-out" %>
           <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
-            <span class="sr-only">Open sidebar</span>
+            <span class="sr-only"><%= t('.navbar.open_sidebar') %></span>
             <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
               <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
             </svg>
@@ -58,27 +64,27 @@
         <div class="items-center justify-between hidden w-full lg:flex lg:w-auto lg:order-1" id="navbar-sticky">
           <ul class="flex flex-col p-4 lg:p-0 mt-4 font-medium text-sm sm:text-base lg:text-lg xl:text-xl lg:flex-row lg:mt-0 lg:border-0 lg:bg-transparent lg:gap-8 dark:bg-gray-800 lg:dark:bg-transparent">
             <li>
-              <%= link_to "Home", root_path, class: nav_link_class(root_path) %>
+              <%= link_to t('.navbar.home'), root_path, class: nav_link_class(root_path) %>
             <li>
-              <%= link_to "About", about_path, class: nav_link_class(about_path) %>
+              <%= link_to t('.navbar.about'), about_path, class: nav_link_class(about_path) %>
             </li>
             <li>
-              <%= link_to "Gallery", gallery_path, class: nav_link_class(gallery_path) %>
+              <%= link_to t('.navbar.gallery'), gallery_path, class: nav_link_class(gallery_path) %>
             </li>
             <li>
-              <%= link_to "Blog", blogs_path, class: nav_link_class(blogs_path) %>
+              <%= link_to t('.navbar.blog'), blogs_path, class: nav_link_class(blogs_path) %>
             </li>
             <li>
-              <%= link_to "Projects", projects_path, class: nav_link_class(projects_path) %>
+              <%= link_to t('.navbar.projects'), projects_path, class: nav_link_class(projects_path) %>
             </li>
             <li>
-              <%= link_to "Healthcare", healthcare_requests_path, class: nav_link_class(healthcare_requests_path) %>
+              <%= link_to t('.navbar.healthcare'), healthcare_requests_path, class: nav_link_class(healthcare_requests_path) %>
             </li>
             <li>
-              <%= link_to "Events", events_path, class: nav_link_class(events_path) %>
+              <%= link_to t('.navbar.events'), events_path, class: nav_link_class(events_path) %>
             </li>
             <li>
-              <%= link_to "Contact", contact_path, class:  nav_link_class(contact_path) %>
+              <%= link_to t('.navbar.contact'), contact_path, class:  nav_link_class(contact_path) %>
             </li>
           </ul>
         </div>
@@ -95,55 +101,55 @@
           <li>
             <%= link_to root_path, class: "flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
               <i class="fa-solid fa-house w-5 h-5 text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white"></i>
-              <span class="ms-3">Home</span>
+              <span class="ms-3"><%= t('.sidebar.home') %></span>
             <% end %>
           </li>
           <li>
             <%= link_to projects_path, class: "flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
               <i class="fa-solid fa-table-cells-large w-5 h-5 text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white"></i>
-              <span class="flex-1 ms-3 whitespace-nowrap">Projects</span>
+              <span class="flex-1 ms-3 whitespace-nowrap"><%= t('.sidebar.projects') %></span>
             <% end %>
           </li>
           <li>
             <%= link_to healthcare_requests_path, class: "flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
               <i class="fa-solid fa-hand-holding-medical w-5 h-5 text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white"></i>
-              <span class="flex-1 ms-3 whitespace-nowrap">Healthcare</span>
+              <span class="flex-1 ms-3 whitespace-nowrap"><%= t('.sidebar.healthcare') %></span>
             <% end %>
           </li>
           <li>
             <%= link_to events_path, class: "flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
               <i class="fa-solid fa-calendar-days w-5 h-5 text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white"></i>
-              <span class="flex-1 ms-3 whitespace-nowrap">Events</span>
+              <span class="flex-1 ms-3 whitespace-nowrap"><%= t('.sidebar.events') %></span>
             <% end %>
           </li>
           <li>
             <%= link_to about_path, class: "flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
               <i class="fa-solid fa-circle-info w-5 h-5 text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white"></i>
-              <span class="flex-1 ms-3 whitespace-nowrap">About</span>
+              <span class="flex-1 ms-3 whitespace-nowrap"><%= t('.sidebar.about') %></span>
             <% end %>
           </li>
           <li>
             <%= link_to gallery_path, class: "flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
               <i class="fa-solid fa-image w-5 h-5 text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white"></i>
-              <span class="flex-1 ms-3 whitespace-nowrap">Gallery</span>
+              <span class="flex-1 ms-3 whitespace-nowrap"><%= t('.sidebar.gallery') %></span>
             <% end %>
           </li>
           <li>
             <%= link_to blogs_path, class: "flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
               <i class="fa-solid fa-blog w-5 h-5 text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white"></i>
-              <span class="flex-1 ms-3 whitespace-nowrap">Blog</span>
+              <span class="flex-1 ms-3 whitespace-nowrap"><%= t('.sidebar.blog') %></span>
             <% end %>
           </li>
           <li>
             <%= link_to contact_path, class: "flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
               <i class="fa-solid fa-envelope w-5 h-5 text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white"></i>
-              <span class="flex-1 ms-3 whitespace-nowrap">Contact</span>
+              <span class="flex-1 ms-3 whitespace-nowrap"><%= t('.sidebar.contact') %></span>
             <% end %>
           </li>
           <li>
             <%= link_to new_user_session_path, class: "flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
               <i class="fa-solid fa-user w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"></i>
-              <span class="flex-1 ms-3 whitespace-nowrap">Login</span>
+              <span class="flex-1 ms-3 whitespace-nowrap"><%= t('.sidebar.login') %></span>
             <% end %>
           </li>
         </ul>
@@ -228,9 +234,9 @@
                 <%= image_tag "Foundation_Logo_Side.png", class: "h-16 w-auto rounded shadow-lg bg-white p-1 border-4 border-forange" %>
               </div>
               <p class="text-white/90 mb-4 text-base max-w-md leading-relaxed">
-                <span class="text-forange font-semibold">“And whoever saves one [life] – it is as if he had saved mankind entirely.” Surah Al-Ma’idah (5:32)</span>
+                <span class="text-forange font-semibold"><%= t('.footer.quote') %></span>
                 <br class="hidden md:block"/>
-                <span class="text-white/80">Empowering lives through <span class="text-forange font-semibold">education</span>, <span class="text-forange font-semibold">healthcare</span>, and <span class="text-forange font-semibold">community development</span> with integrity and compassion.</span>
+                <span class="text-white/80"><%= t('.footer.mission') %></span>
               </p>
               <div class="flex space-x-4 mt-4">
                 <a href="#" aria-label="Facebook" class="text-white hover:text-blue-500 transition-colors">
@@ -250,37 +256,37 @@
 
             <!-- Quick Links -->
             <div class="flex-1 min-w-[180px] mb-8 md:mb-0">
-              <h3 class="text-lg font-bold mb-4 text-forange tracking-wide">Quick Links</h3>
+              <h3 class="text-lg font-bold mb-4 text-forange tracking-wide"><%= t('.footer.quick_links') %></h3>
               <ul class="space-y-2 text-base text-white/90">
-                <li><%= link_to "About Us", about_path, class: "hover:text-forange transition-colors" %></li>
-                <li><%= link_to "Our Projects", projects_path, class: "hover:text-forange transition-colors" %></li>
-                <li><%= link_to "Healthcare", healthcare_requests_path, class: "hover:text-forange transition-colors" %></li>
-                <li><%= link_to "Events", events_path, class: "hover:text-forange transition-colors" %></li>
-                <li><%= link_to "Contact", contact_path, class: "hover:text-forange transition-colors" %></li>
+                <li><%= link_to t('.footer.about_us'), about_path, class: "hover:text-forange transition-colors" %></li>
+                <li><%= link_to t('.footer.our_projects'), projects_path, class: "hover:text-forange transition-colors" %></li>
+                <li><%= link_to t('.footer.healthcare'), healthcare_requests_path, class: "hover:text-forange transition-colors" %></li>
+                <li><%= link_to t('.footer.events'), events_path, class: "hover:text-forange transition-colors" %></li>
+                <li><%= link_to t('.footer.contact'), contact_path, class: "hover:text-forange transition-colors" %></li>
               </ul>
             </div>
 
             <!-- Contact & Newsletter -->
             <div class="flex-1 min-w-[220px]">
-              <h3 class="text-lg font-bold mb-4 text-forange tracking-wide">Contact</h3>
+              <h3 class="text-lg font-bold mb-4 text-forange tracking-wide"><%= t('.footer.contact_heading') %></h3>
               <ul class="space-y-2 text-base text-white/90 mb-6">
-                <li><i class="fas fa-envelope mr-2 text-forange"></i> info@tawhazin.org</li>
-                <li><i class="fas fa-phone mr-2 text-forange"></i> +880 1234 567890</li>
-                <li><i class="fas fa-map-marker-alt mr-2 text-forange"></i> Dhaka, Bangladesh</li>
+                <li><i class="fas fa-envelope mr-2 text-forange"></i> <%= t('.footer.email') %></li>
+                <li><i class="fas fa-phone mr-2 text-forange"></i> <%= t('.footer.phone') %></li>
+                <li><i class="fas fa-map-marker-alt mr-2 text-forange"></i> <%= t('.footer.address') %></li>
               </ul>
               <form class="flex flex-col sm:flex-row gap-2" action="#" method="post" autocomplete="off">
-                <input type="email" name="newsletter_email" placeholder="Subscribe to our newsletter" class="rounded-lg px-4 py-2 w-full sm:w-auto flex-1 bg-white/80 text-foundationprimarygreen border border-forange focus:outline-none focus:ring-2 focus:ring-forange placeholder:text-foundationprimarygreen/60" required>
-                <button type="submit" class="px-5 py-2 rounded-lg bg-forange text-white font-semibold hover:bg-yellow-500 transition-colors shadow">Subscribe</button>
+                <input type="email" name="newsletter_email" placeholder="<%= t('.footer.newsletter_placeholder') %>" class="rounded-lg px-4 py-2 w-full sm:w-auto flex-1 bg-white/80 text-foundationprimarygreen border border-forange focus:outline-none focus:ring-2 focus:ring-forange placeholder:text-foundationprimarygreen/60" required>
+                <button type="submit" class="px-5 py-2 rounded-lg bg-forange text-white font-semibold hover:bg-yellow-500 transition-colors shadow"><%= t('.footer.subscribe') %></button>
               </form>
             </div>
           </div>
           <div class="border-t border-white/20 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between text-white/70 text-sm gap-4">
             <div>
-              &copy; <%= Date.current.year %> Taw Ha Zin Nurain Foundation. All rights reserved.
+              <%= t('.footer.copyright', year: Date.current.year) %>
             </div>
             <div class="flex gap-4">
-              <a href="#" class="hover:text-forange transition-colors">Privacy Policy</a>
-              <a href="#" class="hover:text-forange transition-colors">Terms of Service</a>
+              <%= link_to t('.footer.privacy_policy'), "#", class: "hover:text-forange transition-colors" %>
+              <%= link_to t('.footer.terms_of_service'), "#", class: "hover:text-forange transition-colors" %>
             </div>
           </div>
         </div>

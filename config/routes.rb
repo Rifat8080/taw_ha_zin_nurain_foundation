@@ -74,6 +74,7 @@ Rails.application.routes.draw do
     end
   end
 
+  post "switch_language", to: "application#switch_language"
   root "home#index"
     get "about", to: "pages#about"
     get "gallery", to: "pages#gallery"
