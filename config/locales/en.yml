@@ -76,3 +76,13 @@ en:
           volunteer_gaza_en: "Volunteer Gaza"
           volunteers_gaza: "Volunteer Gaza"
           volunteers_gaza_en: "Volunteer Gaza"
+      contact:
+        title: "Contact | Taw Ha Zin Nurain Foundation"
+        heading: "Contact Us"
+        intro: "We would love to hear from you. Please fill out the form below or reach us via email or phone."
+        name: "Your Name"
+        email_label: "Email Address"
+        message_label: "Your Message"
+        send_message: "Send Message"
+        phone_label: "Phone Number"
+        address_label: "Address"
