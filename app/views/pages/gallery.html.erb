@@ -1,20 +1,23 @@
-<% content_for :title, "Gallery | Taw Ha Zin Nurain Foundation" %>
+<% content_for :title, t('layouts.public.gallery.title') %>
 
 <section class="bg-white py-20 min-h-[60vh]">
   <div class="max-w-6xl mx-auto px-4">
     <div class="mb-10 text-center">
-      <h1 class="text-4xl md:text-5xl font-extrabold text-foundationprimarygreen mb-4">Gallery</h1>
-      <p class="text-lg text-gray-700 max-w-2xl mx-auto">Explore our work and events through categorized photo galleries.</p>
+  <h1 class="text-4xl md:text-5xl font-extrabold text-foundationprimarygreen mb-4"><%= t('layouts.public.gallery.heading') %></h1>
+  <p class="text-lg text-gray-700 max-w-2xl mx-auto"><%= t('layouts.public.gallery.intro') %></p>
     </div>
     <% if @gallery_categories.present? %>
       <div class="mb-8 flex flex-wrap justify-center gap-4">
+        <span class="block w-full text-center text-foundationprimarygreen font-semibold mb-2">
+          <%= t('layouts.public.gallery.categories') %>
+        </span>
         <% @gallery_categories.each_with_index do |cat, idx| %>
-          <button type="button" class="gallery-tab px-5 py-2 rounded-lg font-semibold text-foundationprimarygreen bg-forange/10 hover:bg-forange/20 border border-forange/30 transition" data-category="gallery-<%= idx %>"><%= cat[:name] %></button>
+          <button type="button" class="gallery-tab px-5 py-2 rounded-lg font-semibold text-foundationprimarygreen bg-forange/10 hover:bg-forange/20 border border-forange/30 transition" data-category="gallery-<%= idx %>"><%= t("layouts.public.gallery.category_names.#{cat[:name].parameterize(separator: '_')}", default: cat[:name]) %></button>
         <% end %>
       </div>
       <% @gallery_categories.each_with_index do |cat, idx| %>
         <div class="gallery-category mb-12" id="gallery-<%= idx %>" style="display: <%= idx == 0 ? 'block' : 'none' %>;">
-          <h2 class="text-2xl font-bold text-forange mb-4"><%= cat[:name] %></h2>
+          <h2 class="text-2xl font-bold text-forange mb-4"><%= t("layouts.public.gallery.category_names.#{cat[:name].parameterize(separator: '_')}", default: cat[:name]) %></h2>
           <% if cat[:images].present? %>
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               <% cat[:images].each do |img| %>
@@ -41,12 +44,12 @@
                 </div>
             <% end %>
           <% else %>
-            <div class="text-gray-400 italic">No images in this category yet.</div>
+            <div class="text-gray-400 italic"><%= t('layouts.public.gallery.no_images') %></div>
           <% end %>
         </div>
       <% end %>
     <% else %>
-      <div class="text-center text-gray-400">No gallery categories found.</div>
+  <div class="text-center text-gray-400"><%= t('layouts.public.gallery.no_categories') %></div>
     <% end %>
   </div>
 </section>

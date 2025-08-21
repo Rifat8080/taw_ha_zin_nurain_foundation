@@ -1,34 +1,49 @@
-<% content_for :title, "About Us | Taw Ha Zin Nurain Foundation" %>
+<% content_for :title, t('layouts.public.about.title') %>
 
 <section class="bg-white py-20 min-h-[60vh]">
   <div class="max-w-4xl mx-auto px-4">
     <div class="mb-8 text-center">
-      <h1 class="text-4xl md:text-5xl font-extrabold text-foundationprimarygreen mb-4">About Taw Ha Zin Nurain Foundation</h1>
-      <p class="text-lg text-gray-700 max-w-2xl mx-auto">Dedicated to education, da'wah, and total human welfare, we are a non-political, non-profit, government-registered organization serving the Ummah and beyond.</p>
+      <h1 class="text-4xl md:text-5xl font-extrabold text-foundationprimarygreen mb-4"><%= t('layouts.public.about.heading') %></h1>
+      <p class="text-lg text-gray-700 max-w-2xl mx-auto"><%= t('layouts.public.about.intro') %></p>
     </div>
     <div class="bg-foundationprimarygreen/10 rounded-2xl shadow-lg p-8 mb-8">
-      <h2 class="text-2xl font-bold text-foundationprimarygreen mb-3">Our Mission</h2>
-      <p class="text-gray-800 mb-4">To empower communities through faith, knowledge, and compassion. We strive to provide quality education, healthcare, and social support, guided by Islamic values and a commitment to excellence.</p>
+      <h2 class="text-2xl font-bold text-foundationprimarygreen mb-3"><%= t('layouts.public.about.mission_title') %></h2>
+      <p class="text-gray-800 mb-4"><%= t('layouts.public.about.mission_desc') %></p>
       <ul class="list-disc list-inside text-gray-700 space-y-2">
-        <li>Establishing and supporting Islamic centers and madrasahs</li>
-        <li>Providing healthcare assistance to those in need</li>
-        <li>Organizing charity projects and community events</li>
-        <li>Promoting unity, integrity, and service to humanity</li>
+        <% Array(t('layouts.public.about.mission_points')).each do |point| %>
+          <% unless point.blank? %>
+            <li><%= point %></li>
+          <% end %>
+        <% end %>
       </ul>
     </div>
     <div class="mb-8">
-      <h2 class="text-2xl font-bold text-foundationprimarygreen mb-3">Our Principles</h2>
+      <h2 class="text-2xl font-bold text-foundationprimarygreen mb-3"><%= t('layouts.public.about.principles_title') %></h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div class="flex items-center"><i class="fas fa-praying-hands text-forange mr-2"></i> Faith-Centered Service</div>
-        <div class="flex items-center"><i class="fas fa-graduation-cap text-forange mr-2"></i> Education for All</div>
-        <div class="flex items-center"><i class="fas fa-hands-helping text-forange mr-2"></i> Compassion in Action</div>
-        <div class="flex items-center"><i class="fas fa-balance-scale text-forange mr-2"></i> Integrity and Trust</div>
-        <div class="flex items-center"><i class="fas fa-people-group text-forange mr-2"></i> Unity of the Ummah</div>
+        <% Array(t('layouts.public.about.principles')).each_with_index do |principle, idx| %>
+          <% unless principle.blank? %>
+            <div class="flex items-center">
+              <%# Icon selection based on index %>
+              <% icon_class = case idx
+                when 0 then 'fa-praying-hands'
+                when 1 then 'fa-graduation-cap'
+                when 2 then 'fa-hands-helping'
+                when 3 then 'fa-balance-scale'
+                when 4 then 'fa-people-group'
+                else ''
+              end %>
+              <i class="fas <%= icon_class %> text-forange mr-2"></i> <%= principle %>
+            </div>
+          <% end %>
+        <% end %>
       </div>
     </div>
     <div class="text-center mt-10">
       <%= image_tag "Foundation_Logo_Side.png", class: "mx-auto h-20 w-auto rounded shadow-lg bg-white p-2 border-4 border-forange" %>
-      <p class="mt-4 text-gray-600">Registration Number: S-13111/2019</p>
+      <% reg = t('layouts.public.about.registration', default: '') %>
+      <% unless reg.blank? %>
+        <p class="mt-4 text-gray-600"><%= reg %></p>
+      <% end %>
     </div>
   </div>
 </section>
