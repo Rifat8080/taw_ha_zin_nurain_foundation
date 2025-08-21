@@ -80,7 +80,7 @@
           <div class="relative">
             <% currency_sign = I18n.locale.to_s == 'bn' ? '৳' : '$' %>
             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500"><%= currency_sign %></span>
-            <%= form.number_field :amount, step: 0.01, placeholder: t('.amount_placeholder'), id: "donation_amount", class: "w-full h-12 pl-8 pr-4 text-lg border-2 border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-forange", value: (I18n.locale.to_s == 'bn' && form.object.amount.present? ? number_to_bangla(form.object.amount) : form.object.amount) %>
+            <%= form.number_field :amount, step: 0.01, placeholder: "#{currency_sign} #{t('.amount_placeholder')}", id: "donation_amount", class: "w-full h-12 pl-8 pr-4 text-lg border-2 border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-forange", value: (form.object.amount.present? ? number_to_currency(form.object.amount, unit: '', format: '%n') : nil) %>
           </div>
         </div>
 
@@ -90,7 +90,8 @@
           <% quick_amounts.each do |amt| %>
             <% display_amt = I18n.locale.to_s == 'bn' ? number_to_bangla(amt) : amt %>
             <% currency_sign = I18n.locale.to_s == 'bn' ? '৳' : '$' %>
-            <button type="button" class="flex-1 h-12 px-4 text-lg font-bold text-foundationprimarygreen bg-white rounded-md hover:bg-gray-200 transition-colors" onclick="document.getElementById('donation_amount').value='<%= display_amt %>'">
+            <button type="button" class="flex-1 h-12 px-4 text-lg font-bold text-foundationprimarygreen bg-white rounded-md hover:bg-gray-200 transition-colors"
+              onclick="document.getElementById('donation_amount').value='<%= amt %>';">
               <%= currency_sign %><%= display_amt %>
             </button>
           <% end %>

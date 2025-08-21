@@ -89,3 +89,10 @@ en:
         send_message: "Send Message"
         phone_label: "Phone Number"
         address_label: "Address"
+  blog:
+    index:
+      heading: "Our Latest Insights"
+      subheading: "Stay updated with our news, stories, and impact."
+      read_more: "Read More"
+      no_posts_heading: "No blog posts found"
+      no_posts_text: "Check back later for new updates!"

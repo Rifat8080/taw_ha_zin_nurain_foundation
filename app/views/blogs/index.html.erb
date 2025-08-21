@@ -1,18 +1,64 @@
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 py-12">
-  <% (defined?(blogs) ? blogs : @blogs).each do |blog| %>
-    <div class="bg-white rounded-2xl shadow-lg flex flex-col overflow-hidden hover:shadow-2xl transition-all">
-      <% if blog.images.attached? && blog.images.any? %>
-        <%= image_tag blog.images.first, class: "w-full h-48 object-cover", alt: blog.title %>
-      <% end %>
-      <div class="p-6 flex flex-col flex-1">
-        <h3 class="text-2xl font-bold mb-2 text-foundationprimarygreen"><%= blog.title %></h3>
-        <div class="text-sm text-gray-500 mb-2">By <%= blog.author %> | <%= blog.published_at&.strftime('%b %d, %Y') %></div>
-        <p class="text-gray-700 mb-4 line-clamp-3 flex-1"><%= truncate(blog.body, length: 120) %></p>
-        <%= link_to 'Read More', blog_path(blog), data: { turbo_frame: 'blog-main' }, class: "inline-block mt-auto px-5 py-2 rounded-lg bg-foundationprimarygreen text-white font-semibold hover:bg-green-700 transition-colors text-base" %>
+<% content_for :title, t('layouts.public.navbar.blog') %>
+
+<section class="relative bg-white py-16 overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-br from-foundationprimarygreen/5 to-forange/5 opacity-75"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h1 class="text-5xl md:text-6xl font-extrabold text-foundationprimarygreen mb-4 animate-fade-in-down">
+      <%= t('blog.index.heading', default: 'Our Latest Insights') %>
+    </h1>
+    <p class="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed animate-fade-in-up">
+      <%= t('blog.index.subheading', default: 'Stay updated with our news, stories, and impact.') %>
+    </p>
+  </div>
+</section>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    <% (defined?(blogs) ? blogs : @blogs).each do |blog| %>
+      <div class="bg-white rounded-2xl shadow-lg flex flex-col overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl">
+        <% if blog.images.attached? && blog.images.any? %>
+          <%= image_tag blog.images.first, class: "w-full h-48 object-cover", alt: blog.title %>
+        <% else %>
+          <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-400 text-6xl">
+            <i class="fas fa-newspaper"></i>
+          </div>
+        <% end %>
+        <div class="p-6 flex flex-col flex-1">
+          <h3 class="text-2xl font-bold mb-2 text-foundationprimarygreen leading-tight"><%= blog.title %></h3>
+          <div class="text-sm text-gray-500 mb-4 flex items-center">
+            <i class="fas fa-user-edit mr-2"></i> <span class="mr-4"><%= blog.author %></span>
+            <i class="fas fa-calendar-alt mr-2"></i> <span><%= blog.published_at&.strftime('%b %d, %Y') %></span>
+          </div>
+          <p class="text-gray-700 mb-6 line-clamp-3 flex-1 leading-relaxed"><%= truncate(blog.body, length: 150) %></p>
+          <%= link_to t('blog.index.read_more', default: 'Read More'), blog_path(blog), data: { turbo_frame: 'blog-main' }, 
+              class: "inline-block mt-auto px-6 py-3 rounded-lg bg-forange text-white font-semibold hover:bg-forange/90 transition-colors text-base text-center shadow-md" %>
+        </div>
       </div>
+    <% end %>
+  </div>
+
+  <% if (defined?(blogs) ? blogs : @blogs).empty? %>
+    <div class="text-center py-20">
+      <div class="text-gray-400 mb-6">
+        <svg class="mx-auto h-20 w-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v10m-7-2l4-4m0 0l4-4m-4 4L9 9m7 7l-4 4m0 0l-4 4" />
+        </svg>
+      </div>
+      <h3 class="mt-2 text-2xl font-medium text-gray-900"><%= t('blog.index.no_posts_heading', default: 'No blog posts found') %></h3>
+      <p class="mt-1 text-lg text-gray-500"><%= t('blog.index.no_posts_text', default: 'Check back later for new updates!') %></p>
     </div>
   <% end %>
-  <% if (defined?(blogs) ? blogs : @blogs).empty? %>
-    <div class="col-span-full text-center text-gray-400">No blog posts yet.</div>
-  <% end %>
 </div>
+
+<style>
+  @keyframes fade-in-down {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in-down { animation: fade-in-down 1s ease-out forwards; }
+  .animate-fade-in-up { animation: fade-in-up 1s ease-out forwards; animation-delay: 0.3s; }
+</style>
