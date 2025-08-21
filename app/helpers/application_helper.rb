@@ -1,4 +1,7 @@
+require_relative "number_helper"
+
 module ApplicationHelper
+  include NumberHelper
   def nav_link_class(path)
     base_classes = "nav-link block py-2 px-3 font-medium transition-colors duration-200 lg:bg-transparent lg:p-0 lg:hover:bg-transparent"
     

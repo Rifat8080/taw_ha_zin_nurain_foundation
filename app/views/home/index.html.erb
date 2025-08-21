@@ -78,16 +78,20 @@
         <!-- Amount -->
         <div class="flex-1 w-full lg:w-auto">
           <div class="relative">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">$</span>
-            <%= form.number_field :amount, step: 0.01, placeholder: t('.amount_placeholder'), id: "donation_amount", class: "w-full h-12 pl-8 pr-4 text-lg border-2 border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-forange" %>
+            <% currency_sign = I18n.locale.to_s == 'bn' ? '৳' : '$' %>
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500"><%= currency_sign %></span>
+            <%= form.number_field :amount, step: 0.01, placeholder: t('.amount_placeholder'), id: "donation_amount", class: "w-full h-12 pl-8 pr-4 text-lg border-2 border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-forange", value: (I18n.locale.to_s == 'bn' && form.object.amount.present? ? number_to_bangla(form.object.amount) : form.object.amount) %>
           </div>
         </div>
 
         <!-- Quick Amounts -->
         <div class="flex-1 flex items-center gap-2">
-          <% [25, 50, 100, 200].each do |amt| %>
-            <button type="button" class="flex-1 h-12 px-4 text-lg font-bold text-foundationprimarygreen bg-white rounded-md hover:bg-gray-200 transition-colors" onclick="document.getElementById('donation_amount').value=<%= amt %>">
-              $<%= amt %>
+          <% quick_amounts = [25, 50, 100, 200] %>
+          <% quick_amounts.each do |amt| %>
+            <% display_amt = I18n.locale.to_s == 'bn' ? number_to_bangla(amt) : amt %>
+            <% currency_sign = I18n.locale.to_s == 'bn' ? '৳' : '$' %>
+            <button type="button" class="flex-1 h-12 px-4 text-lg font-bold text-foundationprimarygreen bg-white rounded-md hover:bg-gray-200 transition-colors" onclick="document.getElementById('donation_amount').value='<%= display_amt %>'">
+              <%= currency_sign %><%= display_amt %>
             </button>
           <% end %>
         </div>
@@ -173,7 +177,11 @@
           <% end %>
           <div class="flex-1 min-w-[150px]">
             <%= form.label :amount, t('.donation_amount_label').html_safe, class: "block text-sm font-semibold text-gray-800 mb-1 text-center md:text-left" %>
-            <%= form.number_field :amount, step: 0.01, placeholder: t('.amount_placeholder_bdt'), class: "w-full rounded border border-gray-300 px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-green-500" %>
+            <% currency_sign = I18n.locale.to_s == 'bn' ? '৳' : '$' %>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500"><%= currency_sign %></span>
+              <%= form.number_field :amount, step: 0.01, placeholder: t('.amount_placeholder'), class: "w-full pl-8 rounded border border-gray-300 px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-green-500" %>
+            </div>
           </div>
           <div class="flex-shrink-0 w-full md:w-auto flex items-end justify-center md:justify-end">
             <%= form.submit t('.donate_button'), class: "w-full md:w-auto px-6 py-2 text-base font-bold bg-green-700 hover:bg-green-800 text-white rounded shadow transition" %>

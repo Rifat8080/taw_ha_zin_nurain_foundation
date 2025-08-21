@@ -1,49 +1,97 @@
 <% content_for :title, t('layouts.public.about.title') %>
 
-<section class="bg-white py-20 min-h-[60vh]">
-  <div class="max-w-4xl mx-auto px-4">
-    <div class="mb-8 text-center">
-      <h1 class="text-4xl md:text-5xl font-extrabold text-foundationprimarygreen mb-4"><%= t('layouts.public.about.heading') %></h1>
-      <p class="text-lg text-gray-700 max-w-2xl mx-auto"><%= t('layouts.public.about.intro') %></p>
-    </div>
-    <div class="bg-foundationprimarygreen/10 rounded-2xl shadow-lg p-8 mb-8">
-      <h2 class="text-2xl font-bold text-foundationprimarygreen mb-3"><%= t('layouts.public.about.mission_title') %></h2>
-      <p class="text-gray-800 mb-4"><%= t('layouts.public.about.mission_desc') %></p>
-      <ul class="list-disc list-inside text-gray-700 space-y-2">
+<section class="relative bg-white py-20 min-h-[60vh] overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-br from-foundationprimarygreen/5 to-forange/5 opacity-75"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h1 class="text-5xl md:text-6xl font-extrabold text-foundationprimarygreen mb-6 animate-fade-in-down">
+      <%= t('layouts.public.about.heading') %>
+    </h1>
+    <p class="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed animate-fade-in-up">
+      <%= t('layouts.public.about.intro') %>
+    </p>
+  </div>
+</section>
+
+<section class="bg-gray-50 py-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12 mb-12 border border-foundationprimarygreen/20">
+      <h2 class="text-3xl font-bold text-foundationprimarygreen mb-6 flex items-center justify-center md:justify-start">
+        <i class="fas fa-bullseye text-forange mr-3 text-4xl"></i>
+        <%= t('layouts.public.about.mission_title') %>
+      </h2>
+      <p class="text-lg text-gray-800 leading-relaxed mb-6"><%= t('layouts.public.about.mission_desc') %></p>
+      <ul class="list-none space-y-3 text-gray-700 text-lg">
         <% Array(t('layouts.public.about.mission_points')).each do |point| %>
           <% unless point.blank? %>
-            <li><%= point %></li>
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-foundationprimarygreen mr-3 mt-1"></i>
+              <span><%= point %></span>
+            </li>
           <% end %>
         <% end %>
       </ul>
     </div>
-    <div class="mb-8">
-      <h2 class="text-2xl font-bold text-foundationprimarygreen mb-3"><%= t('layouts.public.about.principles_title') %></h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+    <div class="mb-12">
+      <h2 class="text-3xl font-bold text-foundationprimarygreen mb-8 text-center">
+        <%= t('layouts.public.about.principles_title') %>
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         <% Array(t('layouts.public.about.principles')).each_with_index do |principle, idx| %>
           <% unless principle.blank? %>
-            <div class="flex items-center">
-              <%# Icon selection based on index %>
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-forange/10 flex flex-col items-center text-center transform transition duration-300 hover:scale-105 hover:shadow-xl">
               <% icon_class = case idx
                 when 0 then 'fa-praying-hands'
                 when 1 then 'fa-graduation-cap'
                 when 2 then 'fa-hands-helping'
                 when 3 then 'fa-balance-scale'
                 when 4 then 'fa-people-group'
-                else ''
+                else 'fa-star'
               end %>
-              <i class="fas <%= icon_class %> text-forange mr-2"></i> <%= principle %>
+              <div class="text-forange text-5xl mb-4">
+                <i class="fas <%= icon_class %>"></i>
+              </div>
+              <p class="text-xl font-semibold text-gray-800"><%= principle %></p>
             </div>
           <% end %>
         <% end %>
       </div>
     </div>
-    <div class="text-center mt-10">
-      <%= image_tag "Foundation_Logo_Side.png", class: "mx-auto h-20 w-auto rounded shadow-lg bg-white p-2 border-4 border-forange" %>
+
+    <div class="text-center mt-16">
+      <%= image_tag "Foundation_Logo_Side.png", class: "mx-auto h-24 w-auto rounded-full shadow-2xl bg-white p-3 border-4 border-forange transform transition duration-500 hover:rotate-6" %>
       <% reg = t('layouts.public.about.registration', default: '') %>
       <% unless reg.blank? %>
-        <p class="mt-4 text-gray-600"><%= reg %></p>
+        <p class="mt-6 text-lg text-gray-600 font-medium"><%= reg %></p>
       <% end %>
     </div>
   </div>
 </section>
+
+<section class="bg-forange py-16 text-white text-center">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-4xl font-bold mb-6">
+      <%= t('layouts.public.about.call_to_action_heading', default: 'Join Our Mission') %>
+    </h2>
+    <p class="text-xl mb-8 leading-relaxed">
+      <%= t('layouts.public.about.call_to_action_text', default: 'Every contribution helps us make a significant impact in education, healthcare, and community development.') %>
+    </p>
+    <%= link_to t('layouts.public.about.call_to_action_button', default: 'Support Our Cause'), '#', 
+        class: "inline-flex items-center px-8 py-4 border border-transparent text-lg font-bold rounded-full shadow-lg 
+                bg-white text-forange hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-50 
+                transition ease-in-out duration-300 transform hover:-translate-y-1" %>
+  </div>
+</section>
+
+<style>
+  @keyframes fade-in-down {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in-down { animation: fade-in-down 1s ease-out forwards; }
+  .animate-fade-in-up { animation: fade-in-up 1s ease-out forwards; animation-delay: 0.3s; }
+</style>
