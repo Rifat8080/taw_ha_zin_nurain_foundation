@@ -1,5 +1,5 @@
 class HealthcareRequestsController < ApplicationController
-  before_action :authenticate_user!, except: [:index, :show]
+  before_action :authenticate_user!, except: [ :index, :show ]
   before_action :set_healthcare_request, only: [ :show, :edit, :update, :destroy, :approve, :reject, :complete ]
 
   def index
