@@ -1,4 +1,4 @@
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 py-12">
   <% (defined?(blogs) ? blogs : @blogs).each do |blog| %>
     <div class="bg-white rounded-2xl shadow-lg flex flex-col overflow-hidden hover:shadow-2xl transition-all">
       <% if blog.images.attached? && blog.images.any? %>
@@ -15,7 +15,4 @@
   <% if (defined?(blogs) ? blogs : @blogs).empty? %>
     <div class="col-span-full text-center text-gray-400">No blog posts yet.</div>
   <% end %>
-</div>
-<div class="mt-10 flex justify-center">
-  <%= link_to 'View All Blogs', blogs_path, data: { turbo_frame: 'blog-main' }, class: "inline-flex items-center px-8 py-3 text-lg font-semibold rounded-lg bg-foundationprimarygreen text-white hover:bg-green-700 transition-colors shadow" %>
 </div>

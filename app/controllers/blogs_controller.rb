@@ -1,5 +1,7 @@
+
 class BlogsController < ApplicationController
   before_action :set_blog, only: [ :show, :edit, :update, :destroy ]
+  skip_before_action :authenticate_user!, only: [:index, :show]
 
   layout :resolve_layout
 

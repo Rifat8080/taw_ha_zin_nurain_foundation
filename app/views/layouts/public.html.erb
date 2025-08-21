@@ -61,6 +61,8 @@
             <li>
               <%= link_to "Gallery", gallery_path, class: nav_link_class(gallery_path) %>
             </li>
+            <li>
+              <%= link_to "Blog", blogs_path, class: nav_link_class(blogs_path) %>
             </li>
             <li>
               <%= link_to "Projects", projects_path, class: nav_link_class(projects_path) %>
@@ -144,6 +146,12 @@
             <%= link_to gallery_path, class: "flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
               <i class="fa-solid fa-image w-5 h-5 text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white"></i>
               <span class="flex-1 ms-3 whitespace-nowrap">Gallery</span>
+            <% end %>
+          </li>
+          <li>
+            <%= link_to blogs_path, class: "flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
+              <i class="fa-solid fa-blog w-5 h-5 text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white"></i>
+              <span class="flex-1 ms-3 whitespace-nowrap">Blog</span>
             <% end %>
           </li>
           <li>
