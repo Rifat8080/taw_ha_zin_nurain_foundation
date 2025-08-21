@@ -43,9 +43,9 @@
         <div class="flex lg:order-2 items-center space-x-3 lg:space-x-0 rtl:space-x-reverse">
 
           <%= link_to new_user_session_path, class: "flex items-center justify-center rounded-lg bg-forange shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-gray-600 mr-2 border border-gray-200 px-4 py-2 text-sm h-10" do %>
-            <i class="fa-solid fa-user text-xl text-white"></i>
+            <i class="fa-solid fa-user text-base lg:text-lg xl:text-xl text-white"></i>
           <% end %>
-          <%= link_to "Donate", projects_path, class: "ml-2 text-white bg-foundationprimarygreen hover:bg-foundationprimarygreen/90 focus:ring-4 focus:outline-none focus:ring-foundationprimarygreen/50 font-medium rounded-lg text-sm px-4 py-2 text-center transition-all duration-200 ease-in-out" %>
+          <%= link_to "Donate", projects_path, class: "text-base lg:text-lg xl:text-xl ml-2 text-white bg-foundationprimarygreen hover:bg-foundationprimarygreen/90 focus:ring-4 focus:outline-none focus:ring-foundationprimarygreen/50 font-medium rounded-lg  px-4 py-2 text-center transition-all duration-200 ease-in-out" %>
           <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
             <span class="sr-only">Open sidebar</span>
             <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -56,7 +56,7 @@
         
         
         <div class="items-center justify-between hidden w-full lg:flex lg:w-auto lg:order-1" id="navbar-sticky">
-          <ul class="flex flex-col p-4 lg:p-0 mt-4 font-medium lg:flex-row lg:mt-0 lg:border-0 lg:bg-transparent lg:gap-8 dark:bg-gray-800 lg:dark:bg-transparent">
+          <ul class="flex flex-col p-4 lg:p-0 mt-4 font-medium text-base lg:text-lg xl:text-xl lg:flex-row lg:mt-0 lg:border-0 lg:bg-transparent lg:gap-8 dark:bg-gray-800 lg:dark:bg-transparent">
             <li>
               <%= link_to "Home", root_path, class: nav_link_class(root_path) %>
             <li>
