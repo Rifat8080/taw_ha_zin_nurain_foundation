@@ -45,6 +45,9 @@ class ApplicationController < ActionController::Base
       return true
     end
 
+    # Allow public access to switch_language action
+    return true if controller_name == "application" && action_name == "switch_language"
+
     false
   end
 

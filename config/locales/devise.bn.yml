@@ -1,0 +1,4 @@
+bn:
+  devise:
+    failure:
+      unauthenticated: "আপনাকে আগে সাইন ইন বা সাইন আপ করতে হবে।"
