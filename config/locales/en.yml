@@ -38,7 +38,7 @@ en:
         address: "Dhaka, Bangladesh"
         newsletter_placeholder: "Subscribe to our newsletter"
         subscribe: "Subscribe"
-        copyright: "© {year} Taw Ha Zin Nurain Foundation. All rights reserved."
+        copyright: "© %{year} Taw Ha Zin Nurain Foundation. All rights reserved."
         privacy_policy: "Privacy Policy"
         terms_of_service: "Terms of Service"
       about:

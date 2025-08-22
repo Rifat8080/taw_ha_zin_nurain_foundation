@@ -38,7 +38,7 @@ bn:
         address: "ঢাকা, বাংলাদেশ"
         newsletter_placeholder: "আমাদের নিউজলেটারে সাবস্ক্রাইব করুন"
         subscribe: "সাবস্ক্রাইব"
-        copyright: "© {year} তা-হা যিন নূরাঈন ফাউন্ডেশন। সর্বস্বত্ব সংরক্ষিত।"
+        copyright: "© %{year} তা-হা যিন নূরাঈন ফাউন্ডেশন। সর্বস্বত্ব সংরক্ষিত।"
         privacy_policy: "গোপনীয়তা নীতি"
         terms_of_service: "সেবার শর্তাবলী"
       about:

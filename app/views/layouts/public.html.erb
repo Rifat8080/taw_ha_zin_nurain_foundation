@@ -282,7 +282,7 @@
           </div>
           <div class="border-t border-white/20 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between text-white/70 text-sm gap-4">
             <div>
-              <%= t('.footer.copyright', year: Date.current.year) %>
+              <%= t('.footer.copyright', year: I18n.locale.to_s == 'bn' ? number_to_bangla(Date.current.year) : Date.current.year) %>
             </div>
             <div class="flex gap-4">
               <%= link_to t('.footer.privacy_policy'), "#", class: "hover:text-forange transition-colors" %>
