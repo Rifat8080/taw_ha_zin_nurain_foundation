@@ -1,7 +1,7 @@
 <% content_for :title, t(".welcome_title") %>
 <div class="bg-forange py-3">
   <div class="max-w-7xl mx-auto px-4">
-    <div class="flex overflow-x-auto overflow-y-visible scrollbar-hide gap-3 lg:gap-4 xl:gap-6 xl:flex-wrap xl:justify-center xl:overflow-x-visible">
+  <div class="flex items-end overflow-x-auto overflow-y-hidden scrollbar-hide gap-3 lg:gap-4 xl:gap-6 xl:flex-wrap xl:justify-center xl:overflow-x-visible">
 
       <% navigation_categories_with_counts.each do |category| %>
         <%= link_to category[:url],
