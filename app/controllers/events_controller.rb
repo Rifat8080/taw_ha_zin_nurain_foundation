@@ -4,11 +4,13 @@ class EventsController < ApplicationController
 
   def index
     @events = Event.includes(:event_users, :tickets)
-    @events = @events.where("name ILIKE ?", "%#{params[:search]}%") if params[:search].present?
-    @events = @events.by_category(params[:category]) if params[:category].present?
-    @events = @events.upcoming if params[:status] == "upcoming"
-    @events = @events.past if params[:status] == "past"
-    @events = @events.active if params[:status] == "active"
+    if params[:search].present?
+      @events = @events.where("name ILIKE ? OR venue ILIKE ?", "%#{params[:search]}%", "%#{params[:search]}%")
+    end
+    if params[:status].present?
+      @filter_status = params[:status]
+      @events = @events.send(@filter_status)
+    end
     @events = @events.order(:start_date).page(params[:page])
   end
 

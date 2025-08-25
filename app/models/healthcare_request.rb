@@ -14,6 +14,7 @@ class HealthcareRequest < ApplicationRecord
   scope :by_status, ->(status) { where(status: status) }
   scope :visible_to_public, -> { where(approved: true, status: "approved") }
   scope :accepting_donations, -> { where(approved: true, status: "approved") }
+  scope :search, ->(query) { where("patient_name ILIKE ? OR reason ILIKE ?", "%#{query}%", "%#{query}%") }
 
   def total_donations
     healthcare_donations.sum(:amount)

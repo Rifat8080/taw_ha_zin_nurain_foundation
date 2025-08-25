@@ -1,0 +1,55 @@
+<div class="bg-white rounded-lg shadow-md border border-gray-200 flex flex-col h-full">
+  <% if event.event_image.attached? %>
+    <div class="h-48 bg-gray-200">
+      <%= image_tag event.event_image, class: "w-full h-full object-cover" %>
+    </div>
+  <% else %>
+    <div class="h-48 bg-gray-200 flex items-center justify-center">
+      <span class="text-gray-400">No Image</span>
+    </div>
+  <% end %>
+
+  <div class="p-6 flex flex-col flex-grow">
+    <div class="flex items-center mb-2">
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+        <%= event.event_status == 'upcoming' ? 'bg-green-100 text-green-800' : 
+            event.event_status == 'active' ? 'bg-blue-100 text-blue-800' : 
+            'bg-gray-100 text-gray-800' %>">
+        <%= event.event_status.capitalize %>
+      </span>
+      <span class="ml-auto inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+        <%= event.ticket_category.capitalize %>
+      </span>
+    </div>
+
+    <h3 class="mt-2 text-lg font-medium text-gray-900">
+      <%= link_to event.name, event_path(event), class: "hover:text-blue-600" %>
+    </h3>
+
+    <p class="mt-1 text-sm text-gray-500">
+      <%= event.venue %>
+    </p>
+
+    <div class="mt-2 text-sm text-gray-600 flex-grow">
+      <p><strong>Date:</strong> <%= event.start_date.strftime("%B %d, %Y") %> 
+      <% if event.start_date != event.end_date %>
+        - <%= event.end_date.strftime("%B %d, %Y") %>
+      <% end %></p>
+      <p><strong>Time:</strong> <%= event.start_time.strftime("%I:%M %p") %> - <%= event.end_time.strftime("%I:%M %p") %></p>
+    </div>
+
+    <div class="mt-4 flex items-center justify-between">
+      <div class="text-sm text-gray-600">
+        <p><strong>Price:</strong> $<%= event.ticket_price %></p>
+        <p><strong>Available:</strong> <%= event.available_seats %> / <%= event.seat_number %></p>
+      </div>
+
+      <div class="flex space-x-2">
+        <%= link_to "View", event_path(event), 
+            class: "inline-flex items-center px-3 py-1 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+        <%= link_to "Edit", edit_event_path(event), 
+            class: "inline-flex items-center px-3 py-1 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+      </div>
+    </div>
+  </div>
+</div>

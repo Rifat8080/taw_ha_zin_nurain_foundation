@@ -1,133 +1,111 @@
-<% content_for(:title, "Healthcare Requests") %>
-
-<div class="bg-white">
-  <div class="mx-auto max-w-7xl px-6 py-24 lg:px-8">
-    <div class="mx-auto max-w-2xl text-center">
-      <h2 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">Healthcare Requests</h2>
-      <p class="mt-6 text-lg leading-8 text-gray-600">View and manage healthcare assistance requests</p>
-    </div>
-  </div>
-</div>
-
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <!-- Actions and Filters -->
-  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-  <% if current_user&.role == 'admin' %>
-      <div class="flex flex-wrap gap-2">
-        <%= link_to "All Requests", healthcare_requests_path, 
-            class: "px-4 py-2 rounded-lg #{params[:status].blank? ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
-        <%= link_to "Pending", healthcare_requests_path(status: 'pending'), 
-            class: "px-4 py-2 rounded-lg #{params[:status] == 'pending' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
-        <%= link_to "Approved", healthcare_requests_path(status: 'approved'), 
-            class: "px-4 py-2 rounded-lg #{params[:status] == 'approved' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
-        <%= link_to "Completed", healthcare_requests_path(status: 'completed'), 
-            class: "px-4 py-2 rounded-lg #{params[:status] == 'completed' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}" %>
-      </div>
-    <% else %>
-      <div class="text-sm text-gray-600">
-        Showing approved healthcare requests accepting donations
-      </div>
-    <% end %>
-    
-    <%= link_to "New Healthcare Request", new_healthcare_request_path, 
-        class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700" %>
-  </div>
-
-  <!-- Requests Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <% @healthcare_requests.each do |request| %>
-      <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-        <div class="flex justify-between items-start mb-4">
-          <h3 class="text-lg font-semibold text-gray-900"><%= request.patient_name %></h3>
-          <div class="flex flex-col items-end gap-2">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-              <%= case request.status
-                  when 'pending' then 'bg-yellow-100 text-yellow-800'
-                  when 'approved' then 'bg-green-100 text-green-800'
-                  when 'rejected' then 'bg-red-100 text-red-800'
-                  when 'completed' then 'bg-blue-100 text-blue-800'
-                  else 'bg-gray-100 text-gray-800'
-                  end %>">
-              <%= request.status.capitalize %>
-            </span>
-            <% if request.approved? %>
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                ✓ Approved
-              </span>
-            <% end %>
-          </div>
-        </div>
-        
-        <p class="text-gray-600 mb-4 line-clamp-3"><%= request.reason %></p>
-        
-        <div class="text-sm text-gray-500 mb-4">
-          <p>Requested by: <%= request.user.full_name %></p>
-          <p>Date: <%= request.created_at.strftime("%B %d, %Y") %></p>
-        </div>
-        
-        <div class="bg-gray-50 rounded-lg p-3 mb-4">
-          <div class="flex justify-between text-sm">
-            <span class="text-gray-600">Total Donations:</span>
-            <span class="font-semibold text-green-600">৳<%= number_with_delimiter(request.total_donations) %></span>
-          </div>
-          <div class="flex justify-between text-sm">
-            <span class="text-gray-600">Total Expenses:</span>
-            <span class="font-semibold text-red-600">৳<%= number_with_delimiter(request.total_expenses) %></span>
-          </div>
-          <div class="flex justify-between text-sm border-t pt-2 mt-2">
-            <span class="text-gray-900 font-medium">Balance:</span>
-            <span class="font-semibold <%= request.balance >= 0 ? 'text-blue-600' : 'text-orange-600' %>">
-              <%= request.formatted_balance %>
-            </span>
-          </div>
-          <div class="flex justify-between text-sm">
-            <span class="text-gray-600">Donors:</span>
-            <span class="font-semibold"><%= request.donation_count %></span>
-          </div>
-        </div>
-        
-        <div class="flex flex-wrap gap-2">
-          <%= link_to "View Details", healthcare_request_path(request), 
-              class: "flex-1 text-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
-          
-          <% if request.can_receive_donations? %>
-            <%= link_to "Donate", new_healthcare_request_healthcare_donation_path(request), 
-                class: "flex-1 text-center px-3 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-green-600 hover:bg-green-700" %>
-          <% end %>
-          
-          <% if current_user&.role == 'admin' || request.user == current_user %>
-            <%= link_to "Expenses", healthcare_request_healthcare_expenses_path(request), 
-                class: "flex-1 text-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
-          <% end %>
-          
-          <% if current_user&.role == 'admin' && request.status == 'pending' %>
-            <div class="flex gap-1 w-full mt-2">
-              <%= link_to "Approve", approve_healthcare_request_path(request), method: :patch,
-                  class: "flex-1 text-center px-3 py-1 border border-transparent rounded-md text-xs font-medium text-white bg-green-600 hover:bg-green-700",
-                  data: { confirm: "Are you sure you want to approve this request?" } %>
-              <%= link_to "Reject", reject_healthcare_request_path(request), method: :patch,
-                  class: "flex-1 text-center px-3 py-1 border border-transparent rounded-md text-xs font-medium text-white bg-red-600 hover:bg-red-700",
-                  data: { confirm: "Are you sure you want to reject this request?" } %>
-            </div>
-          <% end %>
-          
-          <% if current_user&.role == 'admin' && request.status == 'approved' && request.approved? %>
-            <div class="flex gap-1 w-full mt-2">
-              <%= link_to "Mark Completed", complete_healthcare_request_path(request), method: :patch,
-                  class: "w-full text-center px-3 py-1 border border-transparent rounded-md text-xs font-medium text-white bg-blue-600 hover:bg-blue-700",
-                  data: { confirm: "Are you sure you want to mark this request as completed?" } %>
-            </div>
-          <% end %>
-        </div>
-      </div>
-    <% end %>
-  </div>
-  
-  <% if @healthcare_requests.empty? %>
-    <div class="text-center py-12">
-      <div class="text-gray-500 text-lg">No healthcare requests found.</div>
-      <%= link_to "Create the first request", new_healthcare_request_path, 
-          class: "mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700" %>
+<% content_for :title, "Healthcare Requests" %>
+<div class="container mx-auto px-4 py-8">
+  <!-- Success Notice -->
+  <% if notice.present? %>
+    <div class="mb-6 p-4 bg-forange/10 border-l-4 border-forange rounded-r-lg shadow-sm flex items-center" id="notice">
+      <svg class="h-5 w-5 text-forange mr-2" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+      </svg>
+      <span class="text-forange font-medium"><%= notice %></span>
     </div>
   <% end %>
+
+  <!-- Header Section -->
+  <div class="flex flex-col md:flex-row justify-between items-center text-center mb-8 gap-4">
+    <div class="w-full">
+      <h1 class="text-4xl md:text-5xl font-bold text-foundationprimarygreen tracking-tight text-center">
+        <% if @filter_status %>
+          <span class="text-forange"><%= @filter_status.capitalize %></span> Requests
+        <% else %>
+          Healthcare <span class="text-forange">Requests</span>
+        <% end %>
+      </h1>
+      <p class="mt-2 text-lg text-gray-700 text-center">
+        <% if @filter_status %>
+          Healthcare requests with <span class="text-forange"><%= @filter_status.downcase %></span> status
+        <% else %>
+          Providing access to essential <span class="text-forange">healthcare services</span>
+        <% end %>
+      </p>
+      <% if @filter_status %>
+        <div class="mt-3 flex items-center justify-center space-x-2">
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-forange/10 text-forange border border-forange">
+            <%= @filter_status.capitalize %>
+          </span>
+          <%= link_to healthcare_requests_path, class: "inline-flex items-center px-2 py-1 text-sm text-gray-600 hover:text-forange transition-colors" do %>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+            Clear filter
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    <% if current_user&.role == "admin" %>
+      <div class="flex gap-3 w-full md:w-auto">
+        <%= link_to new_healthcare_request_path, class: "w-full md:w-auto inline-flex items-center px-6 py-3 bg-foundationprimarygreen hover:bg-forange text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200" do %>
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+          New Request
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Search and Filter Section -->
+  <div class="mb-8 bg-white rounded-lg shadow border border-foundationprimarygreen/20 p-6">
+    <%= form_with url: healthcare_requests_path, method: :get, local: true, class: "flex flex-col md:flex-row gap-4" do |form| %>
+      <div class="flex-1">
+        <%= form.text_field :search, placeholder: "Search by patient name, reason...",
+            value: params[:search],
+            class: "w-full px-4 py-3 border border-foundationprimarygreen/30 rounded-lg focus:ring-2 focus:ring-forange focus:border-forange text-gray-900 placeholder-gray-500" %>
+      </div>
+      <div class="flex gap-2">
+        <%= form.submit "Search", class: "px-6 py-3 bg-forange hover:bg-foundationprimarygreen text-white font-semibold rounded-lg transition-all duration-200 transform will-change-transform hover:scale-105 hover:shadow-xl" %>
+        <% if params[:search].present? || @filter_status %>
+          <%= link_to "Clear", healthcare_requests_path, class: "px-6 py-3 bg-gray-200 hover:bg-forange text-gray-700 font-semibold rounded-lg transition-colors" %>
+        <% end %>
+      </div>
+      <% if @filter_status %>
+        <%= form.hidden_field "status", value: @filter_status %>
+      <% end %>
+    <% end %>
+    <div class="mt-4 flex flex-wrap gap-2">
+      <span class="text-sm font-medium text-gray-600 mr-2">Filter by status:</span>
+      <% %w[pending approved completed rejected].each do |status| %>
+        <%= link_to healthcare_requests_path(status: status), 
+            class: "inline-flex items-center px-3 py-1 rounded-full text-sm #{ @filter_status == status ? 'bg-forange/10 text-forange border border-forange' : 'bg-gray-100 text-gray-700 hover:bg-forange/10 hover:text-forange border border-transparent'} transition-colors" do %>
+          <%= status.capitalize %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Healthcare Requests Grid -->
+  <div id="healthcare_requests" class="relative z-10">
+    <% if @healthcare_requests.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @healthcare_requests.each do |healthcare_request| %>
+          <%= render 'healthcare_request_card', healthcare_request: healthcare_request %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-16">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2zm4-9h.01M15 6h.01M6 9h.01M6 15h.01M18 9h.01M18 15h.01" />
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No healthcare requests</h3>
+        <p class="mt-1 text-sm text-gray-500">Get started by creating a new healthcare request.</p>
+        <div class="mt-6">
+          <%= link_to new_healthcare_request_path, class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-foundationprimarygreen hover:bg-forange focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-forange" do %>
+            <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+            </svg>
+            New Healthcare Request
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
 </div>

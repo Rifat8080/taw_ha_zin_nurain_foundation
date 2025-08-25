@@ -6,20 +6,16 @@ class HealthcareRequestsController < ApplicationController
     # For regular users, only show approved requests that are visible to public
     # For admins, show all requests for management
     if current_user&.role == "admin"
-      @healthcare_requests = HealthcareRequest.includes(:user, :healthcare_donations)
-                                            .order(created_at: :desc)
-      # Filter by status if provided (admin only)
+      @healthcare_requests = HealthcareRequest.includes(:user, :healthcare_donations).order(created_at: :desc)
       if params[:status].present?
-        @healthcare_requests = @healthcare_requests.by_status(params[:status])
+        @filter_status = params[:status]
+        @healthcare_requests = @healthcare_requests.by_status(@filter_status)
       end
-      # Filter by approval status if provided (admin only)
-      if params[:approved].present?
-        @healthcare_requests = @healthcare_requests.where(approved: params[:approved] == "true")
+      if params[:search].present?
+        @healthcare_requests = @healthcare_requests.search(params[:search])
       end
     else
-      @healthcare_requests = HealthcareRequest.visible_to_public
-                                            .includes(:user, :healthcare_donations)
-                                            .order(created_at: :desc)
+      @healthcare_requests = HealthcareRequest.visible_to_public.includes(:user, :healthcare_donations).order(created_at: :desc)
     end
   end
 
