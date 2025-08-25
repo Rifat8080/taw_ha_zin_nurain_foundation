@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_13_095215) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_25_090604) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -18,11 +18,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_13_095215) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
-    t.bigint "record_id", null: false
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
+    t.uuid "record_id"
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
-    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
   create_table "active_storage_blobs", force: :cascade do |t|
@@ -53,7 +52,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_13_095215) do
     t.index ["category"], name: "index_assets_on_category"
     t.index ["zakat_calculation_id"], name: "index_assets_on_zakat_calculation_id"
     t.check_constraint "amount >= 0::numeric", name: "check_amount_positive"
-    t.check_constraint "category::text = ANY (ARRAY['cash'::character varying::text, 'bank'::character varying::text, 'gold'::character varying::text, 'silver'::character varying::text, 'business_inventory'::character varying::text, 'receivables'::character varying::text, 'livestock'::character varying::text, 'agriculture'::character varying::text, 'investments'::character varying::text, 'property_rent'::character varying::text])", name: "check_category"
+    t.check_constraint "category::text = ANY (ARRAY['cash'::character varying, 'bank'::character varying, 'gold'::character varying, 'silver'::character varying, 'business_inventory'::character varying, 'receivables'::character varying, 'livestock'::character varying, 'agriculture'::character varying, 'investments'::character varying, 'property_rent'::character varying]::text[])", name: "check_category"
   end
 
   create_table "blogs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -63,6 +62,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_13_095215) do
     t.datetime "published_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "donation_cart_items", force: :cascade do |t|
+    t.uuid "donation_cart_id", null: false
+    t.uuid "project_id", null: false
+    t.integer "amount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["donation_cart_id"], name: "index_donation_cart_items_on_donation_cart_id"
+    t.index ["project_id"], name: "index_donation_cart_items_on_project_id"
+  end
+
+  create_table "donation_carts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_donation_carts_on_user_id"
   end
 
   create_table "donations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -104,6 +120,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_13_095215) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "ticket_types_config", default: []
+    t.text "description"
     t.index ["start_date"], name: "index_events_on_start_date"
     t.index ["ticket_category"], name: "index_events_on_ticket_category"
     t.index ["ticket_types_config"], name: "index_events_on_ticket_types_config", using: :gin
@@ -219,7 +236,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_13_095215) do
     t.boolean "project_status_active"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "icon"
   end
 
   create_table "team_assignments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -314,6 +330,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_13_095215) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "assets", "zakat_calculations"
+  add_foreign_key "donation_cart_items", "donation_carts"
+  add_foreign_key "donation_cart_items", "projects"
+  add_foreign_key "donation_carts", "users"
   add_foreign_key "donations", "projects"
   add_foreign_key "donations", "users"
   add_foreign_key "event_users", "events"

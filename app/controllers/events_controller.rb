@@ -37,28 +37,34 @@ class EventsController < ApplicationController
   def edit
     @event.guests.build if @event.guests.empty?
   end
+def update
+  # Handle image replacement / prevention of nil overwrite
+  if params[:event][:event_image].present?
+    @event.event_image.purge if @event.event_image.attached?
+  else
+    params[:event].delete(:event_image)
+  end
 
-  def update
-    if @event.update(event_params)
-      redirect_to @event, notice: "Event was successfully updated."
-    else
-      # Collect all guest errors for better display
-      guest_errors = []
-      @event.guests.each_with_index do |guest, index|
-        if guest.errors.any?
-          guest.errors.full_messages.each do |error|
-            guest_errors << "Guest #{index + 1}: #{error}"
-          end
+  if @event.update(event_params)
+    redirect_to @event, notice: "Event was successfully updated."
+  else
+    # Collect all guest errors for better display
+    guest_errors = []
+    @event.guests.each_with_index do |guest, index|
+      if guest.errors.any?
+        guest.errors.full_messages.each do |error|
+          guest_errors << "Guest #{index + 1}: #{error}"
         end
       end
-
-      if guest_errors.any?
-        flash.now[:error] = "Please fix the following issues:<br>#{guest_errors.join('<br>')}"
-      end
-
-      render :edit, status: :unprocessable_entity
     end
+
+    if guest_errors.any?
+      flash.now[:error] = "Please fix the following issues:<br>#{guest_errors.join('<br>')}".html_safe
+    end
+
+    render :edit, status: :unprocessable_entity
   end
+end
 
   def destroy
     @event.destroy
@@ -79,7 +85,7 @@ class EventsController < ApplicationController
   def event_params
     params.require(:event).permit(:name, :start_date, :end_date, :start_time, :end_time,
                                   :seat_number, :venue, :guest_list, :guest_description,
-                                  :ticket_price, :ticket_category, :event_image,
+                                  :ticket_price, :ticket_category, :event_image,:description,
                                   guests_attributes: [ :id, :name, :title, :description, :image, :_destroy ],
                                   ticket_types: [ :name, :category, :price, :seats_available, :description ])
   end

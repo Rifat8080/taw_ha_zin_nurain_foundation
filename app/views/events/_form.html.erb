@@ -219,7 +219,11 @@
         <%= form.file_field :event_image, accept: "image/*", class: "mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" %>
         <% if event.event_image.attached? %>
           <div class="mt-2">
-            <p class="text-sm text-gray-500">Current image: <%= event.event_image.filename %></p>
+<% if event.event_image.attached? %>
+  <div class="mt-2">
+    <%= image_tag event.event_image.variant(resize_to_limit: [300, 200]) %>
+  </div>
+<% end %>
           </div>
         <% end %>
       </div>
