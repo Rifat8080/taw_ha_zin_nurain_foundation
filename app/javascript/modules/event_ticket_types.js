@@ -6,20 +6,14 @@ class EventTicketTypes {
   }
 
   init() {
-    if (this.initialized) {
-      return;
-    }
-
-    console.log('Initializing event ticket types...');
+  if (this.initialized) return;
     this.attachEventListeners();
     // Attach direct listeners to any existing rendered ticket remove buttons
     const existingTickets = Array.from(document.querySelectorAll('.ticket-type-fields'));
-    console.debug('[EventTicketTypes] existing ticket blocks found:', existingTickets.length);
     existingTickets.forEach((t) => {
       const removeBtn = t.querySelector('[data-remove-ticket], .remove-ticket-type');
       if (removeBtn) {
         removeBtn.addEventListener('click', (e) => {
-          console.debug('[EventTicketTypes] direct remove click (existing ticket)');
           e.preventDefault();
           e.stopPropagation();
           this.removeTicketType(t);
@@ -52,11 +46,9 @@ class EventTicketTypes {
       document.addEventListener('click', (e) => {
         const removeBtn = e.target.closest('[data-remove-ticket], .remove-ticket-type');
         if (removeBtn) {
-          console.debug('[EventTicketTypes] delegated remove click', removeBtn);
           e.preventDefault();
           e.stopPropagation();
           const ticketTypeField = removeBtn.closest('.ticket-type-fields');
-          console.debug('[EventTicketTypes] ticketTypeField resolved:', ticketTypeField);
           this.removeTicketType(ticketTypeField);
         }
       });
@@ -70,7 +62,7 @@ class EventTicketTypes {
   }
 
   addTicketType() {
-    console.log('Adding ticket type...');
+  // adding ticket type
     const container = document.getElementById('ticket-types-container');
     if (!container) {
       console.error('Container not found');
@@ -132,7 +124,6 @@ class EventTicketTypes {
       const removeBtn = newBlock.querySelector('[data-remove-ticket], .remove-ticket-type');
       if (removeBtn) {
         removeBtn.addEventListener('click', (e) => {
-          console.debug('[EventTicketTypes] direct remove click (new ticket)');
           e.preventDefault();
           e.stopPropagation();
           const ticketTypeField = removeBtn.closest('.ticket-type-fields');

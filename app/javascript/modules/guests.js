@@ -7,33 +7,26 @@ class EventGuests {
 
   init() {
     if (this.initialized) {
-      console.log('Event guests already initialized, skipping...');
       return;
     }
 
-    console.log('Initializing event guests...');
+    // initialization
     this.attachEventListeners();
     // Attach direct listeners to any existing rendered guest remove buttons
     const existingGuests = Array.from(document.querySelectorAll('.guest-form-item'));
-    console.debug('[EventGuests] existing guest blocks found:', existingGuests.length);
     existingGuests.forEach((g) => {
       const removeBtn = g.querySelector('[data-remove-guest], .remove-guest-btn, .remove-guest');
       if (removeBtn) {
         removeBtn.addEventListener('click', (e) => {
-          console.debug('[EventGuests] direct remove click (existing guest)');
           e.preventDefault();
           e.stopPropagation();
           this.removeGuest(g);
         });
       }
     });
-    // Log presence of guest-image inputs on page
-    const imageInputs = document.querySelectorAll('.guest-image-input');
-    console.debug('[EventGuests] guest-image-input count:', imageInputs.length);
     // ensure numbering is correct initially
     this.updateGuestNumbers();
     this.initialized = true;
-    console.log('Event guests initialized successfully');
   }
 
   attachEventListeners() {
@@ -46,7 +39,6 @@ class EventGuests {
         e.stopPropagation();
         this.addGuest();
       });
-      console.log('Add guest event listener attached');
     }
 
     // Event delegation for remove guest buttons
@@ -70,7 +62,7 @@ class EventGuests {
   }
 
   addGuest() {
-    console.log('Adding guest...');
+  // adding guest
     const container = document.getElementById('guests-container');
     if (!container) {
       console.error('Guest container not found');
@@ -133,7 +125,7 @@ class EventGuests {
       }
     }
 
-    console.log('Guest added successfully');
+  // guest added
   }
 
   removeGuest(guestField) {
@@ -159,8 +151,8 @@ class EventGuests {
       guestField.remove();
     }
 
-    this.updateGuestNumbers();
-    console.log('Guest removed');
+  this.updateGuestNumbers();
+  // guest removed
     
   }
 
@@ -189,7 +181,7 @@ class EventGuests {
       addGuestButton.removeAttribute('data-listener-added');
     }
     
-    console.log('Event guests reset for navigation');
+  // event guests reset for navigation
   }
 }
 
@@ -220,7 +212,7 @@ document.addEventListener('turbo:before-visit', resetEventGuests);
 // Fallback initialization
 setTimeout(() => {
   if (!window.eventGuests && document.getElementById('guests-container')) {
-    console.log('Fallback guests initialization triggered');
+  // fallback guests initialization triggered
     initializeEventGuests();
   }
 }, 100);
