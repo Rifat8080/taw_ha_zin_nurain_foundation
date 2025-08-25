@@ -2,7 +2,7 @@ class Ticket < ApplicationRecord
   # Associations
   belongs_to :event
   belongs_to :user
-  belongs_to :registered_by, class_name: 'User', optional: true
+  belongs_to :registered_by, class_name: "User", optional: true
 
   # Validations
   validates :qr_code, presence: true, uniqueness: true
@@ -148,13 +148,13 @@ class Ticket < ApplicationRecord
 
   def set_price_from_event
     return if price.present? || event.nil? || ticket_type.blank?
-    
+
     # Try to get price from ticket type configuration first
     if event.ticket_types.any?
       ticket_type_config = event.get_ticket_type(ticket_type)
-      self.price = ticket_type_config&.dig('price') || event.ticket_price
+      self.price = ticket_type_config&.dig("price") || event.ticket_price
   # Inherit meals_allowed from ticket type config if present, otherwise default to 1
-  self.meals_allowed = (ticket_type_config&.dig('meals_allowed') || 1).to_i
+  self.meals_allowed = (ticket_type_config&.dig("meals_allowed") || 1).to_i
     else
       # Fallback to legacy pricing
       self.price = event.ticket_price
@@ -164,7 +164,7 @@ class Ticket < ApplicationRecord
 
   def ticket_type_availability
     return unless event && ticket_type
-    
+
     unless event.ticket_type_available?(ticket_type)
       errors.add(:ticket_type, "is sold out or not available")
     end

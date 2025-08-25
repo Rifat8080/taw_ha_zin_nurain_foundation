@@ -6,7 +6,7 @@ class SetDefaultMealsAllowedOnTickets < ActiveRecord::Migration[8.0]
     # Backfill existing records where meals_allowed is 0 or NULL
     say_with_time "Backfilling meals_allowed for existing tickets" do
       Ticket.reset_column_information
-      Ticket.where(meals_allowed: [nil, 0]).update_all(meals_allowed: 1)
+      Ticket.where(meals_allowed: [ nil, 0 ]).update_all(meals_allowed: 1)
     end
   end
 
