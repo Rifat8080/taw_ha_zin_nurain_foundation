@@ -12,6 +12,21 @@ class EventTicketTypes {
 
     console.log('Initializing event ticket types...');
     this.attachEventListeners();
+    // Attach direct listeners to any existing rendered ticket remove buttons
+    const existingTickets = Array.from(document.querySelectorAll('.ticket-type-fields'));
+    console.debug('[EventTicketTypes] existing ticket blocks found:', existingTickets.length);
+    existingTickets.forEach((t) => {
+      const removeBtn = t.querySelector('[data-remove-ticket], .remove-ticket-type');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', (e) => {
+          console.debug('[EventTicketTypes] direct remove click (existing ticket)');
+          e.preventDefault();
+          e.stopPropagation();
+          this.removeTicketType(t);
+          this.updateRemoveButtons();
+        });
+      }
+    });
     this.updateTotalSeats();
     this.updateRemoveButtons();
     this.initialized = true;
@@ -30,19 +45,23 @@ class EventTicketTypes {
     }
 
     // Event delegation for remove buttons and seats inputs
-    if (!document.hasAttribute('data-ticket-delegation-added')) {
-      document.setAttribute('data-ticket-delegation-added', 'true');
+    if (!document.documentElement.hasAttribute('data-ticket-delegation-added')) {
+      document.documentElement.setAttribute('data-ticket-delegation-added', 'true');
       
+      // Listen for clicks on elements that either have the data attribute or the class
       document.addEventListener('click', (e) => {
-        if (e.target.closest('[data-remove-ticket]')) {
+        const removeBtn = e.target.closest('[data-remove-ticket], .remove-ticket-type');
+        if (removeBtn) {
+          console.debug('[EventTicketTypes] delegated remove click', removeBtn);
           e.preventDefault();
           e.stopPropagation();
-          const ticketTypeField = e.target.closest('.ticket-type-fields');
+          const ticketTypeField = removeBtn.closest('.ticket-type-fields');
+          console.debug('[EventTicketTypes] ticketTypeField resolved:', ticketTypeField);
           this.removeTicketType(ticketTypeField);
         }
       });
       
-      document.addEventListener('input', (e) => {
+    document.addEventListener('input', (e) => {
         if (e.target.matches('[data-seats-input]')) {
           this.updateTotalSeats();
         }
@@ -102,9 +121,26 @@ class EventTicketTypes {
       </div>
     `;
 
-    const div = document.createElement('div');
-    div.innerHTML = html;
-    container.appendChild(div.firstElementChild);
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  // Insert the ticket block directly (first child of generated wrapper)
+  const newBlock = div.firstElementChild;
+    if (newBlock) {
+      container.appendChild(newBlock);
+
+      // Attach direct listener to the remove button on the new block
+      const removeBtn = newBlock.querySelector('[data-remove-ticket], .remove-ticket-type');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', (e) => {
+          console.debug('[EventTicketTypes] direct remove click (new ticket)');
+          e.preventDefault();
+          e.stopPropagation();
+          const ticketTypeField = removeBtn.closest('.ticket-type-fields');
+          this.removeTicketType(ticketTypeField);
+          this.updateRemoveButtons();
+        });
+      }
+    }
 
     this.updateTotalSeats();
     this.updateRemoveButtons();
@@ -117,12 +153,16 @@ class EventTicketTypes {
       return;
     }
 
-    if (ticketTypeField) {
-      ticketTypeField.remove();
-      this.updateTotalSeats();
-      this.updateTicketTypeNumbers();
-      this.updateRemoveButtons();
+    if (!ticketTypeField) {
+      console.warn('[EventTicketTypes] removeTicketType called but ticketTypeField is null');
+      return;
     }
+
+    console.debug('[EventTicketTypes] removing ticket block', ticketTypeField);
+    ticketTypeField.remove();
+    this.updateTotalSeats();
+    this.updateTicketTypeNumbers();
+    this.updateRemoveButtons();
   }
 
   updateTotalSeats() {
@@ -173,7 +213,7 @@ class EventTicketTypes {
 
   reset() {
     this.initialized = false;
-    document.removeAttribute('data-ticket-delegation-added');
+  document.documentElement.removeAttribute('data-ticket-delegation-added');
     
     const addButton = document.getElementById('add-ticket-type');
     if (addButton) {

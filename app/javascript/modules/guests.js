@@ -13,6 +13,25 @@ class EventGuests {
 
     console.log('Initializing event guests...');
     this.attachEventListeners();
+    // Attach direct listeners to any existing rendered guest remove buttons
+    const existingGuests = Array.from(document.querySelectorAll('.guest-form-item'));
+    console.debug('[EventGuests] existing guest blocks found:', existingGuests.length);
+    existingGuests.forEach((g) => {
+      const removeBtn = g.querySelector('[data-remove-guest], .remove-guest-btn, .remove-guest');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', (e) => {
+          console.debug('[EventGuests] direct remove click (existing guest)');
+          e.preventDefault();
+          e.stopPropagation();
+          this.removeGuest(g);
+        });
+      }
+    });
+    // Log presence of guest-image inputs on page
+    const imageInputs = document.querySelectorAll('.guest-image-input');
+    console.debug('[EventGuests] guest-image-input count:', imageInputs.length);
+    // ensure numbering is correct initially
+    this.updateGuestNumbers();
     this.initialized = true;
     console.log('Event guests initialized successfully');
   }
@@ -31,14 +50,19 @@ class EventGuests {
     }
 
     // Event delegation for remove guest buttons
-    if (!document.hasAttribute('data-guest-delegation-added')) {
-      document.setAttribute('data-guest-delegation-added', 'true');
-      
+    if (!document.documentElement.hasAttribute('data-guest-delegation-added')) {
+      document.documentElement.setAttribute('data-guest-delegation-added', 'true');
+
+      // Support both the data attribute and the partial's remove button class
       document.addEventListener('click', (e) => {
-        if (e.target.closest('[data-remove-guest]')) {
+        const removeBtn = e.target.closest('[data-remove-guest], .remove-guest-btn, .remove-guest');
+        if (removeBtn) {
+          console.debug('[EventGuests] delegated remove click detected', removeBtn);
           e.preventDefault();
           e.stopPropagation();
-          const guestField = e.target.closest('.guest-fields');
+          // The partial uses `guest-form-item` as the wrapper class; fallback to `.guest-fields` if present
+          const guestField = removeBtn.closest('.guest-form-item') || removeBtn.closest('.guest-fields');
+          console.debug('[EventGuests] guestField resolved:', guestField);
           this.removeGuest(guestField);
         }
       });
@@ -53,11 +77,12 @@ class EventGuests {
       return;
     }
 
-    const currentGuests = document.querySelectorAll('.guest-fields');
-    const newIndex = currentGuests.length;
+  // Match the server-rendered partial wrapper class
+  const currentGuests = Array.from(document.querySelectorAll('.guest-form-item'));
+  const newIndex = currentGuests.length;
 
     const html = `
-      <div class="guest-fields bg-gray-50 rounded-lg p-4 border border-gray-200">
+  <div class="guest-form-item bg-gray-50 rounded-lg p-4 border border-gray-200">
         <div class="flex justify-between items-center mb-4">
           <h4 class="text-md font-medium text-gray-900">Guest ${newIndex + 1}</h4>
           <button type="button" class="remove-guest text-red-600 hover:text-red-800 p-1" data-remove-guest>
@@ -66,7 +91,7 @@ class EventGuests {
             </svg>
           </button>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
             <input type="text" name="event[guests_attributes][${newIndex}][name]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Guest name" required />
@@ -77,40 +102,87 @@ class EventGuests {
           </div>
           <div class="md:col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-1">Bio/Description</label>
-            <textarea name="event[guests_attributes][${newIndex}][bio]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="2" placeholder="Brief description about the guest..."></textarea>
+            <textarea name="event[guests_attributes][${newIndex}][description]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="2" placeholder="Brief description about the guest..."></textarea>
           </div>
         </div>
+        <div class="mt-3">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Guest Image</label>
+          <input type="file" name="event[guests_attributes][${newIndex}][image]" accept="image/*" class="guest-image-input mt-1 block w-full text-sm text-gray-500" />
+        </div>
+        <!-- hidden _destroy field for Rails nested attributes handling -->
+        <input type="hidden" name="event[guests_attributes][${newIndex}][_destroy]" value="false" class="destroy-field" />
       </div>
     `;
 
     const div = document.createElement('div');
     div.innerHTML = html;
-    container.appendChild(div.firstElementChild);
+    const newGuest = div.firstElementChild;
+    if (newGuest) {
+      container.appendChild(newGuest);
+
+      // Attach a direct remove listener to the newly added guest remove button
+      const removeBtn = newGuest.querySelector('[data-remove-guest], .remove-guest, .remove-guest-btn');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', (e) => {
+          console.debug('[EventGuests] direct remove click (new guest)');
+          e.preventDefault();
+          e.stopPropagation();
+          const guestField = removeBtn.closest('.guest-form-item') || removeBtn.closest('.guest-fields');
+          this.removeGuest(guestField);
+        });
+      }
+    }
 
     console.log('Guest added successfully');
   }
 
   removeGuest(guestField) {
-    if (guestField) {
-      guestField.remove();
-      this.updateGuestNumbers();
-      console.log('Guest removed');
+    if (!guestField) {
+      console.warn('[EventGuests] removeGuest called but guestField not found');
+      return;
     }
+
+    // If this guest was persisted (has an id hidden field), mark for destruction and hide
+  const idField = guestField.querySelector('input[type="hidden"][name*="[id]"]');
+  let destroyField = guestField.querySelector('.destroy-field');
+  // fallback: try to find by name if class not present
+  if (!destroyField) destroyField = guestField.querySelector('input[name*="[_destroy]"]');
+
+  if (idField && destroyField) {
+      console.debug('[EventGuests] marking persisted guest for destroy', idField.value);
+      destroyField.value = '1'; // Rails treats '1' as truthy for _destroy
+      guestField.style.display = 'none';
+      guestField.dataset.destroyed = 'true';
+    } else {
+      // New guest not persisted yet — remove from DOM entirely
+      console.debug('[EventGuests] removing new guest DOM node');
+      guestField.remove();
+    }
+
+    this.updateGuestNumbers();
+    console.log('Guest removed');
+    
   }
 
   updateGuestNumbers() {
-    const guestFields = document.querySelectorAll('.guest-fields');
-    guestFields.forEach((field, index) => {
+    const allGuests = Array.from(document.querySelectorAll('.guest-form-item'));
+    // only count visible / non-marked-for-destroy guests
+    const visibleGuests = allGuests.filter((g) => {
+      const destroyField = g.querySelector('.destroy-field');
+      if (g.style.display === 'none') return false;
+      if (destroyField && (destroyField.value === '1' || destroyField.value === 'true')) return false;
+      return true;
+    });
+
+    visibleGuests.forEach((field, index) => {
       const heading = field.querySelector('h4');
-      if (heading) {
-        heading.textContent = 'Guest ' + (index + 1);
-      }
+      if (heading) heading.textContent = 'Guest ' + (index + 1);
     });
   }
 
   reset() {
     this.initialized = false;
-    document.removeAttribute('data-guest-delegation-added');
+  document.documentElement.removeAttribute('data-guest-delegation-added');
     
     const addGuestButton = document.getElementById('add-guest-btn');
     if (addGuestButton) {
