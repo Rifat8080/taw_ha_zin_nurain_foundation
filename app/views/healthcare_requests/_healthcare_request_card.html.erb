@@ -1,83 +1,87 @@
-<div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 flex flex-col h-full">
-  <div class="flex justify-between items-start mb-4">
-    <h3 class="text-lg font-semibold text-gray-900"><%= healthcare_request.patient_name %></h3>
-    <div class="flex flex-col items-end gap-2">
-      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-        <%= case healthcare_request.status
-            when 'pending' then 'bg-yellow-100 text-yellow-800'
-            when 'approved' then 'bg-green-100 text-green-800'
-            when 'rejected' then 'bg-red-100 text-red-800'
-            when 'completed' then 'bg-blue-100 text-blue-800'
-            else 'bg-gray-100 text-gray-800'
-            end %>">
-        <%= healthcare_request.status.capitalize %>
-      </span>
-      <% if healthcare_request.approved? %>
-        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-          ✓ Approved
+<!-- Modern Healthcare Request Card Partial -->
+<div class="relative bg-white rounded-3xl shadow-xl transition-all duration-300 border border-gray-100 hover:border-foundationprimarygreen group overflow-hidden flex flex-col transform-gpu will-change-transform hover:scale-[1.03] hover:-translate-y-2 hover:shadow-3xl hover:shadow-foundationprimarygreen/20 hover:z-20 hover:rotate-x-2 hover:rotate-y-1" style="perspective: 1200px;">
+  <!-- Status Ribbon -->
+  <div class="absolute top-4 left-0 z-20 px-4 py-1 rounded-r-2xl text-xs font-bold tracking-wider shadow-md
+    <%= case healthcare_request.status
+        when 'pending' then 'bg-yellow-400 text-white'
+        when 'approved' then 'bg-green-400 text-white'
+        when 'rejected' then 'bg-red-400 text-white'
+        when 'completed' then 'bg-blue-400 text-white'
+        else 'bg-gray-400 text-white'
+        end %>">
+    <%= healthcare_request.status.capitalize %>
+  </div>
+
+  <!-- Placeholder Image -->
+  <div class="relative w-full aspect-[16/9] bg-gray-100 flex items-center justify-center overflow-hidden">
+    <div class="w-full h-full flex items-center justify-center text-gray-300 text-6xl">
+      <i class="fas fa-heartbeat"></i>
+    </div>
+  </div>
+
+  <!-- Request Content -->
+  <div class="flex-1 flex flex-col p-6 gap-2">
+    <h3 class="text-2xl font-bold text-gray-900 mb-1 group-hover:text-foundationprimarygreen transition-colors"><%= healthcare_request.patient_name %></h3>
+    <p class="text-gray-600 mb-2 line-clamp-3 text-base"><%= healthcare_request.reason %></p>
+    
+    <div class="text-sm text-gray-500 mb-4">
+      <p>Requested by: <%= healthcare_request.user.full_name %></p>
+      <p>Date: <%= healthcare_request.created_at.strftime("%B %d, %Y") %></p>
+    </div>
+
+    <div class="bg-gray-50 rounded-lg p-3 mb-4">
+      <div class="flex justify-between text-sm">
+        <span class="text-gray-600">Total Donations:</span>
+        <span class="font-semibold text-green-600">৳<%= number_with_delimiter(healthcare_request.total_donations) %></span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-gray-600">Total Expenses:</span>
+        <span class="font-semibold text-red-600">৳<%= number_with_delimiter(healthcare_request.total_expenses) %></span>
+      </div>
+      <div class="flex justify-between text-sm border-t pt-2 mt-2">
+        <span class="text-gray-900 font-medium">Balance:</span>
+        <span class="font-semibold <%= healthcare_request.balance >= 0 ? 'text-blue-600' : 'text-orange-600' %>">
+          <%= healthcare_request.formatted_balance %>
         </span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-gray-600">Donors:</span>
+        <span class="font-semibold"><%= healthcare_request.donation_count %></span>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mt-auto">
+      <%= link_to healthcare_request_path(healthcare_request), class: "flex-1 min-w-[120px] text-center px-4 py-2 bg-[rgb(var(--color-foundationprimarygreen))] text-white font-semibold rounded-lg transition-all duration-200 shadow-md scale-100 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-foundationprimarygreen))]/60 transform will-change-transform hover:shadow-lg hover:shadow-[rgba(var(--color-foundationprimarygreen),0.25)] hover:-translate-y-1 hover:-rotate-x-2 hover:scale-105 active:scale-95 active:shadow-inner" do %>
+        <i class="fas fa-eye mr-1"></i> View
+      <% end %>
+
+      <% if healthcare_request.can_receive_donations? %>
+        <%= link_to new_healthcare_request_healthcare_donation_path(healthcare_request), class: "flex-1 min-w-[120px] text-center px-4 py-2 bg-[rgb(var(--color-forange))] text-white font-semibold rounded-lg transition-all duration-200 shadow-md scale-100 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-forange))]/60 transform will-change-transform hover:shadow-lg hover:shadow-[rgba(var(--color-forange),0.25)] hover:-translate-y-1 hover:-rotate-x-2 hover:scale-105 active:scale-95 active:shadow-inner" do %>
+          <i class="fas fa-donate mr-1"></i> Donate
+        <% end %>
+      <% end %>
+
+      <% if current_user&.role == 'admin' || healthcare_request.user == current_user %>
+        <%= link_to healthcare_request_healthcare_expenses_path(healthcare_request), class: "flex-1 min-w-[120px] text-center px-4 py-2 bg-[rgb(var(--color-foundation-secondary))] text-white font-semibold rounded-lg transition-all duration-200 shadow-md scale-100 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-foundation-secondary))]/60 transform will-change-transform hover:shadow-lg hover:shadow-[rgba(var(--color-foundation-secondary),0.25)] hover:-translate-y-1 hover:-rotate-x-2 hover:scale-105 active:scale-95 active:shadow-inner" do %>
+          <i class="fas fa-file-invoice-dollar mr-1"></i> Expenses
+        <% end %>
       <% end %>
     </div>
-  </div>
 
-  <p class="text-gray-600 mb-4 line-clamp-3 flex-grow"><%= healthcare_request.reason %></p>
-
-  <div class="text-sm text-gray-500 mb-4">
-    <p>Requested by: <%= healthcare_request.user.full_name %></p>
-    <p>Date: <%= healthcare_request.created_at.strftime("%B %d, %Y") %></p>
-  </div>
-
-  <div class="bg-gray-50 rounded-lg p-3 mb-4">
-    <div class="flex justify-between text-sm">
-      <span class="text-gray-600">Total Donations:</span>
-      <span class="font-semibold text-green-600">৳<%= number_with_delimiter(healthcare_request.total_donations) %></span>
-    </div>
-    <div class="flex justify-between text-sm">
-      <span class="text-gray-600">Total Expenses:</span>
-      <span class="font-semibold text-red-600">৳<%= number_with_delimiter(healthcare_request.total_expenses) %></span>
-    </div>
-    <div class="flex justify-between text-sm border-t pt-2 mt-2">
-      <span class="text-gray-900 font-medium">Balance:</span>
-      <span class="font-semibold <%= healthcare_request.balance >= 0 ? 'text-blue-600' : 'text-orange-600' %>">
-        <%= healthcare_request.formatted_balance %>
-      </span>
-    </div>
-    <div class="flex justify-between text-sm">
-      <span class="text-gray-600">Donors:</span>
-      <span class="font-semibold"><%= healthcare_request.donation_count %></span>
-    </div>
-  </div>
-
-  <div class="flex flex-wrap gap-2 mt-auto">
-    <%= link_to "View Details", healthcare_request_path(healthcare_request),
-        class: "flex-1 text-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
-
-    <% if healthcare_request.can_receive_donations? %>
-      <%= link_to "Donate", new_healthcare_request_healthcare_donation_path(healthcare_request),
-          class: "flex-1 text-center px-3 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-green-600 hover:bg-green-700" %>
-    <% end %>
-
-    <% if current_user&.role == 'admin' || healthcare_request.user == current_user %>
-      <%= link_to "Expenses", healthcare_request_healthcare_expenses_path(healthcare_request),
-          class: "flex-1 text-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
-    <% end %>
-
-    <% if current_user&.role == 'admin' && healthcare_request.status == 'pending' %>
-      <div class="flex gap-1 w-full mt-2">
-        <%= link_to "Approve", approve_healthcare_request_path(healthcare_request), method: :patch,
-            class: "flex-1 text-center px-3 py-1 border border-transparent rounded-md text-xs font-medium text-white bg-green-600 hover:bg-green-700",
-            data: { confirm: "Are you sure you want to approve this request?" } %>
-        <%= link_to "Reject", reject_healthcare_request_path(healthcare_request), method: :patch,
-            class: "flex-1 text-center px-3 py-1 border border-transparent rounded-md text-xs font-medium text-white bg-red-600 hover:bg-red-700",
-            data: { confirm: "Are you sure you want to reject this request?" } %>
-      </div>
-    <% end %>
-
-    <% if current_user&.role == 'admin' && healthcare_request.status == 'approved' && healthcare_request.approved? %>
-      <div class="flex gap-1 w-full mt-2">
-        <%= link_to "Mark Completed", complete_healthcare_request_path(healthcare_request), method: :patch,
-            class: "w-full text-center px-3 py-1 border border-transparent rounded-md text-xs font-medium text-white bg-blue-600 hover:bg-blue-700",
-            data: { confirm: "Are you sure you want to mark this request as completed?" } %>
+    <% if current_user&.role == 'admin' %>
+      <div class="mt-2 flex gap-1 w-full">
+        <% if healthcare_request.status == 'pending' %>
+          <%= link_to "Approve", approve_healthcare_request_path(healthcare_request), method: :patch,
+              class: "flex-1 text-center px-3 py-1 border border-transparent rounded-md text-xs font-medium text-white bg-green-600 hover:bg-green-700",
+              data: { confirm: "Are you sure you want to approve this request?" } %>
+          <%= link_to "Reject", reject_healthcare_request_path(healthcare_request), method: :patch,
+              class: "flex-1 text-center px-3 py-1 border border-transparent rounded-md text-xs font-medium text-white bg-red-600 hover:bg-red-700",
+              data: { confirm: "Are you sure you want to reject this request?" } %>
+        <% elsif healthcare_request.status == 'approved' %>
+          <%= link_to "Mark Completed", complete_healthcare_request_path(healthcare_request), method: :patch,
+              class: "w-full text-center px-3 py-1 border border-transparent rounded-md text-xs font-medium text-white bg-blue-600 hover:bg-blue-700",
+              data: { confirm: "Are you sure you want to mark this request as completed?" } %>
+        <% end %>
       </div>
     <% end %>
   </div>
