@@ -65,7 +65,7 @@ class EventTicketTypes {
   // adding ticket type
     const container = document.getElementById('ticket-types-container');
     if (!container) {
-      console.error('Container not found');
+      // Container not found
       return;
     }
 
@@ -145,11 +145,11 @@ class EventTicketTypes {
     }
 
     if (!ticketTypeField) {
-      console.warn('[EventTicketTypes] removeTicketType called but ticketTypeField is null');
+      // removeTicketType called but ticketTypeField is null
       return;
     }
 
-    console.debug('[EventTicketTypes] removing ticket block', ticketTypeField);
+    // removing ticket block
     ticketTypeField.remove();
     this.updateTotalSeats();
     this.updateTicketTypeNumbers();

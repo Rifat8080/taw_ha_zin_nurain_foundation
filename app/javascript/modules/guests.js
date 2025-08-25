@@ -49,12 +49,12 @@ class EventGuests {
       document.addEventListener('click', (e) => {
         const removeBtn = e.target.closest('[data-remove-guest], .remove-guest-btn, .remove-guest');
         if (removeBtn) {
-          console.debug('[EventGuests] delegated remove click detected', removeBtn);
+          // delegated remove click detected
           e.preventDefault();
           e.stopPropagation();
           // The partial uses `guest-form-item` as the wrapper class; fallback to `.guest-fields` if present
           const guestField = removeBtn.closest('.guest-form-item') || removeBtn.closest('.guest-fields');
-          console.debug('[EventGuests] guestField resolved:', guestField);
+          // guestField resolved
           this.removeGuest(guestField);
         }
       });
@@ -65,7 +65,7 @@ class EventGuests {
   // adding guest
     const container = document.getElementById('guests-container');
     if (!container) {
-      console.error('Guest container not found');
+      // Guest container not found
       return;
     }
 
@@ -116,7 +116,7 @@ class EventGuests {
       const removeBtn = newGuest.querySelector('[data-remove-guest], .remove-guest, .remove-guest-btn');
       if (removeBtn) {
         removeBtn.addEventListener('click', (e) => {
-          console.debug('[EventGuests] direct remove click (new guest)');
+          // direct remove click (new guest)
           e.preventDefault();
           e.stopPropagation();
           const guestField = removeBtn.closest('.guest-form-item') || removeBtn.closest('.guest-fields');
@@ -130,7 +130,7 @@ class EventGuests {
 
   removeGuest(guestField) {
     if (!guestField) {
-      console.warn('[EventGuests] removeGuest called but guestField not found');
+      // removeGuest called but guestField not found
       return;
     }
 
@@ -141,13 +141,12 @@ class EventGuests {
   if (!destroyField) destroyField = guestField.querySelector('input[name*="[_destroy]"]');
 
   if (idField && destroyField) {
-      console.debug('[EventGuests] marking persisted guest for destroy', idField.value);
+      // marking persisted guest for destroy
       destroyField.value = '1'; // Rails treats '1' as truthy for _destroy
       guestField.style.display = 'none';
       guestField.dataset.destroyed = 'true';
     } else {
       // New guest not persisted yet — remove from DOM entirely
-      console.debug('[EventGuests] removing new guest DOM node');
       guestField.remove();
     }
 

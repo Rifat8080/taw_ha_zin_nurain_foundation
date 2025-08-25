@@ -70,31 +70,54 @@ class Tickets {
       return;
     }
 
+    // Determine operation: prefer the operation selector, then the scanner's data-default-operation
+    const opSelect = document.getElementById('qr-operation-select');
+    let operation = 'entry';
+    if (opSelect) {
+      operation = opSelect.value || 'entry';
+    } else {
+      const scannerEl = document.querySelector('#qr-scanner');
+      operation = (scannerEl && scannerEl.dataset && scannerEl.dataset.defaultOperation) ? scannerEl.dataset.defaultOperation : 'entry';
+    }
+
     // Validate the QR code
-    this.processQRCode(qrCode);
+    this.processQRCode(qrCode, operation);
   }
 
-  async processQRCode(qrCode) {
+  async processQRCode(qrCode, operation = 'entry') {
     try {
-      const response = await fetch('/tickets/validate_qr', {
+      // Prefer a validate URL provided on the page (e.g., in qr_scan view)
+      const scannerEl = document.getElementById('qr-scanner');
+      const validateUrl = (scannerEl && scannerEl.dataset && scannerEl.dataset.validateUrl) ? scannerEl.dataset.validateUrl : '/tickets/validate_qr';
+
+      const response = await fetch(validateUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
         },
-        body: JSON.stringify({
-          qr_code: qrCode
-        })
+        body: JSON.stringify({ qr_code: qrCode, operation })
       });
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+      // Attempt to parse JSON body regardless of status so we can show server messages
+      let data = null;
+      try {
+        data = await response.json();
+      } catch (e) {
+        // Non-JSON response
+        data = null;
       }
 
-      const data = await response.json();
-      this.displayQRResults(data);
+      if (!response.ok) {
+        const message = (data && (data.message || data.error)) ? (data.message || data.error) : `Server returned ${response.status}`;
+        this.displayQRError(message);
+        return;
+      }
+
+  this.displayQRResults(data || {});
     } catch (error) {
-      console.error('Error validating QR code:', error);
+      // Network or unexpected error
+      // Remove debug logging in production-like flows
       this.displayQRError('Error validating QR code. Please try again.');
     }
   }
@@ -105,31 +128,57 @@ class Tickets {
     
     if (!scanResults || !resultContent) return;
 
-    // Show results section
+    // Show results section and ensure previous render is cleared
     scanResults.classList.remove('hidden');
-    
-    // Display the validation results
-    if (data.valid) {
+    resultContent.innerHTML = '';
+    resultContent.dataset.renderedBy = 'tickets';
+
+    // Display the validation results (structure expected from server: {status, message, ticket})
+    const ok = data && data.status === 'success';
+    const message = data && (data.message || (data.error)) ? (data.message || data.error) : '';
+
+    const ticket = data && data.ticket ? data.ticket : null;
+
+    if (ok) {
+      // success - prepare safe display values
+      const t = ticket || {};
+      const attendee = t.user_name || t.userName || '';
+      const eventName = t.event_name || t.eventName || '';
+      const entriesUsed = (typeof t.entries_used !== 'undefined' && t.entries_used !== null) ? t.entries_used : (typeof t.entriesUsed !== 'undefined' ? t.entriesUsed : null);
+      const maxEntries = t.max_entries || t.maxEntries || '';
+      const mealsClaimed = (typeof t.meals_claimed !== 'undefined') ? t.meals_claimed : (typeof t.mealsClaimed !== 'undefined' ? t.mealsClaimed : 0);
+      const mealsAllowed = t.meals_allowed || t.mealsAllowed || 0;
+      const onBreak = !!t.on_break || !!t.onBreak;
+      const lastScanned = t.last_scanned_at || t.lastScannedAt || '';
+
       resultContent.innerHTML = `
         <div class="bg-green-50 border border-green-200 rounded-lg p-4">
           <div class="flex">
             <div class="flex-shrink-0">
-              <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-              </svg>
+              <span class="text-2xl text-green-600">✅</span>
             </div>
             <div class="ml-3">
-              <h3 class="text-sm font-medium text-green-800">Valid Ticket</h3>
+              <h3 class="text-sm font-medium text-green-800">${message || 'Operation successful'}</h3>
               <div class="mt-2 text-sm text-green-700">
-                <p><strong>Event:</strong> ${data.event_title}</p>
-                <p><strong>Attendee:</strong> ${data.attendee_name}</p>
-                <p><strong>Status:</strong> ${data.status}</p>
+                ${attendee ? `<div><strong>Attendee:</strong> ${attendee}</div>` : ''}
+                ${eventName ? `<div><strong>Event:</strong> ${eventName}</div>` : ''}
+              </div>
+              <div class="mt-3 text-xs text-gray-700">
+                ${entriesUsed !== null ? `<div><strong>Entries:</strong> ${entriesUsed} / ${maxEntries}</div>` : ''}
+                ${mealsAllowed ? `<div><strong>Meals:</strong> ${mealsClaimed} / ${mealsAllowed}</div>` : ''}
+                <div><strong>On break:</strong> ${onBreak ? 'Yes' : 'No'}</div>
+                ${lastScanned ? `<div><strong>Last scanned:</strong> ${lastScanned}</div>` : ''}
               </div>
             </div>
           </div>
         </div>
       `;
     } else {
+      const t = ticket || {};
+      const attendee = t.user_name || t.userName || '';
+      const eventName = t.event_name || t.eventName || '';
+      const statusStr = t.status || '';
+
       resultContent.innerHTML = `
         <div class="bg-red-50 border border-red-200 rounded-lg p-4">
           <div class="flex">
@@ -139,9 +188,11 @@ class Tickets {
               </svg>
             </div>
             <div class="ml-3">
-              <h3 class="text-sm font-medium text-red-800">Invalid Ticket</h3>
+              <h3 class="text-sm font-medium text-red-800">${message || 'This QR code is not valid or the ticket has been cancelled.'}</h3>
               <div class="mt-2 text-sm text-red-700">
-                <p>${data.message || 'This QR code is not valid or the ticket has been cancelled.'}</p>
+                ${attendee ? `<div><strong>Attendee:</strong> ${attendee}</div>` : ''}
+                ${eventName ? `<div><strong>Event:</strong> ${eventName}</div>` : ''}
+                ${statusStr ? `<div><strong>Status:</strong> ${statusStr}</div>` : ''}
               </div>
             </div>
           </div>
@@ -156,8 +207,10 @@ class Tickets {
     
     if (!scanResults || !resultContent) return;
 
-    scanResults.classList.remove('hidden');
-    resultContent.innerHTML = `
+  scanResults.classList.remove('hidden');
+  resultContent.innerHTML = '';
+  resultContent.dataset.renderedBy = 'tickets';
+  resultContent.innerHTML = `
       <div class="bg-red-50 border border-red-200 rounded-lg p-4">
         <div class="flex">
           <div class="flex-shrink-0">

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_25_090604) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_25_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -258,10 +258,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_25_090604) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "registered_by_id"
+    t.integer "entries_used", default: 0, null: false
+    t.integer "max_entries", default: 1, null: false
+    t.integer "meals_allowed", default: 1, null: false
+    t.integer "meals_claimed", default: 0, null: false
+    t.boolean "on_break", default: false, null: false
+    t.datetime "last_scanned_at"
+    t.datetime "break_started_at"
+    t.datetime "last_exit_at"
+    t.jsonb "scan_actions", default: {}, null: false
     t.index ["event_id", "seat_number"], name: "index_tickets_on_event_id_and_seat_number", unique: true
     t.index ["event_id"], name: "index_tickets_on_event_id"
     t.index ["qr_code"], name: "index_tickets_on_qr_code", unique: true
     t.index ["registered_by_id"], name: "index_tickets_on_registered_by_id"
+    t.index ["scan_actions"], name: "index_tickets_on_scan_actions", using: :gin
     t.index ["status"], name: "index_tickets_on_status"
     t.index ["ticket_type"], name: "index_tickets_on_ticket_type"
     t.index ["user_id"], name: "index_tickets_on_user_id"

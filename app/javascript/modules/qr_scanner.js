@@ -56,9 +56,10 @@ class QRScanner {
     this.canvas = document.createElement('canvas');
     this.context = this.canvas?.getContext('2d');
     
-    // Get validate URL from data attribute
-    const scannerElement = this.safeQuerySelector('#qr-scanner');
-    this.validateUrl = scannerElement?.dataset.validateUrl || '';
+  // Get validate URL and default operation from data attribute
+  const scannerElement = this.safeQuerySelector('#qr-scanner');
+  this.validateUrl = scannerElement?.dataset.validateUrl || '';
+  this.defaultOperation = scannerElement?.dataset.defaultOperation || 'entry';
 
     this.bindEvents();
   }
@@ -68,7 +69,7 @@ class QRScanner {
     try {
       return document.querySelector(selector);
     } catch (error) {
-      console.warn(`Invalid selector: ${selector}`);
+  // Invalid selector encountered when querying DOM
       return null;
     }
   }
@@ -80,7 +81,7 @@ class QRScanner {
     try {
       element.addEventListener(event, handler, options);
     } catch (error) {
-      console.error('Error adding event listener:', error);
+  // Failed to add event listener
     }
   }
 
@@ -108,7 +109,7 @@ class QRScanner {
     this.stopScanHandler = () => this.stopScanning();
     this.manualInputHandler = (e) => {
       if (e.key === 'Enter') {
-        this.validateManualQR();
+  this.validateManualQR();
       }
     };
 
@@ -127,6 +128,15 @@ class QRScanner {
     // Make function globally available for onclick handlers
     window.validateManualQR = () => this.validateManualQR();
     window.qrScanner = this; // Make instance globally available for retry functionality
+
+    // Operation selector handling (if present)
+    const opSelect = this.safeQuerySelector('#qr-operation-select');
+    if (opSelect) {
+      this.opChangeHandler = (e) => {
+        this.defaultOperation = e.target.value;
+      };
+      this.addEventListenerSafe(opSelect, 'change', this.opChangeHandler);
+    }
   }
 
   cleanupEventListeners() {
@@ -145,6 +155,12 @@ class QRScanner {
     if (manualInput && this.manualInputHandler) {
       manualInput.removeEventListener('keypress', this.manualInputHandler);
     }
+
+    // Remove op selector listener if set
+    const opSelect = this.safeQuerySelector('#qr-operation-select');
+    if (opSelect && this.opChangeHandler) {
+      opSelect.removeEventListener('change', this.opChangeHandler);
+    }
   }
 
   async startScanning() {
@@ -155,7 +171,7 @@ class QRScanner {
     }
     
     try {
-      console.log('Requesting camera permission...');
+  // Requesting camera permission
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment' } // Use back camera if available
       });
@@ -170,8 +186,8 @@ class QRScanner {
         requestAnimationFrame(() => this.scanQRCode());
       }
       
-    } catch (error) {
-      console.error('Error accessing camera:', error);
+  } catch (error) {
+  // Error accessing camera
       
       let errorMessage = 'Unable to access camera. ';
       if (error.name === 'NotAllowedError') {
@@ -186,7 +202,7 @@ class QRScanner {
         errorMessage += `Error: ${error.message}`;
       }
       
-      this.showResult('error', errorMessage);
+  this.showResult('error', errorMessage);
     }
   }
 
@@ -255,7 +271,7 @@ class QRScanner {
     const manualInput = this.safeQuerySelector('#manual-qr');
     const qrCode = manualInput?.value.trim();
     if (qrCode) {
-      this.validateQRCode(qrCode);
+  this.validateQRCode(qrCode, this.defaultOperation);
     } else {
       this.showResult('error', 'Please enter a QR code');
     }
@@ -267,7 +283,7 @@ class QRScanner {
     return metaTag ? metaTag.content : '';
   }
 
-  async validateQRCode(qrCode) {
+  async validateQRCode(qrCode, operation = null) {
     // Store for retry functionality
     this.storeLastScannedCode(qrCode);
     
@@ -279,14 +295,17 @@ class QRScanner {
     // Show loading state
     this.showResult('loading', 'Validating QR code...', null, 'loading');
 
-    try {
+  // decide operation param
+  const op = operation || this.defaultOperation || 'entry';
+
+  try {
       const response = await fetch(this.validateUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRF-Token': this.getCSRFToken()
         },
-        body: JSON.stringify({ qr_code: qrCode })
+    body: JSON.stringify({ qr_code: qrCode, operation: op })
       });
 
       const result = await response.json();
@@ -298,9 +317,8 @@ class QRScanner {
         this.handleValidationError(response.status, result, qrCode);
       }
       
-    } catch (error) {
-      console.error('Error validating QR code:', error);
-      
+      } catch (error) {
+      // Network or unexpected error while validating
       if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
         this.showResult('error', 'Network connection failed. Please check your internet connection and try again.', null, 'network');
       } else {
@@ -438,10 +456,10 @@ class QRScanner {
           </div>
           <div class="flex-1">
             <h3 class="text-lg font-semibold ${textColor} mb-2">
-              ${this.getResultTitle(type, errorType)}
+              ${type === 'success' ? 'Welcome! Ticket validated successfully.' : this.getResultTitle(type, errorType)}
             </h3>
-            <p class="${textColor} mb-3">${message}</p>
-            
+            <p class="${textColor} mb-3">${type === 'success' ? '✅ Welcome! Ticket validated successfully. Enjoy the event!' : message}</p>
+
             ${this.generateTicketDetails(ticketData, type, errorType)}
             ${this.generateActionButtons(type, errorType)}
           </div>
@@ -449,8 +467,15 @@ class QRScanner {
       </div>
     `;
 
-    contentDiv.innerHTML = html;
-    resultsDiv.classList.remove('hidden');
+  // Replace previous content entirely and mark this render so other modules
+  // can detect who last rendered the results. This prevents overlapping
+  // success/error messages when both the scanner and manual validator act
+  // on the same DOM nodes.
+  contentDiv.innerHTML = '';
+  contentDiv.dataset.renderedBy = 'qr_scanner';
+  contentDiv.innerHTML = html;
+  // Ensure the results container is visible
+  resultsDiv.classList.remove('hidden');
     
     // Auto-hide loading messages
     if (type === 'loading') {

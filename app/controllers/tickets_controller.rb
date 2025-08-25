@@ -182,7 +182,8 @@ class TicketsController < ApplicationController
   end
 
   def validate_qr
-    qr_code_data = params[:qr_code]
+  qr_code_data = params[:qr_code]
+  operation = params[:operation]&.to_s || 'entry' # default operation is entry
 
     if qr_code_data.blank?
       render json: { status: "error", message: "QR code is required" }, status: :bad_request
@@ -197,7 +198,7 @@ class TicketsController < ApplicationController
       qr_code = qr_code_data
     end
 
-    ticket = Ticket.find_by(qr_code: qr_code)
+  ticket = Ticket.find_by(qr_code: qr_code)
 
     if ticket.nil?
       render json: { 
@@ -207,74 +208,114 @@ class TicketsController < ApplicationController
       return
     end
 
-    if ticket.can_be_used?
-      if ticket.use_ticket!
-        # Also mark the user as attended in EventUser
-        event_user = ticket.user.event_users.find_by(event: ticket.event)
-        event_user&.mark_as_attended!
-
-        render json: {
-          status: "success",
-          message: "✅ Welcome! Ticket validated successfully. Enjoy the event!",
-          ticket: ticket_details_for_response(ticket)
-        }
-      else
-        render json: { 
-          status: "error", 
-          message: "Unable to validate ticket due to a system error. Please try again or contact support." 
-        }, status: :unprocessable_entity
+    # Handle different operations
+    case operation
+    when 'entry'
+      if ticket.scanned_action?('entry')
+        render json: { status: 'error', message: 'This ticket has already recorded an entry.', ticket: ticket_details_for_response(ticket) }, status: :unprocessable_entity
+        return
       end
-    else
-      case ticket.status
-      when "used"
-        used_date = ticket.updated_at.strftime("%B %d, %Y at %I:%M %p")
-        render json: {
-          status: "error",
-          message: "⚠️ This ticket was already used on #{used_date}. Each ticket can only be used once.",
-          ticket: ticket_details_for_response(ticket, include_used_at: true)
-        }, status: :unprocessable_entity
-      when "cancelled"
-        render json: {
-          status: "error",
-          message: "❌ This ticket has been cancelled and cannot be used. Please contact support if you believe this is an error.",
-          ticket: ticket_details_for_response(ticket)
-        }, status: :unprocessable_entity
-      when "refunded"
-        render json: {
-          status: "error",
-          message: "💰 This ticket has been refunded and is no longer valid. Please purchase a new ticket if you wish to attend.",
-          ticket: ticket_details_for_response(ticket)
-        }, status: :unprocessable_entity
-      else
-        # Check specific reasons why ticket can't be used
-        current_date = Date.current
-        event_start = ticket.event.start_date
-        event_end = ticket.event.end_date
+      if ticket.can_be_used?
+        begin
+          ticket.use_ticket!
+          event_user = ticket.user.event_users.find_by(event: ticket.event)
+          event_user&.mark_as_attended!
 
-        if current_date < event_start.advance(days: -1)
-          details = ticket_details_for_response(ticket)
-          details[:event_start_date] = ticket.event.start_date.strftime("%B %d, %Y")
+          ticket.mark_scanned_action!('entry') rescue nil
           render json: {
-            status: "error",
-            message: "⏰ Check-in is not available yet. Entry opens 1 day before the event on #{details[:event_start_date]}.",
-            ticket: details
-          }, status: :unprocessable_entity
-        elsif current_date > event_end
-          details = ticket_details_for_response(ticket)
-          details[:event_end_date] = ticket.event.end_date.strftime("%B %d, %Y")
-          render json: {
-            status: "error",
-            message: "⌛ This ticket has expired. The event ended on #{details[:event_end_date]}.",
-            ticket: details
-          }, status: :unprocessable_entity
-        else
-          render json: {
-            status: "error",
-            message: "⚠️ This ticket cannot be used at this time. Please contact support for assistance.",
+            status: 'success',
+            message: '✅ Entry recorded. Welcome!',
             ticket: ticket_details_for_response(ticket)
-          }, status: :unprocessable_entity
+          }
+        rescue ActiveRecord::RecordInvalid => e
+          render json: { status: 'error', message: e.record.errors.full_messages.join(', '), ticket: ticket_details_for_response(ticket) }, status: :unprocessable_entity
         end
+      elsif ticket.can_reenter?
+        if ticket.scanned_action?('reentry')
+          render json: { status: 'error', message: 'This ticket has already recorded a re-entry.', ticket: ticket_details_for_response(ticket) }, status: :unprocessable_entity
+          return
+        end
+        begin
+          ticket.reenter!
+          ticket.mark_scanned_action!('reentry') rescue nil
+          render json: { status: 'success', message: '🔁 Re-entry recorded. Welcome back!', ticket: ticket_details_for_response(ticket) }
+        rescue ActiveRecord::RecordInvalid => e
+          render json: { status: 'error', message: e.record.errors.full_messages.join(', '), ticket: ticket_details_for_response(ticket) }, status: :unprocessable_entity
+        end
+      else
+        render json: { status: 'error', message: 'Ticket is not eligible for entry.', ticket: ticket_details_for_response(ticket) }, status: :unprocessable_entity
       end
+
+    when 'reentry'
+      if ticket.scanned_action?('reentry')
+        render json: { status: 'error', message: 'This ticket has already recorded a re-entry.', ticket: ticket_details_for_response(ticket) }, status: :unprocessable_entity
+        return
+      end
+      if ticket.can_reenter?
+        begin
+          ticket.reenter!
+          ticket.mark_scanned_action!('reentry') rescue nil
+          render json: { status: 'success', message: '🔁 Re-entry allowed. Have a good time!', ticket: ticket_details_for_response(ticket) }
+        rescue ActiveRecord::RecordInvalid => e
+          render json: { status: 'error', message: e.record.errors.full_messages.join(', '), ticket: ticket_details_for_response(ticket) }, status: :unprocessable_entity
+        end
+      else
+        render json: { status: 'error', message: 'Re-entry not allowed for this ticket.', ticket: ticket_details_for_response(ticket) }, status: :unprocessable_entity
+      end
+
+    when 'meal'
+      if ticket.scanned_action?('meal')
+        render json: { status: 'error', message: 'Meal already claimed for this ticket.', ticket: ticket_details_for_response(ticket) }, status: :unprocessable_entity
+        return
+      end
+      begin
+        if ticket.claim_meal!
+          ticket.mark_scanned_action!('meal') rescue nil
+          render json: { status: 'success', message: '🍽️ Meal claimed.', ticket: ticket_details_for_response(ticket) }
+        else
+          render json: { status: 'error', message: 'No meals remaining or unable to claim meal.', ticket: ticket_details_for_response(ticket) }, status: :unprocessable_entity
+        end
+      rescue ActiveRecord::RecordInvalid => e
+        render json: { status: 'error', message: e.record.errors.full_messages.join(', '), ticket: ticket_details_for_response(ticket) }, status: :unprocessable_entity
+      end
+
+    when 'start_break'
+      if ticket.scanned_action?('start_break')
+        render json: { status: 'error', message: 'Break already started for this ticket.', ticket: ticket_details_for_response(ticket) }, status: :unprocessable_entity
+        return
+      end
+      begin
+        if ticket.start_break!
+          ticket.mark_scanned_action!('start_break') rescue nil
+          render json: { status: 'success', message: '🔕 Break started. Enjoy your break.', ticket: ticket_details_for_response(ticket) }
+        else
+          render json: { status: 'error', message: 'Unable to start break.', ticket: ticket_details_for_response(ticket) }, status: :unprocessable_entity
+        end
+      rescue ActiveRecord::RecordInvalid => e
+        render json: { status: 'error', message: e.record.errors.full_messages.join(', '), ticket: ticket_details_for_response(ticket) }, status: :unprocessable_entity
+      end
+
+    when 'end_break'
+      if ticket.scanned_action?('end_break')
+        render json: { status: 'error', message: 'Break already ended for this ticket.', ticket: ticket_details_for_response(ticket) }, status: :unprocessable_entity
+        return
+      end
+      begin
+        if ticket.end_break!
+          ticket.mark_scanned_action!('end_break') rescue nil
+          render json: { status: 'success', message: '⏱️ Break ended. Welcome back!', ticket: ticket_details_for_response(ticket) }
+        else
+          render json: { status: 'error', message: 'No active break found for this ticket.', ticket: ticket_details_for_response(ticket) }, status: :unprocessable_entity
+        end
+      rescue ActiveRecord::RecordInvalid => e
+        render json: { status: 'error', message: e.record.errors.full_messages.join(', '), ticket: ticket_details_for_response(ticket) }, status: :unprocessable_entity
+      end
+
+    when 'status_check'
+      render json: { status: 'success', message: 'Ticket status retrieved.', ticket: ticket_details_for_response(ticket) }
+
+    else
+      render json: { status: 'error', message: 'Unknown operation.' }, status: :bad_request
     end
   end
 
@@ -421,7 +462,20 @@ class TicketsController < ApplicationController
       ticket_type: ticket.ticket_type.capitalize,
       seat_number: ticket.seat_number,
       price: "$#{ticket.price}",
-      status: ticket.status.capitalize
+      status: ticket.status.capitalize,
+
+      # new state fields for frontend display
+      entries_used: ticket.respond_to?(:entries_used) ? ticket.entries_used : nil,
+      max_entries: ticket.respond_to?(:max_entries) ? ticket.max_entries : nil,
+      entries_left: (ticket.respond_to?(:max_entries) && ticket.respond_to?(:entries_used)) ? [ticket.max_entries - ticket.entries_used, 0].max : nil,
+
+      meals_allowed: ticket.respond_to?(:meals_allowed) ? ticket.meals_allowed : nil,
+      meals_claimed: ticket.respond_to?(:meals_claimed) ? ticket.meals_claimed : nil,
+      meals_left: (ticket.respond_to?(:meals_allowed) && ticket.respond_to?(:meals_claimed)) ? [ticket.meals_allowed - ticket.meals_claimed, 0].max : nil,
+
+      on_break: ticket.respond_to?(:on_break) ? ticket.on_break : nil,
+      last_scanned_at: ticket.respond_to?(:last_scanned_at) && ticket.last_scanned_at ? ticket.last_scanned_at.strftime("%B %d, %Y at %I:%M %p") : nil,
+      break_started_at: ticket.respond_to?(:break_started_at) && ticket.break_started_at ? ticket.break_started_at.strftime("%B %d, %Y at %I:%M %p") : nil
     }
 
     if include_used_at && ticket.status == "used"

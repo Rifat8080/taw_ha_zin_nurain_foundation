@@ -12,7 +12,7 @@ class DonorInfoModal {
     try {
       return document.querySelector(selector);
     } catch (error) {
-      console.warn(`Invalid selector: ${selector}`);
+  // Invalid selector encountered when querying DOM
       return null;
     }
   }

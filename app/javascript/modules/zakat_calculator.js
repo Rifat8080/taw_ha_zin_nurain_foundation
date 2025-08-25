@@ -286,7 +286,7 @@ class ZakatCalculator {
       const data = await response.json();
       this.displayQuickResults(data);
     } catch (error) {
-      console.error('Error:', error);
+      // Error calculating quick zakat
       alert('Error calculating zakat. Please try again.');
     }
   }
