@@ -43,15 +43,28 @@
         <div class="flex lg:order-2 items-center space-x-3 lg:space-x-0 rtl:space-x-reverse">
 
           <div class="flex items-center ml-3">
-            <%= form_tag switch_language_path, method: :post, class: "inline" do %>
-              <%= select_tag :locale, options_for_select([['English', 'en'], ['বাংলা', 'bn']], I18n.locale), onchange: "this.form.submit();", class: "block w-full px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm" %>
+            <%= form_tag switch_language_path, method: :post, class: "inline-flex items-center bg-white rounded-lg" do %>
+              <% en_active = I18n.locale.to_s == 'en' %>
+              <% bn_active = I18n.locale.to_s == 'bn' %>
+              <button type="submit" name="locale" value="en" aria-pressed="<%= en_active %>" class="px-3 py-2  rounded-lg text-sm font-medium focus:outline-none <%= en_active ? 'bg-foundationprimarygreen text-white' : 'text-gray-700 hover:bg-gray-50' %> rounded-l-md">
+                EN
+              </button>
+              <button type="submit" name="locale" value="bn" aria-pressed="<%= bn_active %>" class="px-3 py-2 rounded-lg text-sm font-medium focus:outline-none <%= bn_active ? 'bg-foundationprimarygreen text-white' : 'text-gray-700 hover:bg-gray-50' %> rounded-r-md border-l border-gray-200">
+                বাং
+              </button>
             <% end %>
           </div>
 
-          <%= link_to new_user_session_path, class: "hidden lg:block flex items-center justify-center rounded-lg bg-forange shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-gray-600 mr-2 border border-gray-200 px-4 py-2 text-sm h-10" do %>
-            <i class="fa-solid fa-user text-sm sm:text-base lg:text-lg xl:text-xl text-white "></i>
+          <%= link_to new_user_session_path, class: "lg:inline-flex group relative items-center justify-center rounded-lg bg-forange text-white shadow transform transition-all duration-200 hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen/50 mr-2 border border-gray-200 px-4 py-2 text-sm h-10 overflow-hidden" do %>
+            <!-- Decorative gradient overlay -->
+            <span aria-hidden="true" class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style="background: linear-gradient(90deg, rgba(247,183,49,0.12), rgba(34,197,94,0.12));"></span>
+            <span class="relative z-10"><i class="fa-solid fa-user text-sm sm:text-base lg:text-lg xl:text-xl" aria-hidden="true"></i></span>
           <% end %>
-          <%= link_to t('.navbar.donate'), projects_path, class: " text-sm sm:text-base lg:text-lg xl:text-xl ml-2 text-white bg-foundationprimarygreen hover:bg-foundationprimarygreen/90 focus:ring-4 focus:outline-none focus:ring-foundationprimarygreen/50 font-medium rounded-lg  px-4 py-2 text-center transition-all duration-200 ease-in-out" %>
+          <%= link_to projects_path, class: "inline-flex group relative items-center justify-center text-sm sm:text-base lg:text-lg xl:text-xl ml-2 text-white bg-foundationprimarygreen focus:ring-4 focus:outline-none focus:ring-foundationprimarygreen/50 font-medium rounded-lg px-4 py-2 text-center transition-all duration-200 hover:shadow-xl hover:scale-105 overflow-hidden" do %>
+            <span aria-hidden="true" class="absolute -left-6 -top-6 w-32 h-32 rounded-full bg-[rgba(255,255,255,0.06)] transform rotate-45 opacity-0 group-hover:opacity-100 group-hover:-translate-x-2 transition-all duration-400"></span>
+            <span aria-hidden="true" class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style="background: linear-gradient(90deg, rgba(34,197,94,0.08), rgba(247,183,49,0.08));"></span>
+            <span class="relative z-10"><%= t('.navbar.donate') %></span>
+          <% end %>
           <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
             <span class="sr-only"><%= t('.navbar.open_sidebar') %></span>
             <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
