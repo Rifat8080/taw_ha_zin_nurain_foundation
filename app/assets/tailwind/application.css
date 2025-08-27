@@ -138,3 +138,16 @@
   box-shadow: 0 6px 14px rgba(2,6,23,0.08);
   border-color: #ffffff !important; /* ensure border becomes white on hover */
 }
+
+/* Delete button stable color */
+.btn-delete {
+  background-color: rgb(var(--color-error));
+  border-color: rgb(var(--color-error));
+  color: #ffffff;
+  transition: background-color 180ms cubic-bezier(.4,0,.2,1), border-color 180ms cubic-bezier(.4,0,.2,1), box-shadow 180ms;
+}
+.btn-delete:hover, .btn-delete:focus {
+  background-color: rgb(var(--color-error) / 0.9);
+  border-color: rgb(var(--color-error) / 0.9);
+  box-shadow: 0 10px 24px rgba(239,68,68,0.12);
+}
