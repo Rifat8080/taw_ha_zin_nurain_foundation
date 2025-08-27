@@ -3,10 +3,21 @@ class HealthcareRequestsController < ApplicationController
   before_action :set_healthcare_request, only: [ :show, :edit, :update, :destroy, :approve, :reject, :complete ]
 
   def index
-    @healthcare_requests = HealthcareRequest.includes(:user, :healthcare_donations).order(created_at: :desc)
+    allowed_public_statuses = %w[approved completed]
+
+    if current_user&.role == "admin"
+      @healthcare_requests = HealthcareRequest.includes(:user, :healthcare_donations).order(created_at: :desc)
+    else
+      # Non-admins (including guests) only see approved or completed requests
+      @healthcare_requests = HealthcareRequest.includes(:user, :healthcare_donations).where(status: allowed_public_statuses).order(created_at: :desc)
+    end
+
     if params[:status].present?
       @filter_status = params[:status]
-      @healthcare_requests = @healthcare_requests.by_status(@filter_status)
+      # Only allow filtering to statuses that the current viewer is permitted to see
+      if current_user&.role == "admin" || allowed_public_statuses.include?(@filter_status)
+        @healthcare_requests = @healthcare_requests.by_status(@filter_status)
+      end
     end
     if params[:search].present?
       @healthcare_requests = @healthcare_requests.search(params[:search])

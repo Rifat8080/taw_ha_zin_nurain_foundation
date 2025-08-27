@@ -64,7 +64,8 @@
     <% end %>
     <div class="mt-4 flex flex-wrap gap-2">
       <span class="text-sm font-medium text-gray-600 mr-2">Filter by status:</span>
-      <% %w[pending approved completed rejected].each do |status| %>
+      <% statuses = current_user&.role == "admin" ? %w[pending approved completed rejected] : %w[approved completed] %>
+      <% statuses.each do |status| %>
         <%= link_to healthcare_requests_path(status: status), 
             class: "inline-flex items-center px-3 py-1 rounded-full text-sm #{ @filter_status == status ? 'bg-forange/10 text-forange border border-forange' : 'bg-gray-100 text-gray-700 hover:bg-forange/10 hover:text-forange border border-transparent'} transition-colors" do %>
           <%= status.capitalize %>
