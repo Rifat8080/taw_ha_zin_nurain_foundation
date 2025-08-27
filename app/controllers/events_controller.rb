@@ -4,13 +4,28 @@ class EventsController < ApplicationController
 
   def index
     @events = Event.includes(:event_users, :tickets)
+
     if params[:search].present?
       @events = @events.where("name ILIKE ? OR venue ILIKE ?", "%#{params[:search]}%", "%#{params[:search]}%")
     end
+
+    # Allowed statuses differ by role: admins may see all, others only upcoming and active
+    allowed_statuses = current_user&.role == "admin" ? %w[upcoming active past] : %w[upcoming active]
+
     if params[:status].present?
-      @filter_status = params[:status]
-      @events = @events.send(@filter_status)
+      requested = params[:status].to_s.downcase
+      if allowed_statuses.include?(requested)
+        @filter_status = requested
+        @events = @events.public_send(requested)
+      end
+    else
+      # Default for non-admins: restrict to upcoming OR active events
+      unless current_user&.role == "admin"
+        today = Date.current
+        @events = @events.where("start_date >= :today OR (start_date <= :today AND end_date >= :today)", today: today)
+      end
     end
+
     @events = @events.order(:start_date).page(params[:page])
   end
 
