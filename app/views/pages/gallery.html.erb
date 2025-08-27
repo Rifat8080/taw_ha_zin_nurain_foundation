@@ -3,8 +3,24 @@
 <section class="bg-white py-20 min-h-[60vh]">
   <div class="max-w-6xl mx-auto px-4">
     <div class="mb-10 text-center">
-  <h1 class="text-4xl md:text-5xl font-extrabold text-foundationprimarygreen mb-4"><%= t('layouts.public.gallery.heading') %></h1>
-  <p class="text-lg text-gray-700 max-w-2xl mx-auto"><%= t('layouts.public.gallery.intro') %></p>
+        <h1 class="text-4xl md:text-5xl font-bold text-foundationprimarygreen tracking-tight mb-4">
+          <% heading_text = t('layouts.public.gallery.heading') %>
+          <% parts = heading_text.to_s.split %>
+          <% if parts.length > 1 %>
+            <%= parts[0...-1].join(' ') %> <span class="text-forange"><%= parts.last %></span>
+          <% else %>
+            <%= heading_text %>
+          <% end %>
+        </h1>
+        <p class="mt-2 text-lg text-gray-700 max-w-2xl mx-auto">
+          <% intro = t('layouts.public.gallery.intro') %>
+          <% s = intro.to_s.split %>
+          <% if s.length > 2 %>
+            <%= s[0...-2].join(' ') %> <span class="text-forange"><%= s[-2..-1].join(' ') %></span>
+          <% else %>
+            <%= intro %>
+          <% end %>
+        </p>
     </div>
     <% if @gallery_categories.present? %>
       <div class="mb-8 flex flex-wrap justify-center gap-4">

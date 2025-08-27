@@ -4,10 +4,22 @@
   <div class="absolute inset-0 bg-gradient-to-br from-foundationprimarygreen/5 to-forange/5 opacity-75"></div>
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
     <h1 class="text-5xl md:text-6xl font-extrabold text-foundationprimarygreen mb-6 animate-fade-in-down">
-      <%= t('layouts.public.about.heading') %>
+        <% heading_text = t('layouts.public.about.heading') %>
+        <% parts = heading_text.to_s.split %>
+        <% if parts.length > 1 %>
+          <%= parts[0...-1].join(' ') %> <span class="text-forange"><%= parts.last %></span>
+        <% else %>
+          <%= heading_text %>
+        <% end %>
     </h1>
     <p class="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed animate-fade-in-up">
-      <%= t('layouts.public.about.intro') %>
+        <% intro = t('layouts.public.about.intro') %>
+        <% s = intro.to_s.split %>
+        <% if s.length > 2 %>
+          <%= s[0...-2].join(' ') %> <span class="text-forange"><%= s[-2..-1].join(' ') %></span>
+        <% else %>
+          <%= intro %>
+        <% end %>
     </p>
   </div>
 </section>
