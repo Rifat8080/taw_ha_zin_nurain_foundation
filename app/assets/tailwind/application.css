@@ -99,3 +99,42 @@
 
 .text-forange\/10 { color: rgb(var(--color-forange) / 0.1); }
 .text-forange\/20 { color: rgb(var(--color-forange) / 0.2); }
+
+/* Hover and transform polish (fallbacks for utility classes used in templates) */
+/* Ensure elements using .transform have a smooth transition */
+.transform { will-change: transform; }
+.transition-all { transition: all 200ms cubic-bezier(.4,0,.2,1); }
+.duration-200 { transition-duration: 200ms; }
+.duration-300 { transition-duration: 300ms; }
+.duration-500 { transition-duration: 500ms; }
+
+/* Card/group hover polish */
+.group { transition: transform 260ms cubic-bezier(.4,0,.2,1), box-shadow 260ms cubic-bezier(.4,0,.2,1); }
+.group:hover { transform: translateY(-6px); }
+.group:hover .shadow-lg { box-shadow: 0 20px 40px rgba(2,6,23,0.12); }
+
+/* Image scale on group hover */
+.group img, .group .object-cover { transition: transform 450ms cubic-bezier(.2,.8,.2,1); }
+.group:hover img, .group:hover .object-cover { transform: scale(1.05); }
+
+/* Hover shadow utilities (fallbacks) */
+.hover\:shadow-2xl:hover { box-shadow: 0 25px 50px -12px rgba(2,6,23,0.25); }
+.hover\:shadow-xl:hover { box-shadow: 0 20px 25px -5px rgba(2,6,23,0.1); }
+
+/* Small translate used on buttons: hover:-translate-y-0.5 */
+.hover\:-translate-y-0\.5:hover { transform: translateY(-2px); }
+
+/* Ensure inline-flex buttons that also use transform don't produce abrupt jumps */
+.inline-flex.transform { transition: transform 200ms cubic-bezier(.4,0,.2,1); }
+
+/* Edit button stable hover */
+.btn-edit {
+  transition: background-color 180ms cubic-bezier(.4,0,.2,1), color 180ms cubic-bezier(.4,0,.2,1), box-shadow 180ms;
+  transform: translateY(0);
+  will-change: background-color, color, transform;
+}
+.btn-edit:hover, .btn-edit:focus {
+  transform: translateY(0) !important; /* prevent translate during hover */
+  box-shadow: 0 6px 14px rgba(2,6,23,0.08);
+  border-color: #ffffff !important; /* ensure border becomes white on hover */
+}
