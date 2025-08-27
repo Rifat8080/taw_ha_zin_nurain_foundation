@@ -49,6 +49,7 @@
         <%= f.label :role, class: "block text-sm font-medium text-gray-700" %>
         <%= f.select :role, 
             options_for_select([
+              ['Admin', 'admin'],
               ['Member', 'member'],
               ['Volunteer', 'volunteer']
             ]), 
