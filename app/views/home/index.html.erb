@@ -483,7 +483,6 @@
       </div>
       <!-- Patients Assisted -->
   <div class="stat-card group relative text-center rounded-3xl shadow-2xl border border-forange/30 p-10 bg-white/60 backdrop-blur-xl transition-transform hover:-translate-y-3 hover:shadow-[0_8px_40px_0_rgba(255,186,59,0.15)] hover:border-forange/60 overflow-hidden fade-in flex flex-col">
-        <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-40 h-32 bg-forange/20 blur-2xl opacity-60 z-0"></div>
         <div class="flex justify-center mb-2 relative z-10">
           <div class="h-20 w-20 flex items-center justify-center rounded-full bg-forange/20 shadow-lg border-4 border-white/60 -mt-14 mb-2 group-hover:scale-110 transition-transform duration-300">
             <i class="fas fa-user-injured text-forange text-4xl drop-shadow"></i>
@@ -493,9 +492,7 @@
         <div class="text-5xl font-extrabold text-forange mb-2 count-up font-sans tracking-tight" data-count="<%= (@healthcare_requests || []).count %>" aria-label="Patients Assisted"><%= (@healthcare_requests || []).count %></div>
         <div class="text-forange font-semibold text-lg tracking-wide"><%= t('.patients_assisted') %></div>
         <div class="text-xs text-gray-500 mt-1"><%= t('.healthcare_requests') %></div>
-        <div class="w-3/4 mx-auto mt-6 h-2 rounded-full bg-forange/10 overflow-hidden">
-          <div class="h-2 rounded-full bg-gradient-to-r from-forange via-foundationprimarygreen to-forange animate-progress" style="width: <%= [(@healthcare_requests || []).count * 7, 100].min %>%"></div>
-        </div>
+  <!-- removed colored line above button -->
         <div class="flex-1"></div>
         <div class="flex justify-center mt-8 mb-2">
           <%= link_to t('.support_button'), healthcare_requests_path, class: "inline-block px-6 py-2 rounded-lg bg-forange text-white font-semibold shadow hover:bg-yellow-500 transition-colors text-base" %>
@@ -523,7 +520,6 @@
       </div>
       <!-- Volunteers -->
   <div class="stat-card group relative text-center rounded-3xl shadow-2xl border border-forange/30 p-10 bg-white/60 backdrop-blur-xl transition-transform hover:-translate-y-3 hover:border-forange/60 hover:shadow-[0_8px_40px_0_rgba(255,186,59,0.15)] overflow-hidden fade-in flex flex-col">
-        <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-40 h-32 bg-forange/20 blur-2xl opacity-60 z-0"></div>
         <div class="flex justify-center mb-2 relative z-10">
           <div class="h-20 w-20 flex items-center justify-center rounded-full bg-forange/20 shadow-lg border-4 border-white/60 -mt-14 mb-2 group-hover:scale-110 transition-transform duration-300">
             <i class="fas fa-users text-forange text-4xl drop-shadow"></i>
@@ -533,9 +529,7 @@
         <div class="text-5xl font-extrabold text-forange mb-2 count-up font-sans tracking-tight" data-count="<%= defined?(@volunteers_count) ? @volunteers_count : '100+' %>" aria-label="Volunteers"><%= defined?(@volunteers_count) ? @volunteers_count : '100+' %></div>
         <div class="text-forange font-semibold text-lg tracking-wide"><%= t('.volunteers') %></div>
         <div class="text-xs text-gray-500 mt-1"><%= t('.active_supporters') %></div>
-        <div class="w-3/4 mx-auto mt-6 h-2 rounded-full bg-forange/10 overflow-hidden">
-          <div class="h-2 rounded-full bg-gradient-to-r from-forange via-foundationprimarygreen to-forange animate-progress" style="width: <%= [(defined?(@volunteers_count) ? @volunteers_count : 100) * 1, 100].min %>%"></div>
-        </div>
+  <!-- removed colored line above button -->
         <div class="flex-1"></div>
         <div class="flex justify-center mt-8 mb-2">
           <%= link_to t('.join_as_volunteer_button'), new_volunteer_path, class: "inline-block px-6 py-2 rounded-lg bg-forange text-white font-semibold shadow hover:bg-yellow-500 transition-colors text-base" %>
