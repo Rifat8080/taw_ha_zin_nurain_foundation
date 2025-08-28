@@ -13,7 +13,7 @@ class Donation < ApplicationRecord
     return unless project_id.present?
     
     project_record = Project.find_by(id: project_id)
-    if project_record && !project_record.project_status_active
+    if project_record && !project_record.is_active
       errors.add(:project, 'is not accepting donations at this time (project is inactive)')
     end
   end

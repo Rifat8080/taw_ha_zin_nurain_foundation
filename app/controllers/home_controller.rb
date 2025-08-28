@@ -50,20 +50,31 @@ class HomeController < ApplicationController
   end
 
   def render_public_homepage
+    # Cache navigation stats for 5 minutes
+    @navigation_stats = Rails.cache.fetch("navigation_stats", expires_in: 5.minutes) do
+      {
+        total_active_projects: Project.where(is_active: true).count,
+        upcoming_events: Event.where("start_date >= ?", Date.current).count,
+        healthcare_requests: HealthcareRequest.where(approved: true, status: "approved").count
+      }
+    end
+
+    # Optimize queries with includes and select only needed columns
     @upcoming_events = Event.upcoming
+                           .select(:id, :name, :start_date, :guest_description, :total_seats)
+                           .includes(:event_users)
+                           .limit(6)
+
     @projects = Project.active
+                      .select(:id, :name, :description)
+                      .limit(10)
+
     @healthcare_requests = HealthcareRequest.visible_to_public
-                                           .includes(:user, :healthcare_donations)
+                                           .select(:id, :user_id, :patient_name, :reason, :status, :approved, :donations_count, :total_donations_cents)
+                                           .includes(:user)
+                                           .limit(8)
+
     @donation = Donation.new
     @submit_text = "Donate Now"
-
-    # Prepare dynamic navigation data
-    @navigation_stats = {
-      total_active_projects: Project.active.count,
-      upcoming_events: Event.upcoming.count,
-      healthcare_requests: HealthcareRequest.visible_to_public.count
-    }
-
-    render "index"
   end
 end

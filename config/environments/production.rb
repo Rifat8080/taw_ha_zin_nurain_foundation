@@ -21,8 +21,16 @@ Rails.application.configure do
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
 
+  # Specifies the header that your server uses for sending files.
+  config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
+
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
+
+  # Mount Action Cable outside main process or domain.
+  # config.action_cable.mount_path = nil
+  # config.action_cable.url = "wss://example.com/cable"
+  # config.action_cable.allowed_request_origins = [ "http://example.com", /http:\/\/example.*/ ]
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   config.assume_ssl = true
@@ -48,6 +56,13 @@ Rails.application.configure do
 
   # Replace the default in-process memory cache store with a durable alternative.
   config.cache_store = :solid_cache_store
+
+  # Enable compression
+  config.middleware.use Rack::Deflater
+
+  # Optimize Active Record
+  config.active_record.verbose_query_logs = false
+  config.active_record.query_log_tags_enabled = true
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
   config.active_job.queue_adapter = :solid_queue

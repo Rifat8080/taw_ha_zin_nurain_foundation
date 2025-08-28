@@ -26,7 +26,7 @@ class Event < ApplicationRecord
   validate :at_least_one_ticket_type
 
   # Legacy field validations (for backward compatibility)
-  validates :seat_number, presence: true, numericality: { greater_than: 0 }, if: :legacy_mode?
+  validates :total_seats, presence: true, numericality: { greater_than: 0 }, if: :legacy_mode?
   validates :ticket_price, presence: true, numericality: { greater_than_or_equal_to: 0 }, if: :legacy_mode?
   validates :ticket_category, presence: true, inclusion: { in: %w[general vip premium standard] }, if: :legacy_mode?
 
@@ -103,7 +103,7 @@ class Event < ApplicationRecord
 
   def available_seats
     if legacy_mode?
-      seat_number - tickets.where(status: [ "active", "used" ]).count
+      total_seats - tickets.where(status: [ "active", "used" ]).count
     else
       total_seats_remaining
     end

@@ -1,12 +1,20 @@
 class HealthcareRequest < ApplicationRecord
   belongs_to :user
-  has_many :healthcare_donations, foreign_key: :request_id, dependent: :destroy
+  has_many :healthcare_donations, foreign_key: :request_id, dependent: :destroy do
+    def sum_amount
+      sum(:amount)
+    end
+  end
   has_many :healthcare_expenses, dependent: :destroy
 
   validates :patient_name, presence: true
   validates :reason, presence: true
   validates :status, presence: true, inclusion: { in: %w[pending approved rejected completed] }
   validates :approved, inclusion: { in: [ true, false ] }
+
+  # Counter cache columns
+  attribute :donations_count, :integer, default: 0
+  attribute :total_donations_cents, :integer, default: 0
 
   # Scopes for easy querying
   scope :approved_requests, -> { where(approved: true) }
@@ -16,8 +24,9 @@ class HealthcareRequest < ApplicationRecord
   scope :accepting_donations, -> { where(approved: true, status: "approved") }
   scope :search, ->(query) { where("patient_name ILIKE ? OR reason ILIKE ?", "%#{query}%", "%#{query}%") }
 
+  # Optimized methods using counter caches
   def total_donations
-    healthcare_donations.sum(:amount)
+    total_donations_cents.to_f / 100.0
   end
 
   def total_expenses
@@ -28,12 +37,12 @@ class HealthcareRequest < ApplicationRecord
     total_donations - total_expenses
   end
 
-  def expense_count
-    healthcare_expenses.count
+  def donation_count
+    donations_count
   end
 
-  def donation_count
-    healthcare_donations.count
+  def expense_count
+    healthcare_expenses.count
   end
 
   def approved?
@@ -46,6 +55,14 @@ class HealthcareRequest < ApplicationRecord
 
   def visible_to_public?
     approved? && status == "approved"
+  end
+
+  # Counter cache update method
+  def update_counters
+    update_columns(
+      donations_count: healthcare_donations.count,
+      total_donations_cents: (healthcare_donations.sum(:amount) * 100).to_i
+    )
   end
 
   def mark_as_completed!

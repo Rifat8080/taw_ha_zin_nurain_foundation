@@ -9,7 +9,9 @@ class HealthcareDonation < ApplicationRecord
   scope :recent, -> { order(created_at: :desc) }
   scope :total_amount, -> { sum(:amount) }
 
-  after_create :check_request_completion
+  after_create :update_request_counters
+  after_update :update_request_counters
+  after_destroy :update_request_counters
 
   def donor_name
     user.full_name
@@ -24,5 +26,9 @@ class HealthcareDonation < ApplicationRecord
   def check_request_completion
     # You can add logic here to automatically mark requests as completed
     # based on donation goals or other criteria
+  end
+
+  def update_request_counters
+    healthcare_request.update_counters
   end
 end

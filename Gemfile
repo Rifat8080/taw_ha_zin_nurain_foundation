@@ -82,4 +82,19 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "tailwindcss-ruby", "~> 4.1"
+# Performance monitoring and optimization
+gem "rack-mini-profiler", require: false
+gem "memory_profiler", require: false
+gem "flamegraph", require: false
+gem "stackprof", require: false
+
+# Caching and optimization
+gem "redis"
+gem "connection_pool"
+
+# Compression
+gem "brotli"
+
+# Background job optimization
+gem "sidekiq"
+gem "sidekiq-cron"

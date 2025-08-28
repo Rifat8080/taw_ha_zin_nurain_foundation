@@ -7,8 +7,8 @@ class Project < ApplicationRecord
     validates :description, presence: true
 
     # Scopes
-    scope :active, -> { where(project_status_active: true) }
-    scope :inactive, -> { where(project_status_active: false) }
+    scope :active, -> { where(is_active: true) }
+    scope :inactive, -> { where(is_active: false) }
     scope :by_category, ->(category) { where("categories ILIKE ?", "%#{category}%") }
 
     # Category methods
@@ -26,7 +26,7 @@ class Project < ApplicationRecord
 
     # Helper methods
     def active?
-      project_status_active
+      is_active
     end
 
     def accepting_donations?

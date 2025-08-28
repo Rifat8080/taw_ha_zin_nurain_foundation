@@ -17,7 +17,7 @@ class ProjectsTest < ApplicationSystemTestCase
     fill_in "Categories", with: @project.categories
     fill_in "Description", with: @project.description
     fill_in "Name", with: @project.name
-    check "Project status active" if @project.project_status_active
+    check "Is active" if @project.is_active
     click_on "Create Project"
 
     assert_text "Project was successfully created"
@@ -31,7 +31,7 @@ class ProjectsTest < ApplicationSystemTestCase
     fill_in "Categories", with: @project.categories
     fill_in "Description", with: @project.description
     fill_in "Name", with: @project.name
-    check "Project status active" if @project.project_status_active
+    check "Is active" if @project.is_active
     click_on "Update Project"
 
     assert_text "Project was successfully updated"

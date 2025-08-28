@@ -4,7 +4,7 @@ if Project.count < 13
     Project.create!(
       name: "Demo Project #{i+1}",
       description: "Description for Demo Project #{i+1} - supporting the Ummah.",
-      project_status_active: true
+      is_active: true
     )
   end
   puts "Seeded demo projects: #{Project.count} total."
@@ -32,7 +32,7 @@ if Event.count < 13
       end_date: Date.today + i.days,
       start_time: Time.now.change(hour: 10, min: 0),
       end_time: Time.now.change(hour: 14, min: 0),
-      seat_number: 100 + i,
+      total_seats: 100 + i,
       venue: "Venue #{i+1}, City Center",
       guest_list: "Guest Speaker #{i+1}",
       guest_description: "Join us for Demo Event #{i+1} to support our cause.",
@@ -102,7 +102,7 @@ if Event.count < 3
     end_date: Date.current + 30.days,
     start_time: Time.parse("18:00"),
     end_time: Time.parse("23:00"),
-    seat_number: 200,
+    total_seats: 200,
     venue: "Grand Ballroom, Luxury Hotel, Downtown",
     guest_list: "Special guest speaker: Dr. Sarah Johnson, renowned philanthropist\nPerformance by the City Orchestra\nAward ceremony for outstanding volunteers",
     guest_description: "Join us for an elegant evening of giving back to the community. This annual gala brings together supporters, volunteers, and beneficiaries to celebrate our achievements and raise funds for future projects. Enjoy a three-course dinner, live entertainment, and inspiring stories from those we've helped.",
@@ -117,7 +117,7 @@ if Event.count < 3
     end_date: Date.current + 62.days,
     start_time: Time.parse("09:00"),
     end_time: Time.parse("17:00"),
-    seat_number: 50,
+    total_seats: 50,
     venue: "Community Center, Room A & B",
     guest_list: "Workshop facilitators:\n- Tech expert Alex Chen\n- Senior trainer Maria Rodriguez\n- Digital inclusion specialist David Kim",
     guest_description: "A comprehensive 3-day workshop designed to help community members develop essential digital skills. Topics include basic computer operations, internet safety, online banking, social media basics, and accessing government services online. All skill levels welcome!",
@@ -132,7 +132,7 @@ if Event.count < 3
     end_date: Date.current + 45.days,
     start_time: Time.parse("19:30"),
     end_time: Time.parse("22:30"),
-    seat_number: 100,
+    total_seats: 100,
     venue: "Riverside Amphitheater",
     guest_list: "Featured Artists:\n- Indie rock band 'Midnight Echo'\n- Folk singer-songwriter Lisa Thompson\n- Jazz trio 'Blue Note Collective'\n- Hip-hop artist MC Flow",
     guest_description: "An evening celebrating local musical talent with performances across multiple genres. Support emerging artists while enjoying an intimate concert experience under the stars. Proceeds benefit our youth music education programs.",
@@ -227,13 +227,13 @@ projects = [
     name: "School Building Project",
     categories: "Education, Infrastructure",
     description: "Building new classrooms for underprivileged children",
-    project_status_active: true
+    is_active: true
   },
   {
     name: "Medical Camp Initiative",
     categories: "Healthcare, Community Service",
     description: "Free medical checkups in rural areas",
-    project_status_active: true
+    is_active: true
   }
 ]
 
@@ -242,7 +242,7 @@ projects.each do |project_data|
   project = Project.find_or_create_by!(name: project_data[:name]) do |proj|
     proj.categories = project_data[:categories]
     proj.description = project_data[:description]
-    proj.project_status_active = project_data[:project_status_active]
+    proj.is_active = project_data[:is_active]
   end
   created_projects << project
 end

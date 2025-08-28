@@ -38,8 +38,8 @@
   </div>
 
   <div class="my-5 flex items-center gap-2">
-    <%= form.label :project_status_active %>
-    <%= form.checkbox :project_status_active, class: ["block shadow-sm rounded-md border order-first h-5 w-5", {"border-gray-400 focus:outline-blue-600": project.errors[:project_status_active].none?, "border-red-400 focus:outline-red-600": project.errors[:project_status_active].any?}] %>
+    <%= form.label :is_active %>
+    <%= form.checkbox :is_active, class: ["block shadow-sm rounded-md border order-first h-5 w-5", {"border-gray-400 focus:outline-blue-600": project.errors[:is_active].none?, "border-red-400 focus:outline-red-600": project.errors[:is_active].any?}] %>
   </div>
 
   <div class="inline">

@@ -419,7 +419,7 @@
                 <div class="w-full flex flex-col gap-1 mb-2">
                   <div class="flex items-center justify-center text-xs text-gray-500 gap-1">
                     <i class="fas fa-users text-foundationprimarygreen"></i>
-                    <span><%= t('.max_attendees') %>: <%= event.seat_number %></span>
+                    <span><%= t('.max_attendees') %>: <%= event.total_seats %></span>
                   </div>
                 </div>
                 <%= link_to t('.view_event_button'), event_path(event), class: "w-full inline-block px-5 py-2 text-base font-semibold text-foundationprimarygreen border border-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen hover:text-white transition-colors text-center mt-2" %>
