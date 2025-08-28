@@ -11,7 +11,17 @@ if Project.count < 13
 end
 
 if HealthcareRequest.count < 13
-  demo_user = User.first
+  # Ensure we have at least one user to associate with demo healthcare requests.
+  # If no users exist yet, create a lightweight seed user so requests can be created idempotently.
+  demo_user = User.first || User.find_or_create_by!(email: 'seed-user@example.com') do |u|
+    u.first_name = 'Seed'
+    u.last_name = 'User'
+    u.phone_number = 1234567890
+    u.password = 'password123'
+    u.password_confirmation = 'password123'
+    u.role = 'admin'
+    u.address = 'Seed Address'
+  end
   (HealthcareRequest.count...13).each do |i|
     HealthcareRequest.create!(
       patient_name: "Demo Patient #{i+1}",
