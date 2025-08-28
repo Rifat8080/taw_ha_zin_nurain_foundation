@@ -57,7 +57,7 @@
         <div class="flex lg:order-2 items-center space-x-3 lg:space-x-0 rtl:space-x-reverse">
 
           <div class="flex items-center ml-3">
-            <%= form_tag switch_language_path, method: :post, class: "inline-flex items-center bg-white rounded-lg" do %>
+            <%= form_tag switch_language_path, method: :post, class: "inline-flex items-center bg-white rounded-lg lang-switch" do %>
               <% en_active = I18n.locale.to_s == 'en' %>
               <% bn_active = I18n.locale.to_s == 'bn' %>
               <button type="submit" name="locale" value="en" aria-pressed="<%= en_active %>" class="px-3 py-2  rounded-lg text-sm font-medium focus:outline-none <%= en_active ? 'bg-foundationprimarygreen text-white' : 'text-gray-700 hover:bg-gray-50' %> rounded-l-md">

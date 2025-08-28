@@ -1,8 +1,5 @@
 @import "tailwindcss";
 
-/* Import Google Fonts - Roboto */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
-
 /* Custom Color Definitions using CSS Custom Properties */
 /* This approach works with current Tailwind and is compatible with Tailwind 4 */
 :root {
@@ -74,6 +71,65 @@
 /* Custom Font Classes */
 .font-body { font-family: var(--font-body); }
 .font-sans { font-family: var(--font-sans); }
+
+/* Scoped language switcher styles (only affect the language toggle form)
+   Keeps other submit/button styling untouched. */
+.lang-switch { display: inline-flex; }
+.lang-switch > button {
+  padding-left: .75rem; /* px-3 */
+  padding-right: .75rem; /* px-3 */
+  padding-top: .5rem; /* py-2 */
+  padding-bottom: .5rem; /* py-2 */
+  border-radius: .5rem; /* rounded-md */
+  background-color: transparent;
+  color: #374151; /* text-gray-700 */
+  border: none;
+}
+.lang-switch > button[aria-pressed="true"] {
+  background-color: rgb(var(--color-foundationprimarygreen));
+  color: #ffffff;
+}
+.lang-switch > button:hover:not([aria-pressed="true"]) {
+  background-color: #f8fafc; /* gray-50 */
+}
+.lang-switch > button + button {
+  border-left: 1px solid rgba(229,231,235,1); /* border-gray-200 */
+}
+
+/* Scoped donate button styling to avoid touching global submit/button defaults */
+.btn-donate {
+  /* Ensure the donate button has the orange background and readable white text.
+     Keep this rule after Tailwind utilities so it wins without needing !important. */
+  background-color: rgb(var(--color-forange));
+  border: 1px solid transparent;
+  color: #ffffff; /* enforce white text for contrast */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-donate:hover,
+.btn-donate:focus {
+  background-color: rgb(var(--color-forange) / 0.9);
+  color: #ffffff;
+}
+
+/* Extra specificity to override base resets from compiled Tailwind where button/input backgrounds
+   may be set to transparent. Targets both button elements and input submit elements that use
+   the btn-donate class. Using !important here is a safe, narrow override to ensure the
+   intended styling is visible. */
+button.btn-donate,
+input[type="submit"].btn-donate,
+.btn-donate {
+  background-color: rgb(var(--color-forange)) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+button.btn-donate:hover,
+input[type="submit"].btn-donate:hover,
+.btn-donate:hover {
+  background-color: rgb(var(--color-forange) / 0.9) !important;
+  color: #ffffff !important;
+}
 
 /* With opacity support (Tailwind 4 style) */
 .bg-foundation-primary\/50 { background-color: rgb(var(--color-foundation-primary) / 0.5); }

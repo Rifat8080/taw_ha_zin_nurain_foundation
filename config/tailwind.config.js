@@ -12,7 +12,12 @@ module.exports = {
     'hover:bg-forange/90',
     'focus:ring-forange/50',
     'text-forange',
-    'border-forange'
+    'border-forange',
+    'bg-foundationprimarygreen',
+    'text-foundationprimarygreen',
+    'border-foundationprimarygreen',
+    'hover:bg-foundationprimarygreen',
+    'hover:text-foundationprimarygreen'
   ],
   theme: {
     extend: {
