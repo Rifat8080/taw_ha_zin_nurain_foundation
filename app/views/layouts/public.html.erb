@@ -10,9 +10,17 @@
 
     <%= yield :head %>
 
+  <!-- Core color variables are defined in Tailwind's application.css; using that file instead of inline fallback -->
+
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
+  <!-- Resource hints to improve LCP and connection setup (no design changes) -->
+  <link rel="preload" as="image" href="<%= asset_path('hero.jpg') %>">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
     
     <!-- Performance-optimized font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,9 +34,15 @@
     <%= stylesheet_link_tag "navigation", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "fonts", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <!-- Swiper CSS for donation carousel -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <!-- Font Awesome (non-blocking load) -->
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
+  <!-- Flowbite CSS (non-blocking) -->
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css"></noscript>
+  <!-- Swiper CSS for donation carousel (non-blocking) -->
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" /></noscript>
   <%= stylesheet_link_tag 'home_index', media: 'all', 'data-turbo-track': 'reload' %>
   </head>
 
@@ -215,8 +229,8 @@
     <main class="pt-24 xl:pt-26 bg-white">
     <%= yield %>
 
-  <!-- Swiper JS for donation carousel -->
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <!-- Swiper JS for donation carousel (deferred to avoid blocking) -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
     </main>
 
     <!-- Footer -->

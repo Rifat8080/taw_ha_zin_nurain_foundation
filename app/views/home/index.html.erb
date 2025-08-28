@@ -111,7 +111,7 @@
 
         <!-- Submit Button -->
         <div class="flex-shrink-0">
-          <%= form.submit t('.donate_now_button'), class: "w-full lg:w-auto h-12 px-8 text-lg font-bold text-white bg-forange rounded-md hover:bg-opacity-90 transition-colors" %>
+          <%= form.submit t('.donate_now_button'), class: "w-full lg:w-auto h-12 px-8 text-lg font-bold text-white bg-forange rounded-md hover:bg-red-700 transition-colors" %>
         </div>
       </div>
       <% if current_user %>
@@ -255,7 +255,7 @@
       <button class="bg-green-700 hover:bg-green-800 text-white font-semibold px-8 py-3 rounded shadow transition mb-8"><%= t('.read_more_button') %></button>
     </div>
     <div class="flex-1 flex justify-center">
-      <img src="<%= asset_path('kid_image.jpg') %>" alt="Kid" class="rounded-[120px] rounded-br-none shadow-2xl w-full max-w-md object-cover" style="aspect-ratio: 1/1.1;" />
+      <img src="<%= asset_path('kid_image.jpg') %>" alt="Kid" class="rounded-[120px] rounded-br-none shadow-2xl w-full max-w-md object-cover" style="aspect-ratio: 1/1.1;" loading="lazy" decoding="async" width="448" height="407" />
     </div>
   </div>
 </section>
@@ -339,9 +339,9 @@
               <div class="swiper-slide flex justify-center items-stretch">
                 <div class="bg-white rounded-3xl shadow-xl flex flex-col items-center p-6 relative w-full max-w-xs mx-auto border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
                   <% if project.image.attached? %>
-                    <%= image_tag project.image, class: "rounded-2xl w-full h-48 object-cover mb-4 border border-gray-200", style: "aspect-ratio: 1.5/1; object-fit: cover;" %>
+                    <%= image_tag project.image, class: "rounded-2xl w-full h-48 object-cover mb-4 border border-gray-200", style: "aspect-ratio: 1.5/1; object-fit: cover;", loading: "lazy", decoding: "async", width: 288, height: 192 %>
                   <% else %>
-                    <%= image_tag 'kid_image.jpg', class: "rounded-2xl w-full h-48 object-cover mb-4 border border-gray-200", style: "aspect-ratio: 1.5/1; object-fit: cover;" %>
+                    <%= image_tag 'kid_image.jpg', class: "rounded-2xl w-full h-48 object-cover mb-4 border border-gray-200", style: "aspect-ratio: 1.5/1; object-fit: cover;", loading: "lazy", decoding: "async", width: 288, height: 192 %>
                   <% end %>
                   <h3 class="text-xl font-bold text-gray-900 text-center mb-1"><%= project.name %></h3>
                   <p class="text-gray-600 text-center mb-2 line-clamp-3 min-h-[48px]"> <%= truncate(project.description, length: 100) %></p>
@@ -548,7 +548,7 @@
       <% Dir.glob(Rails.root.join('app/assets/images/institutions/*.{png,jpg,jpeg,svg,webp,gif}')).each do |logo_path| %>
         <% logo_file = File.basename(logo_path) %>
         <div class="bg-white rounded-2xl shadow-lg p-4 flex items-center justify-center hover:shadow-2xl transition-all duration-300 w-36 h-36 md:w-44 md:h-44 lg:w-48 lg:h-48">
-          <%= image_tag "institutions/#{logo_file}", alt: logo_file.titleize.gsub(/[-_]/, ' '), class: "max-h-28 max-w-28 md:max-h-36 md:max-w-36 object-contain mx-auto" %>
+          <%= image_tag "institutions/#{logo_file}", alt: logo_file.titleize.gsub(/[-_]/, ' '), class: "max-h-28 max-w-28 md:max-h-36 md:max-w-36 object-contain mx-auto", loading: "lazy", decoding: "async", width: 112, height: 112 %>
         </div>
       <% end %>
       <% if Dir.glob(Rails.root.join('app/assets/images/institutions/*.{png,jpg,jpeg,svg,webp,gif}')).empty? %>
@@ -570,7 +570,7 @@
       <% Blog.published.limit(6).each do |blog| %>
         <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col overflow-hidden group transition hover:shadow-2xl">
           <% if blog.images.attached? && blog.images.any? %>
-            <%= image_tag blog.images.first, class: "rounded-t-lg w-full h-48 object-cover", alt: blog.title %>
+            <%= image_tag blog.images.first, class: "rounded-t-lg w-full h-48 object-cover", alt: blog.title, loading: "lazy", decoding: "async", width: 400, height: 192 %>
           <% end %>
           <div class="p-5 flex flex-col flex-1">
             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white group-hover:text-foundationprimarygreen transition"> <%= blog.title %> </h5>

@@ -27,7 +27,9 @@
     <%= javascript_importmap_tags %>
     
     <!-- Flowbite CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
+   <!-- Flowbite CSS (non-blocking) -->
+   <link rel="preload" href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+   <noscript><link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" /></noscript>
   </head>
 
   <body class="bg-gray-50 font-sans">
@@ -266,7 +268,7 @@
       </main>
     </div>
 
-    <!-- Flowbite JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+   <!-- Flowbite JavaScript (deferred) -->
+   <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js" defer></script>
   </body>
 </html>

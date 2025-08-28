@@ -9,5 +9,6 @@
  * Consider organizing styles into separate files for maintainability.
  */
 
-/* Import Flowbite styles */
-@import url('https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css');
+/* Flowbite is loaded non-blocking from the layouts (preload with onload swap).
+	Removed the @import here because CSS @import is render-blocking and hurts Lighthouse.
+	Keeping Flowbite inclusion in the layout ensures design stays identical while improving performance. */
