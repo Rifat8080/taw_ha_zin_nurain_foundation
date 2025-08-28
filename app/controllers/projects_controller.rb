@@ -18,7 +18,7 @@ class ProjectsController < ApplicationController
 
     # Search functionality
     if params[:search].present?
-      @projects = @projects.where("name ILIKE ? OR description ILIKE ? OR categories ILIKE ?", 
+      @projects = @projects.where("name ILIKE ? OR description ILIKE ? OR categories ILIKE ?",
                                   "%#{params[:search]}%", "%#{params[:search]}%", "%#{params[:search]}%")
     end
 

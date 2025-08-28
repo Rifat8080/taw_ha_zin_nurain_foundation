@@ -13,7 +13,7 @@ class Project < ApplicationRecord
 
     # Category methods
     def category_list
-      categories.to_s.split(',').map(&:strip).reject(&:blank?)
+      categories.to_s.split(",").map(&:strip).reject(&:blank?)
     end
 
     def has_category?(category)
@@ -34,7 +34,7 @@ class Project < ApplicationRecord
     end
 
     def status_text
-      active? ? 'Active' : 'Inactive'
+      active? ? "Active" : "Inactive"
     end
 
     # Calculate project metrics
@@ -51,6 +51,6 @@ class Project < ApplicationRecord
     end
 
     def donors_count
-      donations.joins(:user).count('DISTINCT users.id')
+      donations.joins(:user).count("DISTINCT users.id")
     end
 end

@@ -20,7 +20,7 @@ class Event < ApplicationRecord
   validates :start_time, presence: true
   validates :end_time, presence: true
   validates :venue, presence: true, length: { minimum: 3, maximum: 500 }
-  
+
   # Ticket types validation
   validate :ticket_types_config_format
   validate :at_least_one_ticket_type
@@ -59,31 +59,31 @@ class Event < ApplicationRecord
 
   def available_ticket_types
     ticket_types.map do |type|
-      sold_count = tickets.where(ticket_type: type['category'], status: ['active', 'used']).count
+      sold_count = tickets.where(ticket_type: type["category"], status: [ "active", "used" ]).count
       type.merge(
-        'seats_sold' => sold_count,
-        'seats_remaining' => [type['seats_available'] - sold_count, 0].max,
-        'sold_out' => (type['seats_available'] - sold_count) <= 0
+        "seats_sold" => sold_count,
+        "seats_remaining" => [ type["seats_available"] - sold_count, 0 ].max,
+        "sold_out" => (type["seats_available"] - sold_count) <= 0
       )
     end
   end
 
   def get_ticket_type(category)
-    ticket_types.find { |type| type['category'] == category }
+    ticket_types.find { |type| type["category"] == category }
   end
 
   def ticket_type_available?(category, quantity = 1)
-    type_info = available_ticket_types.find { |type| type['category'] == category }
+    type_info = available_ticket_types.find { |type| type["category"] == category }
     return false unless type_info
-    type_info['seats_remaining'] >= quantity
+    type_info["seats_remaining"] >= quantity
   end
 
   def total_seats_available
-    ticket_types.sum { |type| type['seats_available'] }
+    ticket_types.sum { |type| type["seats_available"] }
   end
 
   def total_seats_sold
-    available_ticket_types.sum { |type| type['seats_sold'] }
+    available_ticket_types.sum { |type| type["seats_sold"] }
   end
 
   def total_seats_remaining
@@ -113,7 +113,7 @@ class Event < ApplicationRecord
     if legacy_mode?
       available_seats <= 0
     else
-      available_ticket_types.all? { |type| type['sold_out'] }
+      available_ticket_types.all? { |type| type["sold_out"] }
     end
   end
 
@@ -132,7 +132,7 @@ class Event < ApplicationRecord
 
   def ticket_types_config_format
     return if ticket_types_config.blank?
-    
+
     unless ticket_types_config.is_a?(Array)
       errors.add(:ticket_types_config, "must be an array")
       return
@@ -151,11 +151,11 @@ class Event < ApplicationRecord
         end
       end
 
-      if type['price'].present? && type['price'].to_f < 0
+      if type["price"].present? && type["price"].to_f < 0
         errors.add(:ticket_types_config, "ticket type #{index + 1} price must be non-negative")
       end
 
-      if type['seats_available'].present? && type['seats_available'].to_i <= 0
+      if type["seats_available"].present? && type["seats_available"].to_i <= 0
         errors.add(:ticket_types_config, "ticket type #{index + 1} must have at least 1 seat available")
       end
     end

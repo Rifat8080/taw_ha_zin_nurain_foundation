@@ -23,7 +23,6 @@ default: &default
   checkout_timeout: 5
   reaping_frequency: 10
 
-
 development:
   <<: *default
   database: taw_ha_zin_nurain_foundation_development

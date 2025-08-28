@@ -24,7 +24,7 @@ class CleanUpDuplicateIndexes < ActiveRecord::Migration[8.0]
     # Healthcare Requests table - remove redundant indexes
     remove_index :healthcare_requests, :approved, name: "index_healthcare_requests_on_approved" if index_exists?(:healthcare_requests, :approved, name: "index_healthcare_requests_on_approved")
     remove_index :healthcare_requests, :status, name: "index_healthcare_requests_on_status" if index_exists?(:healthcare_requests, :status, name: "index_healthcare_requests_on_status")
-    remove_index :healthcare_requests, [:status, :approved], name: "index_healthcare_requests_on_status_approved" if index_exists?(:healthcare_requests, [:status, :approved], name: "index_healthcare_requests_on_status_approved")
+    remove_index :healthcare_requests, [ :status, :approved ], name: "index_healthcare_requests_on_status_approved" if index_exists?(:healthcare_requests, [ :status, :approved ], name: "index_healthcare_requests_on_status_approved")
 
     # Payments table - remove redundant index
     remove_index :payments, :project_id, name: "index_payments_on_project_id" if index_exists?(:payments, :project_id, name: "index_payments_on_project_id")

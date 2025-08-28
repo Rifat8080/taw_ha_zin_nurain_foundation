@@ -1,17 +1,17 @@
 # Performance monitoring and optimization settings
-require 'rack-mini-profiler' if Rails.env.development?
+require "rack-mini-profiler" if Rails.env.development?
 
 # Enable memory profiling in development
 if Rails.env.development?
-  require 'memory_profiler'
-  require 'flamegraph'
+  require "memory_profiler"
+  require "flamegraph"
 end
 
 # Configure Redis for caching (if available)
-if ENV['REDIS_URL'].present?
+if ENV["REDIS_URL"].present?
   Rails.application.config.cache_store = :redis_cache_store, {
-    url: ENV['REDIS_URL'],
-    pool_size: ENV.fetch('RAILS_MAX_THREADS', 5).to_i,
+    url: ENV["REDIS_URL"],
+    pool_size: ENV.fetch("RAILS_MAX_THREADS", 5).to_i,
     pool_timeout: 5
   }
 end
@@ -37,5 +37,5 @@ Rails.application.config.middleware.use Rack::Deflater
 
 # Optimize asset serving
 Rails.application.config.public_file_server.headers = {
-  'Cache-Control' => 'public, max-age=31536000, immutable'
+  "Cache-Control" => "public, max-age=31536000, immutable"
 }

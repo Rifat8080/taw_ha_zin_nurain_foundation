@@ -18,8 +18,8 @@ class ProfessionalizeSchemaIndexes < ActiveRecord::Migration[8.0]
     add_index :blogs, :published_at, name: "index_blogs_on_published_at" unless index_exists?(:blogs, :published_at)
 
     # Add composite indexes for common query patterns
-    add_index :donations, [:user_id, :project_id], name: "index_donations_on_user_project" unless index_exists?(:donations, [:user_id, :project_id])
-    add_index :healthcare_donations, [:user_id, :request_id], name: "index_healthcare_donations_on_user_request" unless index_exists?(:healthcare_donations, [:user_id, :request_id])
+    add_index :donations, [ :user_id, :project_id ], name: "index_donations_on_user_project" unless index_exists?(:donations, [ :user_id, :project_id ])
+    add_index :healthcare_donations, [ :user_id, :request_id ], name: "index_healthcare_donations_on_user_request" unless index_exists?(:healthcare_donations, [ :user_id, :request_id ])
 
     # Optimize existing indexes by removing unused ones
     # Note: Keep single-column indexes only if they're used for queries that don't benefit from composite indexes

@@ -7,6 +7,5 @@ class ProfessionalizeSchemaDataTypes < ActiveRecord::Migration[8.0]
     change_column :events, :ticket_price, :decimal, precision: 14, scale: 2
     change_column :tickets, :price, :decimal, precision: 14, scale: 2
     change_column :healthcare_donations, :amount, :decimal, precision: 14, scale: 2
-
   end
 end
