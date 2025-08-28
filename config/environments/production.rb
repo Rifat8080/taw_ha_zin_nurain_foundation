@@ -63,10 +63,15 @@ Rails.application.configure do
   # Optimize Active Record
   config.active_record.verbose_query_logs = false
   config.active_record.query_log_tags_enabled = true
+  config.active_record.async_query_executor = :global_thread_pool
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
   config.active_job.queue_adapter = :solid_queue
   config.solid_queue.connects_to = { database: { writing: :queue } }
+
+  # Enable Action Controller caching optimizations
+  config.action_controller.default_url_options = { host: ENV.fetch("APPLICATION_HOST", "localhost") }
+  config.action_controller.asset_host = ENV["ASSET_HOST"] if ENV["ASSET_HOST"].present?
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.

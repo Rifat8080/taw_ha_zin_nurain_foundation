@@ -16,3 +16,15 @@ test:
 
 production:
   <<: *default
+  dispatchers:
+    - polling_interval: 0.5
+      batch_size: 1000
+  workers:
+    - queues: "*"
+      threads: 5
+      processes: <%= ENV.fetch("JOB_CONCURRENCY", 3) %>
+      polling_interval: 0.05
+    - queues: "mailers,maintenance"
+      threads: 2
+      processes: 1
+      polling_interval: 1

@@ -31,6 +31,9 @@ min_threads_count = ENV.fetch("RAILS_MIN_THREADS", 2).to_i
 
 threads min_threads_count, max_threads_count
 
+# Configure workers for production scaling
+workers ENV.fetch("WEB_CONCURRENCY", 2).to_i if ENV.fetch("RAILS_ENV", "development") == "production"
+
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
 port ENV.fetch("PORT", 3000)
 
@@ -56,3 +59,15 @@ log_requests true
 
 # Optimize for memory usage
 preload_app!
+
+# Production-specific optimizations
+if ENV.fetch("RAILS_ENV", "development") == "production"
+  # Enable phased restart for zero-downtime deployments
+  phased_restart true
+
+  # Optimize garbage collection
+  gc_request_concurrency 1
+
+  # Set worker check interval
+  worker_check_interval 5
+end
