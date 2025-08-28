@@ -100,7 +100,7 @@ end
   def event_params
     params.require(:event).permit(:name, :start_date, :end_date, :start_time, :end_time,
                                   :seat_number, :venue, :guest_list, :guest_description,
-                                  :ticket_price, :ticket_category, :event_image,:description,
+                                  :ticket_price, :ticket_category, :event_image, :description,
                                   guests_attributes: [ :id, :name, :title, :description, :image, :_destroy ],
                                   ticket_types: [ :name, :category, :price, :seats_available, :description ])
   end
