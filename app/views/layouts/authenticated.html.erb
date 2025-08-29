@@ -220,36 +220,46 @@
                 <% end %>
              </li>
 
-             <!-- Zakat Calculator -->
-             <li>
-                <%= link_to zakat_calculations_path, class: "sidebar-link ".dup.concat(current_page?(zakat_calculations_path) ? ' sidebar-link-active' : '') do %>
-                   <i class="fa-solid fa-calculator sidebar-icon" aria-hidden="true"></i>
-                   <span class="flex-1 ms-3 whitespace-nowrap">Zakat Calculator</span>
-                <% end %>
-             </li>
+                   <!-- Zakat group (Zakat Calculator + Nisab Rates) -->
+                   <li>
+                      <button type="button" data-collapse-toggle="zakat-collapse-mobile" aria-expanded="false" aria-controls="zakat-collapse-mobile" class="sidebar-link w-full flex items-center justify-between">
+                         <span class="flex items-center">
+                            <i class="fa-solid fa-balance-scale sidebar-icon" aria-hidden="true"></i>
+                            <span class="ms-3">Zakat</span>
+                         </span>
+                         <i class="fa-solid fa-chevron-down fa-sm text-white" aria-hidden="true"></i>
+                      </button>
+                      <ul id="zakat-collapse-mobile" class="hidden py-1 mt-1 space-y-1">
+                         <li>
+                              <%= link_to zakat_calculations_path, class: "sidebar-link pl-8 ".dup.concat(current_page?(zakat_calculations_path) ? ' sidebar-link-active' : '') do %>
+                                  <i class="fa-solid fa-calculator sidebar-icon" aria-hidden="true"></i>
+                                  <span class="ms-3">Zakat Calculator</span>
+                              <% end %>
+                         </li>
+                   <% if current_user&.role == 'admin' %>
+                     <li>
+                         <%= link_to nisab_rates_path, class: "sidebar-link pl-8 ".dup.concat(current_page?(nisab_rates_path) ? ' sidebar-link-active' : '') do %>
+                            <i class="fa-solid fa-coins sidebar-icon" aria-hidden="true"></i>
+                            <span class="ms-3">Nisab Rates</span>
+                         <% end %>
+                     </li>
+                   <% end %>
+                      </ul>
+                   </li>
 
                       <div class="w-full py-2">
                          <h6 class="text-xs tracking-wide font-semibold uppercase text-white/90">Preference</h6>
                       </div>
                
 
-                   <% if current_user&.role == 'admin' %>
-             <!-- Nisab Rates (Admin Only) -->
-             <li>
-                <%= link_to nisab_rates_path, class: "sidebar-link ".dup.concat(current_page?(nisab_rates_path) ? ' sidebar-link-active' : '') do %>
-                      <i class="fa-solid fa-balance-scale sidebar-icon" aria-hidden="true"></i>
-                   <span class="flex-1 ms-3 whitespace-nowrap">Nisab Rates</span>
-                <% end %>
-             </li>
-             <!-- User Management (Admin Only) -->
+                   <!-- User Management (Admin Only) -->
              <li>
                 <%= link_to users_path, class: "sidebar-link ".dup.concat(current_page?(users_path) ? ' sidebar-link-active' : '') do %>
                       <i class="fa-solid fa-user sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">User Management</span>
                 <% end %>
-                   </li>
-                   <% end %>
-               </ul>
+               </li>
+            </ul>
             </div>
          </div>
     </aside>
@@ -384,13 +394,32 @@
                 <% end %>
              </li>
 
-             <!-- Zakat Calculator -->
-             <li>
-                <%= link_to zakat_calculations_path, class: "sidebar-link ".dup.concat(current_page?(zakat_calculations_path) ? ' sidebar-link-active' : '') do %>
-                   <i class="fa-solid fa-calculator sidebar-icon" aria-hidden="true"></i>
-                   <span class="flex-1 ms-3 whitespace-nowrap">Zakat Calculator</span>
-                <% end %>
-             </li>
+                   <!-- Zakat group (Zakat Calculator + Nisab Rates) -->
+                   <li>
+                      <button type="button" data-collapse-toggle="zakat-collapse-xl" aria-expanded="false" aria-controls="zakat-collapse-xl" class="sidebar-link w-full flex items-center justify-between">
+                         <span class="flex items-center">
+                            <i class="fa-solid fa-balance-scale sidebar-icon" aria-hidden="true"></i>
+                            <span class="ms-3">Zakat</span>
+                         </span>
+                         <i class="fa-solid fa-chevron-down fa-sm text-white" aria-hidden="true"></i>
+                      </button>
+                      <ul id="zakat-collapse-xl" class="hidden py-1 mt-1 space-y-1">
+                         <li>
+                              <%= link_to zakat_calculations_path, class: "sidebar-link pl-8 ".dup.concat(current_page?(zakat_calculations_path) ? ' sidebar-link-active' : '') do %>
+                                  <i class="fa-solid fa-calculator sidebar-icon" aria-hidden="true"></i>
+                                  <span class="ms-3">Zakat Calculator</span>
+                              <% end %>
+                         </li>
+                   <% if current_user&.role == 'admin' %>
+                     <li>
+                         <%= link_to nisab_rates_path, class: "sidebar-link pl-8 ".dup.concat(current_page?(nisab_rates_path) ? ' sidebar-link-active' : '') do %>
+                            <i class="fa-solid fa-coins sidebar-icon" aria-hidden="true"></i>
+                            <span class="ms-3">Nisab Rates</span>
+                         <% end %>
+                     </li>
+                   <% end %>
+                      </ul>
+                   </li>
 
                    <!-- Preference heading inserted into the middle of the list -->
               
@@ -399,23 +428,14 @@
                       </div>
               
 
-                   <% if current_user&.role == 'admin' %>
-             <!-- Nisab Rates (Admin Only) -->
-             <li>
-                <%= link_to nisab_rates_path, class: "sidebar-link ".dup.concat(current_page?(nisab_rates_path) ? ' sidebar-link-active' : '') do %>
-                      <i class="fa-solid fa-balance-scale sidebar-icon" aria-hidden="true"></i>
-                   <span class="flex-1 ms-3 whitespace-nowrap">Nisab Rates</span>
-                <% end %>
-             </li>
              <!-- User Management (Admin Only) -->
              <li>
                 <%= link_to users_path, class: "sidebar-link ".dup.concat(current_page?(users_path) ? ' sidebar-link-active' : '') do %>
                       <i class="fa-solid fa-user sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">User Management</span>
                 <% end %>
-                   </li>
-                   <% end %>
-               </ul>
+               </li>
+            </ul>
               
             </div>
          </div>
