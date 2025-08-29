@@ -140,7 +140,7 @@
                       <button type="button" data-collapse-toggle="volunteers-collapse-mobile" aria-expanded="false" aria-controls="volunteers-collapse-mobile" class="sidebar-link w-full flex items-center justify-between">
                          <span class="flex items-center">
                             <i class="fa-solid fa-people-group sidebar-icon" aria-hidden="true"></i>
-                            <span class="ms-3">Volunteers</span>
+                            <span class="ms-3">Volunteer System</span>
                          </span>
                          <i class="fa-solid fa-chevron-down fa-sm text-white" aria-hidden="true"></i>
                       </button>
@@ -179,20 +179,32 @@
                    <span class="flex-1 ms-3 whitespace-nowrap">Tickets</span>
                 <% end %>
              </li>
-             <li>
-                <%= link_to qr_scan_tickets_path, class: "sidebar-link ".dup.concat(current_page?(qr_scan_tickets_path) ? ' sidebar-link-active' : '') do %>
-                   <i class="fa-solid fa-qrcode sidebar-icon" aria-hidden="true"></i>
-                   <span class="flex-1 ms-3 whitespace-nowrap">QR Scanner</span>
-                <% end %>
-             </li>
-             <% if current_user.is_volunteer? || current_user.role == 'admin' %>
-               <li>
-                  <%= link_to spot_registration_tickets_path, class: "sidebar-link ".dup.concat(current_page?(spot_registration_tickets_path) ? ' sidebar-link-active' : '') do %>
-                     <i class="fa-solid fa-tag sidebar-icon" aria-hidden="true"></i>
-                     <span class="flex-1 ms-3 whitespace-nowrap">Spot Registration</span>
-                  <% end %>
-               </li>
-             <% end %>
+                   <!-- Scanner group (QR Scanner + Spot Registration) -->
+                   <li>
+                            <button type="button" data-collapse-toggle="scanner-collapse-mobile" aria-expanded="false" aria-controls="scanner-collapse-mobile" class="sidebar-link w-full flex items-center justify-between">
+                               <span class="flex items-center">
+                                  <i class="fa-solid fa-calendar-plus sidebar-icon" aria-hidden="true"></i>
+                                  <span class="ms-3">Event Management</span>
+                               </span>
+                         <i class="fa-solid fa-chevron-down fa-sm text-white" aria-hidden="true"></i>
+                      </button>
+                      <ul id="scanner-collapse-mobile" class="hidden py-1 mt-1 space-y-1">
+                         <li>
+                            <%= link_to qr_scan_tickets_path, class: "sidebar-link pl-8 ".dup.concat(current_page?(qr_scan_tickets_path) ? ' sidebar-link-active' : '') do %>
+                               <i class="fa-solid fa-qrcode sidebar-icon" aria-hidden="true"></i>
+                               <span class="ms-3">QR Scanner</span>
+                            <% end %>
+                         </li>
+                         <% if current_user.is_volunteer? || current_user.role == 'admin' %>
+                            <li>
+                               <%= link_to spot_registration_tickets_path, class: "sidebar-link pl-8 ".dup.concat(current_page?(spot_registration_tickets_path) ? ' sidebar-link-active' : '') do %>
+                                  <i class="fa-solid fa-tag sidebar-icon" aria-hidden="true"></i>
+                                  <span class="ms-3">Spot Registration</span>
+                               <% end %>
+                            </li>
+                         <% end %>
+                      </ul>
+                   </li>
 
              <!-- Financial Section -->
              <li>
@@ -331,20 +343,32 @@
                    <span class="flex-1 ms-3 whitespace-nowrap">Tickets</span>
                 <% end %>
              </li>
-             <li>
-                <%= link_to qr_scan_tickets_path, class: "sidebar-link ".dup.concat(current_page?(qr_scan_tickets_path) ? ' sidebar-link-active' : '') do %>
-                   <i class="fa-solid fa-qrcode sidebar-icon" aria-hidden="true"></i>
-                   <span class="flex-1 ms-3 whitespace-nowrap">QR Scanner</span>
-                <% end %>
-             </li>
-             <% if current_user.is_volunteer? || current_user.role == 'admin' %>
-               <li>
-                  <%= link_to spot_registration_tickets_path, class: "sidebar-link ".dup.concat(current_page?(spot_registration_tickets_path) ? ' sidebar-link-active' : '') do %>
-                     <i class="fa-solid fa-tag sidebar-icon" aria-hidden="true"></i>
-                     <span class="flex-1 ms-3 whitespace-nowrap">Spot Registration</span>
-                  <% end %>
-               </li>
-             <% end %>
+                   <!-- Scanner group (QR Scanner + Spot Registration) -->
+                   <li>
+                            <button type="button" data-collapse-toggle="scanner-collapse-xl" aria-expanded="false" aria-controls="scanner-collapse-xl" class="sidebar-link w-full flex items-center justify-between">
+                               <span class="flex items-center">
+                                  <i class="fa-solid fa-calendar-plus sidebar-icon" aria-hidden="true"></i>
+                                  <span class="ms-3">Event Management</span>
+                               </span>
+                         <i class="fa-solid fa-chevron-down fa-sm text-white" aria-hidden="true"></i>
+                      </button>
+                      <ul id="scanner-collapse-xl" class="hidden py-1 mt-1 space-y-1">
+                         <li>
+                            <%= link_to qr_scan_tickets_path, class: "sidebar-link pl-8 ".dup.concat(current_page?(qr_scan_tickets_path) ? ' sidebar-link-active' : '') do %>
+                               <i class="fa-solid fa-qrcode sidebar-icon" aria-hidden="true"></i>
+                               <span class="ms-3">QR Scanner</span>
+                            <% end %>
+                         </li>
+                         <% if current_user.is_volunteer? || current_user.role == 'admin' %>
+                            <li>
+                               <%= link_to spot_registration_tickets_path, class: "sidebar-link pl-8 ".dup.concat(current_page?(spot_registration_tickets_path) ? ' sidebar-link-active' : '') do %>
+                                  <i class="fa-solid fa-tag sidebar-icon" aria-hidden="true"></i>
+                                  <span class="ms-3">Spot Registration</span>
+                               <% end %>
+                            </li>
+                         <% end %>
+                      </ul>
+                   </li>
 
              <!-- Financial Section -->
              <li>

@@ -63,6 +63,20 @@
 
 /* Color chevron when the collapsible group is expanded (Flowbite toggles aria-expanded)
    Targets the Font Awesome chevron used inside the collapse toggle button. */
+[data-collapse-toggle] .fa-chevron-down {
+  /* default transition for all chevrons */
+  transition: transform 200ms cubic-bezier(.4,0,.2,1), color 150ms;
+  transform-origin: center;
+}
+
 [data-collapse-toggle][aria-expanded="true"] .fa-chevron-down {
+  color: var(--forange, #F29300) !important;
+  transform: rotate(180deg);
+}
+
+/* Make chevrons turn foundation orange on hover/focus (toggle or icon) */
+[data-collapse-toggle]:hover .fa-chevron-down,
+[data-collapse-toggle]:focus .fa-chevron-down,
+.fa-chevron-down:hover {
   color: var(--forange, #F29300) !important;
 }
