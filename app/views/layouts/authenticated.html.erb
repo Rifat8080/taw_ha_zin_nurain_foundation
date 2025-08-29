@@ -92,7 +92,7 @@
 
    <!-- Sidebar -->
    <aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-transparent border-r border-gray-200 lg:border-0 xl:hidden xl:translate-x-0 xl:[transform:translateX(0!important)] dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
-         <div class="h-full px-3 pb-4 overflow-y-auto bg-forange text-white dark:bg-gray-800 rounded-lg lg:rounded-xl">
+         <div class="h-full px-3 pb-4 overflow-y-auto bg-forange text-white dark:bg-gray-800 rounded-none lg:rounded-xl">
                <!-- Sidebar logo (visible on lg and up) -->
                <div class="hidden xl:block">
                   <%= link_to root_path do %>
@@ -101,7 +101,11 @@
                </div>
                <!-- Center the list on large screens -->
                <div class="w-full xl:flex xl:flex-col xl:items-center">
-                  <ul class="space-y-2 pt-4 font-medium text-white w-full lg:w-auto">
+                  <!-- Section heading (matches screenshot) -->
+                  <div class="w-full py-2 mt-2">
+                     <h6 class="text-xs tracking-wide font-semibold uppercase text-white/90 mb-2">Manage</h6>
+                  </div>
+                  <ul class="space-y-2 pt-2 font-medium text-white w-full lg:w-auto">
              <li>
                 <%= link_to dashboard_path, class: "sidebar-link ".dup.concat(current_page?(dashboard_path) ? ' sidebar-link-active' : '') do %>
                    <i class="fa-solid fa-house sidebar-icon" aria-hidden="true"></i>
@@ -201,7 +205,12 @@
                 <% end %>
              </li>
 
-             <% if current_user&.role == 'admin' %>
+                      <div class="w-full py-2">
+                         <h6 class="text-xs tracking-wide font-semibold uppercase text-white/90">Preference</h6>
+                      </div>
+               
+
+                   <% if current_user&.role == 'admin' %>
              <!-- Nisab Rates (Admin Only) -->
              <li>
                 <%= link_to nisab_rates_path, class: "sidebar-link ".dup.concat(current_page?(nisab_rates_path) ? ' sidebar-link-active' : '') do %>
@@ -233,6 +242,10 @@
                </div>
                <!-- Center the list on large screens -->
                <div class="w-full xl:flex xl:flex-col xl:items-center">
+                  <!-- Section heading (matches screenshot) -->
+                  <div class="w-full py-2">
+                     <h6 class="text-xs tracking-wide font-semibold uppercase text-white/90 mb-2">Manage</h6>
+                  </div>
                   <ul class="space-y-2 font-medium text-white w-full lg:w-auto">
              <li>
                 <%= link_to dashboard_path, class: "sidebar-link ".dup.concat(current_page?(dashboard_path) ? ' sidebar-link-active' : '') do %>
@@ -333,7 +346,14 @@
                 <% end %>
              </li>
 
-             <% if current_user&.role == 'admin' %>
+                   <!-- Preference heading inserted into the middle of the list -->
+              
+                      <div class="w-full py-2">
+                         <h6 class="text-xs tracking-wide font-semibold uppercase text-white/90">Preference</h6>
+                      </div>
+              
+
+                   <% if current_user&.role == 'admin' %>
              <!-- Nisab Rates (Admin Only) -->
              <li>
                 <%= link_to nisab_rates_path, class: "sidebar-link ".dup.concat(current_page?(nisab_rates_path) ? ' sidebar-link-active' : '') do %>
@@ -350,6 +370,7 @@
                    </li>
                    <% end %>
                </ul>
+              
             </div>
          </div>
     </aside>
