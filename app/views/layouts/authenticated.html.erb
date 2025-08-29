@@ -173,12 +173,7 @@
                    <span class="flex-1 ms-3 whitespace-nowrap">Events</span>
                 <% end %>
              </li>
-             <li>
-                <%= link_to tickets_path, class: "sidebar-link ".dup.concat(current_page?(tickets_path) ? ' sidebar-link-active' : '') do %>
-                   <i class="fa-solid fa-ticket sidebar-icon" aria-hidden="true"></i>
-                   <span class="flex-1 ms-3 whitespace-nowrap">Tickets</span>
-                <% end %>
-             </li>
+            
                    <!-- Scanner group (QR Scanner + Spot Registration) -->
                    <li>
                             <button type="button" data-collapse-toggle="scanner-collapse-mobile" aria-expanded="false" aria-controls="scanner-collapse-mobile" class="sidebar-link w-full flex items-center justify-between">
@@ -259,6 +254,24 @@
                    <span class="flex-1 ms-3 whitespace-nowrap">User Management</span>
                 <% end %>
                </li>
+                <li>
+                <%= link_to tickets_path, class: "sidebar-link ".dup.concat(current_page?(tickets_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-ticket sidebar-icon" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Tickets</span>
+                <% end %>
+             </li>
+                <li>
+                   <%= link_to edit_user_registration_path, class: "sidebar-link ".dup.concat(current_page?(edit_user_registration_path) ? ' sidebar-link-active' : '') do %>
+                      <i class="fa-solid fa-user-gear sidebar-icon" aria-hidden="true"></i>
+                      <span class="flex-1 ms-3 whitespace-nowrap">My Account</span>
+                   <% end %>
+                </li>
+                <li>
+                   <%= button_to destroy_user_session_path, method: :delete, class: "sidebar-link text-left w-full" do %>
+                      <i class="fa-solid fa-right-from-bracket sidebar-icon" aria-hidden="true"></i>
+                      <span class="flex-1 ms-3 whitespace-nowrap">Sign out</span>
+                   <% end %>
+                </li>
             </ul>
             </div>
          </div>
@@ -347,12 +360,7 @@
                    <span class="flex-1 ms-3 whitespace-nowrap">Events</span>
                 <% end %>
              </li>
-             <li>
-                <%= link_to tickets_path, class: "sidebar-link ".dup.concat(current_page?(tickets_path) ? ' sidebar-link-active' : '') do %>
-                   <i class="fa-solid fa-ticket sidebar-icon" aria-hidden="true"></i>
-                   <span class="flex-1 ms-3 whitespace-nowrap">Tickets</span>
-                <% end %>
-             </li>
+             
                    <!-- Scanner group (QR Scanner + Spot Registration) -->
                    <li>
                             <button type="button" data-collapse-toggle="scanner-collapse-xl" aria-expanded="false" aria-controls="scanner-collapse-xl" class="sidebar-link w-full flex items-center justify-between">
@@ -435,6 +443,25 @@
                    <span class="flex-1 ms-3 whitespace-nowrap">User Management</span>
                 <% end %>
                </li>
+
+               <li>
+                <%= link_to tickets_path, class: "sidebar-link ".dup.concat(current_page?(tickets_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-ticket sidebar-icon" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Tickets</span>
+                <% end %>
+             </li>
+                <li>
+                   <%= link_to edit_user_registration_path, class: "sidebar-link ".dup.concat(current_page?(edit_user_registration_path) ? ' sidebar-link-active' : '') do %>
+                      <i class="fa-solid fa-user-gear sidebar-icon" aria-hidden="true"></i>
+                      <span class="flex-1 ms-3 whitespace-nowrap">My Account</span>
+                   <% end %>
+                </li>
+                <li>
+                   <%= button_to destroy_user_session_path, method: :delete, class: "sidebar-link text-left w-full" do %>
+                      <i class="fa-solid fa-right-from-bracket sidebar-icon" aria-hidden="true"></i>
+                      <span class="flex-1 ms-3 whitespace-nowrap">Sign out</span>
+                   <% end %>
+                </li>
             </ul>
               
             </div>
