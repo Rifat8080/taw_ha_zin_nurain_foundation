@@ -58,13 +58,13 @@
         <div class="flex lg:order-2 items-center space-x-1 sm:space-x-2 md:space-x-3 lg:space-x-0 rtl:space-x-reverse">
 
           <div class="lg:flex hidden items-center ml-1 sm:ml-2 md:ml-3">
-            <%= form_tag switch_language_path, method: :post, class: "inline-flex items-center bg-white rounded-lg lang-switch" do %>
+            <%= form_tag switch_language_path, method: :post, class: "inline-flex items-center bg-white rounded-lg lang-switch h-8 sm:h-9 md:h-10 lg:h-11 wide:h-12 2xl:h-14" do %>
               <% en_active = I18n.locale.to_s == 'en' %>
               <% bn_active = I18n.locale.to_s == 'bn' %>
-              <button type="submit" name="locale" value="en" aria-pressed="<%= en_active %>" class="px-2 py-1 sm:px-3 sm:py-2 text-xs sm:text-sm wide:text-base 2xl:text-lg rounded-lg font-medium focus:outline-none <%= en_active ? 'bg-foundationprimarygreen text-white' : 'text-gray-700 hover:bg-gray-50' %> rounded-l-md">
+              <button type="submit" name="locale" value="en" aria-pressed="<%= en_active %>" class="h-full flex items-center justify-center px-2 sm:px-3 text-xs sm:text-sm wide:text-base 2xl:text-lg font-medium focus:outline-none <%= en_active ? 'bg-foundationprimarygreen text-white' : 'text-gray-700 hover:bg-gray-50' %> rounded-l-md">
                 EN
               </button>
-              <button type="submit" name="locale" value="bn" aria-pressed="<%= bn_active %>" class="px-2 py-1 sm:px-3 sm:py-2 text-xs sm:text-sm wide:text-base 2xl:text-lg rounded-lg font-medium focus:outline-none <%= bn_active ? 'bg-foundationprimarygreen text-white' : 'text-gray-700 hover:bg-gray-50' %> rounded-r-md border-l border-gray-200">
+              <button type="submit" name="locale" value="bn" aria-pressed="<%= bn_active %>" class="h-full flex items-center justify-center px-2 sm:px-3 text-xs sm:text-sm wide:text-base 2xl:text-lg font-medium focus:outline-none <%= bn_active ? 'bg-foundationprimarygreen text-white' : 'text-gray-700 hover:bg-gray-50' %> rounded-r-md border-l border-gray-200">
                 বাং
               </button>
             <% end %>
@@ -77,12 +77,12 @@
           <% else %>
             <% target_nav_path = new_user_session_path %>
           <% end %>
-                    <%= link_to target_nav_path, class: "flex  group relative items-center justify-center rounded-lg bg-forange text-white shadow transform transition-all duration-200 hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen/50 mr-1 sm:mr-2 border border-gray-200 px-2 py-1 sm:px-3 sm:py-2 md:px-4 md:py-2 text-xs sm:text-sm md:text-base lg:text-lg wide:text-2xl 2xl:text-3xl h-8 sm:h-9 md:h-10 overflow-hidden" do %>
+                    <%= link_to target_nav_path, class: "flex  group relative items-center justify-center rounded-lg bg-forange text-white shadow transform transition-all duration-200 hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen/50 mr-1 sm:mr-2 border border-gray-200 px-3 md:px-4 text-xs sm:text-sm md:text-base lg:text-lg wide:text-2xl 2xl:text-3xl h-8 sm:h-9 md:h-10 lg:h-11 wide:h-12 2xl:h-14 overflow-hidden" do %>
             <!-- Decorative gradient overlay -->
             <span aria-hidden="true" class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style="background: linear-gradient(90deg, rgba(247,183,49,0.12), rgba(34,197,94,0.12));"></span>
             <span class="relative z-10"><i class=" fa-solid fa-user text-xs sm:text-sm md:text-base lg:text-lg wide:text-2xl 2xl:text-3xl" aria-hidden="true"></i></span>
           <% end %>
-          <%= link_to projects_path, class: "inline-flex group relative items-center justify-center text-xs sm:text-sm md:text-base lg:text-lg wide:text-2xl 2xl:text-3xl ml-1 sm:ml-2 text-white bg-foundationprimarygreen focus:ring-4 focus:outline-none focus:ring-foundationprimarygreen/50 font-medium rounded-lg px-3 py-2 md:px-4 md:py-2 text-center transition-all duration-200 hover:shadow-xl hover:scale-105 overflow-hidden" do %>
+          <%= link_to projects_path, class: "inline-flex group relative items-center justify-center text-xs sm:text-sm md:text-base lg:text-lg wide:text-2xl 2xl:text-3xl ml-1 sm:ml-2 text-white bg-foundationprimarygreen focus:ring-4 focus:outline-none focus:ring-foundationprimarygreen/50 font-medium rounded-lg px-3 md:px-4 h-8 sm:h-9 md:h-10 lg:h-11 wide:h-12 2xl:h-14 text-center transition-all duration-200 hover:shadow-xl hover:scale-105 overflow-hidden" do %>
             <span aria-hidden="true" class="absolute -left-4 sm:-left-6 -top-4 sm:-top-6 w-24 sm:w-32 h-24 sm:h-32 rounded-full bg-[rgba(255,255,255,0.06)] transform rotate-45 opacity-0 group-hover:opacity-100 group-hover:-translate-x-1 sm:group-hover:-translate-x-2 transition-all duration-400"></span>
             <span aria-hidden="true" class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style="background: linear-gradient(90deg, rgba(34,197,94,0.08), rgba(247,183,49,0.08));"></span>
             <span class="relative z-10"><%= t('.navbar.donate') %></span>
