@@ -120,7 +120,13 @@
                    <span class="flex-1 ms-3 whitespace-nowrap">Projects</span>
                 <% end %>
              </li>
-
+             <!-- Events Section -->
+             <li>
+                <%= link_to events_path, class: "sidebar-link ".dup.concat(current_page?(events_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-calendar-days sidebar-icon" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Events</span>
+                <% end %>
+             </li>
              <!-- Healthcare Section -->
              <li>
                 <%= link_to healthcare_requests_path, class: "sidebar-link ".dup.concat(current_page?(healthcare_requests_path) ? ' sidebar-link-active' : '') do %>
@@ -165,15 +171,6 @@
                          </li>
                       </ul>
                    </li>
-
-             <!-- Events Section -->
-             <li>
-                <%= link_to events_path, class: "sidebar-link ".dup.concat(current_page?(events_path) ? ' sidebar-link-active' : '') do %>
-                   <i class="fa-solid fa-calendar-days sidebar-icon" aria-hidden="true"></i>
-                   <span class="flex-1 ms-3 whitespace-nowrap">Events</span>
-                <% end %>
-             </li>
-            
                    <!-- Scanner group (QR Scanner + Spot Registration) -->
                    <li>
                             <button type="button" data-collapse-toggle="scanner-collapse-mobile" aria-expanded="false" aria-controls="scanner-collapse-mobile" class="sidebar-link w-full flex items-center justify-between">
@@ -200,21 +197,6 @@
                          <% end %>
                       </ul>
                    </li>
-
-             <!-- Financial Section -->
-             <li>
-                <%= link_to donations_path, class: "sidebar-link ".dup.concat(current_page?(donations_path) ? ' sidebar-link-active' : '') do %>
-                   <i class="fa-solid fa-hand-holding-dollar sidebar-icon" aria-hidden="true"></i>
-                   <span class="flex-1 ms-3 whitespace-nowrap">Donations</span>
-                <% end %>
-             </li>
-             <li>
-                <%= link_to expenses_path, class: "sidebar-link ".dup.concat(current_page?(expenses_path) ? ' sidebar-link-active' : '') do %>
-                   <i class="fa-solid fa-chart-line sidebar-icon" aria-hidden="true"></i>
-                   <span class="flex-1 ms-3 whitespace-nowrap">Expenses</span>
-                <% end %>
-             </li>
-
                    <!-- Zakat group (Zakat Calculator + Nisab Rates) -->
                    <li>
                       <button type="button" data-collapse-toggle="zakat-collapse-mobile" aria-expanded="false" aria-controls="zakat-collapse-mobile" class="sidebar-link w-full flex items-center justify-between">
@@ -241,6 +223,20 @@
                    <% end %>
                       </ul>
                    </li>
+
+                    <!-- Financial Section -->
+             <li>
+                <%= link_to donations_path, class: "sidebar-link ".dup.concat(current_page?(donations_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-hand-holding-dollar sidebar-icon" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Donations</span>
+                <% end %>
+             </li>
+             <li>
+                <%= link_to expenses_path, class: "sidebar-link ".dup.concat(current_page?(expenses_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-chart-line sidebar-icon" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Expenses</span>
+                <% end %>
+             </li>
 
                       <div class="w-full py-2">
                          <h6 class="text-xs tracking-wide font-semibold uppercase text-white/90">Preference</h6>
@@ -307,7 +303,13 @@
                    <span class="flex-1 ms-3 whitespace-nowrap">Projects</span>
                 <% end %>
              </li>
-
+             <!-- Events Section -->
+             <li>
+                <%= link_to events_path, class: "sidebar-link ".dup.concat(current_page?(events_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-calendar-days sidebar-icon" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Events</span>
+                <% end %>
+             </li>
              <!-- Healthcare Section -->
              <li>
                 <%= link_to healthcare_requests_path, class: "sidebar-link ".dup.concat(current_page?(healthcare_requests_path) ? ' sidebar-link-active' : '') do %>
@@ -352,15 +354,6 @@
                          </li>
                       </ul>
                    </li>
-
-             <!-- Events Section -->
-             <li>
-                <%= link_to events_path, class: "sidebar-link ".dup.concat(current_page?(events_path) ? ' sidebar-link-active' : '') do %>
-                   <i class="fa-solid fa-calendar-days sidebar-icon" aria-hidden="true"></i>
-                   <span class="flex-1 ms-3 whitespace-nowrap">Events</span>
-                <% end %>
-             </li>
-             
                    <!-- Scanner group (QR Scanner + Spot Registration) -->
                    <li>
                             <button type="button" data-collapse-toggle="scanner-collapse-xl" aria-expanded="false" aria-controls="scanner-collapse-xl" class="sidebar-link w-full flex items-center justify-between">
@@ -387,21 +380,6 @@
                          <% end %>
                       </ul>
                    </li>
-
-             <!-- Financial Section -->
-             <li>
-                <%= link_to donations_path, class: "sidebar-link ".dup.concat(current_page?(donations_path) ? ' sidebar-link-active' : '') do %>
-                   <i class="fa-solid fa-hand-holding-dollar sidebar-icon" aria-hidden="true"></i>
-                   <span class="flex-1 ms-3 whitespace-nowrap">Donations</span>
-                <% end %>
-             </li>
-             <li>
-                <%= link_to expenses_path, class: "sidebar-link ".dup.concat(current_page?(expenses_path) ? ' sidebar-link-active' : '') do %>
-                   <i class="fa-solid fa-chart-line sidebar-icon" aria-hidden="true"></i>
-                   <span class="flex-1 ms-3 whitespace-nowrap">Expenses</span>
-                <% end %>
-             </li>
-
                    <!-- Zakat group (Zakat Calculator + Nisab Rates) -->
                    <li>
                       <button type="button" data-collapse-toggle="zakat-collapse-xl" aria-expanded="false" aria-controls="zakat-collapse-xl" class="sidebar-link w-full flex items-center justify-between">
@@ -428,6 +406,20 @@
                    <% end %>
                       </ul>
                    </li>
+
+                    <!-- Financial Section -->
+             <li>
+                <%= link_to donations_path, class: "sidebar-link ".dup.concat(current_page?(donations_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-hand-holding-dollar sidebar-icon" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Donations</span>
+                <% end %>
+             </li>
+             <li>
+                <%= link_to expenses_path, class: "sidebar-link ".dup.concat(current_page?(expenses_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-chart-line sidebar-icon" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Expenses</span>
+                <% end %>
+             </li>
 
                    <!-- Preference heading inserted into the middle of the list -->
               
