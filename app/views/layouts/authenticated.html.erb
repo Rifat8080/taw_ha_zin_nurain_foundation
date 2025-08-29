@@ -135,25 +135,36 @@
                 <% end %>
              </li>
 
-             <!-- Volunteers Section -->
-             <li>
-                <%= link_to volunteers_path, class: "sidebar-link ".dup.concat(current_page?(volunteers_path) ? ' sidebar-link-active' : '') do %>
-                   <i class="fa-solid fa-hands-helping sidebar-icon" aria-hidden="true"></i>
-                   <span class="flex-1 ms-3 whitespace-nowrap">Volunteers</span>
-                <% end %>
-             </li>
-             <li>
-                <%= link_to volunteers_teams_path, class: "sidebar-link ".dup.concat(current_page?(volunteers_teams_path) ? ' sidebar-link-active' : '') do %>
-                   <i class="fa-solid fa-users sidebar-icon" aria-hidden="true"></i>
-                   <span class="flex-1 ms-3 whitespace-nowrap">Volunteer Teams</span>
-                <% end %>
-             </li>
-             <li>
-                <%= link_to work_orders_path, class: "sidebar-link ".dup.concat(current_page?(work_orders_path) ? ' sidebar-link-active' : '') do %>
-                   <i class="fa-solid fa-tools sidebar-icon" aria-hidden="true"></i>
-                   <span class="flex-1 ms-3 whitespace-nowrap">Work Orders</span>
-                <% end %>
-             </li>
+                   <!-- Volunteers (collapsible group) -->
+                   <li>
+                      <button type="button" data-collapse-toggle="volunteers-collapse-mobile" aria-expanded="false" aria-controls="volunteers-collapse-mobile" class="sidebar-link w-full flex items-center justify-between">
+                         <span class="flex items-center">
+                            <i class="fa-solid fa-people-group sidebar-icon" aria-hidden="true"></i>
+                            <span class="ms-3">Volunteers</span>
+                         </span>
+                         <i class="fa-solid fa-chevron-down fa-sm text-white" aria-hidden="true"></i>
+                      </button>
+                      <ul id="volunteers-collapse-mobile" class="hidden py-1 mt-1 space-y-1">
+                         <li>
+                            <%= link_to volunteers_path, class: "sidebar-link pl-8 ".dup.concat(current_page?(volunteers_path) ? ' sidebar-link-active' : '') do %>
+                               <i class="fa-solid fa-hands-helping sidebar-icon" aria-hidden="true"></i>
+                               <span class="ms-3">Volunteers</span>
+                            <% end %>
+                         </li>
+                         <li>
+                            <%= link_to volunteers_teams_path, class: "sidebar-link pl-8 ".dup.concat(current_page?(volunteers_teams_path) ? ' sidebar-link-active' : '') do %>
+                               <i class="fa-solid fa-users sidebar-icon" aria-hidden="true"></i>
+                               <span class="ms-3">Volunteer Teams</span>
+                            <% end %>
+                         </li>
+                         <li>
+                            <%= link_to work_orders_path, class: "sidebar-link pl-8 ".dup.concat(current_page?(work_orders_path) ? ' sidebar-link-active' : '') do %>
+                               <i class="fa-solid fa-tools sidebar-icon" aria-hidden="true"></i>
+                               <span class="ms-3">Work Orders</span>
+                            <% end %>
+                         </li>
+                      </ul>
+                   </li>
 
              <!-- Events Section -->
              <li>
@@ -276,25 +287,36 @@
                 <% end %>
              </li>
 
-             <!-- Volunteers Section -->
-             <li>
-                <%= link_to volunteers_path, class: "sidebar-link ".dup.concat(current_page?(volunteers_path) ? ' sidebar-link-active' : '') do %>
-                   <i class="fa-solid fa-hands-helping sidebar-icon" aria-hidden="true"></i>
-                   <span class="flex-1 ms-3 whitespace-nowrap">Volunteers</span>
-                <% end %>
-             </li>
-             <li>
-                <%= link_to volunteers_teams_path, class: "sidebar-link ".dup.concat(current_page?(volunteers_teams_path) ? ' sidebar-link-active' : '') do %>
-                   <i class="fa-solid fa-users sidebar-icon" aria-hidden="true"></i>
-                   <span class="flex-1 ms-3 whitespace-nowrap">Volunteer Teams</span>
-                <% end %>
-             </li>
-             <li>
-                <%= link_to work_orders_path, class: "sidebar-link ".dup.concat(current_page?(work_orders_path) ? ' sidebar-link-active' : '') do %>
-                   <i class="fa-solid fa-tools sidebar-icon" aria-hidden="true"></i>
-                   <span class="flex-1 ms-3 whitespace-nowrap">Work Orders</span>
-                <% end %>
-             </li>
+                   <!-- Volunteers (collapsible group) -->
+                   <li>
+                      <button type="button" data-collapse-toggle="volunteers-collapse-xl" aria-expanded="false" aria-controls="volunteers-collapse-xl" class="sidebar-link w-full flex items-center justify-between">
+                         <span class="flex items-center">
+                            <i class="fa-solid fa-people-group sidebar-icon" aria-hidden="true"></i>
+                            <span class="ms-3">Volunteer System</span>
+                         </span>
+                         <i class="fa-solid fa-chevron-down fa-sm text-white" aria-hidden="true"></i>
+                      </button>
+                      <ul id="volunteers-collapse-xl" class="hidden py-1 mt-1 space-y-1">
+                         <li>
+                            <%= link_to volunteers_path, class: "sidebar-link pl-8 ".dup.concat(current_page?(volunteers_path) ? ' sidebar-link-active' : '') do %>
+                               <i class="fa-solid fa-hands-helping sidebar-icon" aria-hidden="true"></i>
+                               <span class="ms-3">Volunteers</span>
+                            <% end %>
+                         </li>
+                         <li>
+                            <%= link_to volunteers_teams_path, class: "sidebar-link pl-8 ".dup.concat(current_page?(volunteers_teams_path) ? ' sidebar-link-active' : '') do %>
+                               <i class="fa-solid fa-users sidebar-icon" aria-hidden="true"></i>
+                               <span class="ms-3">Volunteer Teams</span>
+                            <% end %>
+                         </li>
+                         <li>
+                            <%= link_to work_orders_path, class: "sidebar-link pl-8 ".dup.concat(current_page?(work_orders_path) ? ' sidebar-link-active' : '') do %>
+                               <i class="fa-solid fa-tools sidebar-icon" aria-hidden="true"></i>
+                               <span class="ms-3">Work Orders</span>
+                            <% end %>
+                         </li>
+                      </ul>
+                   </li>
 
              <!-- Events Section -->
              <li>

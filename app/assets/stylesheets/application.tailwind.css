@@ -60,3 +60,9 @@
 .sidebar-link-active .sidebar-icon {
   color: var(--forange, #F29300);
 }
+
+/* Color chevron when the collapsible group is expanded (Flowbite toggles aria-expanded)
+   Targets the Font Awesome chevron used inside the collapse toggle button. */
+[data-collapse-toggle][aria-expanded="true"] .fa-chevron-down {
+  color: var(--forange, #F29300) !important;
+}
