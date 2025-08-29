@@ -149,6 +149,20 @@ input[type="submit"].btn-book-ticket:hover {
   background-color: rgb(var(--color-forange) / 0.9) !important;
   color: #ffffff !important;
 }
+/* Notification button helper: ensures the notification bell uses the foundation orange
+   with a narrow, high-specificity override so it remains visible even when other
+   utility classes compete. */
+.btn-notif,
+button.btn-notif {
+  background-color: rgb(var(--color-forange)) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+.btn-notif:hover,
+button.btn-notif:hover {
+  background-color: rgb(var(--color-forange) / 0.9) !important;
+  color: #ffffff !important;
+}
 .bg-foundation-primary\/50 { background-color: rgb(var(--color-foundation-primary) / 0.5); }
 .bg-foundation-secondary\/50 { background-color: rgb(var(--color-foundation-secondary) / 0.5); }
 .bg-foundation-accent\/50 { background-color: rgb(var(--color-foundation-accent) / 0.5); }
