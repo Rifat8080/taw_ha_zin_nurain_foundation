@@ -293,9 +293,9 @@
                     <span><%= t('.donors') %>: <%= request.donation_count %></span>
                   </div>
                 </div>
-                <%= link_to t('.view_details_button'), healthcare_request_path(request), class: "w-full inline-block px-5 py-2 text-base font-semibold text-foundationprimarygreen border border-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen hover:text-white transition-colors text-center mt-2" %>
+                <%= link_to t('.view_details_button'), healthcare_request_path(request), class: "w-full inline-block px-5 py-2 text-base font-semibold text-foundationprimarygreen bg-transparent border border-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen hover:text-white hover:border-white transition-colors duration-200 ease-in-out transform transform-gpu hover:scale-105 focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen/30 interactive-transition text-center mt-2" %>
                 <% if request.can_receive_donations? %>
-                  <%= link_to t('.donate_button_card'), new_healthcare_request_healthcare_donation_path(request), class: "w-full mt-2 inline-block px-5 py-2 text-base font-semibold text-white bg-foundationprimarygreen rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 transition-colors text-center" %>
+                  <%= link_to t('.donate_button_card'), new_healthcare_request_healthcare_donation_path(request), class: "w-full mt-2 inline-block px-5 py-2 text-base font-semibold text-white bg-foundationprimarygreen rounded-lg hover:bg-green-700 hover:border-white transition-colors duration-200 ease-in-out transform transform-gpu hover:scale-105 focus:ring-4 focus:outline-none focus:ring-green-300 interactive-transition text-center" %>
                 <% end %>
               </div>
             </div>
@@ -365,8 +365,9 @@
                       </div>
                     <% end %>
                   </div>
-                  <%= link_to t('.donate_button_card'), new_donation_path(project_id: project.id), class: "w-full inline-block px-5 py-2 text-base font-semibold text-white bg-foundationprimarygreen rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 transition-colors text-center mt-2" %>
-                  <%= link_to t('.learn_more_button'), project_path(project), class: "w-full mt-2 inline-block px-5 py-2 text-base font-semibold text-foundationprimarygreen border border-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen hover:text-white transition-colors text-center" %>
+                  <%= link_to t('.learn_more_button'), project_path(project), class: "w-full mt-2 inline-block px-5 py-2 text-base font-semibold text-foundationprimarygreen border border-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen hover:text-white hover:border-white transition-colors duration-200 ease-in-out transform transform-gpu hover:scale-105 focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen/30 interactive-transition text-center" %>
+
+                  <%= link_to t('.donate_button_card'), new_donation_path(project_id: project.id), class: "w-full inline-block px-5 py-2 text-base font-semibold text-white bg-foundationprimarygreen rounded-lg hover:bg-green-700 hover:border-white transition-colors duration-200 ease-in-out transform transform-gpu hover:scale-105 focus:ring-4 focus:outline-none focus:ring-green-300 interactive-transition text-center mt-2" %>
                 </div>
               </div>
             <% end %>
@@ -422,7 +423,7 @@
                     <span><%= t('.max_attendees') %>: <%= event.total_seats %></span>
                   </div>
                 </div>
-                <%= link_to t('.view_event_button'), event_path(event), class: "w-full inline-block px-5 py-2 text-base font-semibold text-foundationprimarygreen border border-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen hover:text-white transition-colors text-center mt-2" %>
+                <%= link_to t('.view_event_button'), event_path(event), class: "w-full inline-block px-5 py-2 text-base font-semibold text-foundationprimarygreen border border-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen hover:text-white hover:border-white transition-colors duration-200 ease-in-out transform transform-gpu hover:scale-105 focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen/30 interactive-transition text-center mt-2" %>
               </div>
             </div>
           <% end %>

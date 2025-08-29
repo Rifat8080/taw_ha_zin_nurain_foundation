@@ -224,3 +224,23 @@ input[type="submit"].btn-book-ticket:hover {
   border-color: rgb(var(--color-error) / 0.9);
   box-shadow: 0 10px 24px rgba(239,68,68,0.12);
 }
+
+/* Fallback helpers: ensure transform and transition utilities exist for hover effects
+  These mirror the Tailwind utilities used in templates (transition, transform-gpu, hover:scale-105)
+  and provide a graceful fallback when generated utilities are not present in the compiled CSS. */
+.transition { transition-property: background-color, color, opacity, box-shadow, transform; transition-duration: 200ms; transition-timing-function: cubic-bezier(.4,0,.2,1); }
+.transform-gpu { transform: translateZ(0); }
+.hover\:scale-105:hover { transform: scale(1.05); }
+
+/* Ensure inline elements that use transform have a smooth transition as well */
+.inline-flex.transform, .inline-block.transform, .block.transform { transition: transform 200ms cubic-bezier(.4,0,.2,1); }
+
+/* Fallback hover color helpers for foundation primary green */
+.hover\:bg-foundationprimarygreen:hover { background-color: rgb(var(--color-forange)); }
+.hover\:text-white:hover { color: #ffffff; }
+
+/* Combined helper to ensure color + transform transitions are smooth on interactive elements */
+.interactive-transition { transition: background-color 200ms cubic-bezier(.4,0,.2,1), color 200ms cubic-bezier(.4,0,.2,1), transform 200ms cubic-bezier(.4,0,.2,1); }
+
+/* Fallback border color on hover */
+.hover\:border-white:hover { border-color: #ffffff; }
