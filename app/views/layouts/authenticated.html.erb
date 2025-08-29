@@ -36,7 +36,7 @@
 
   <body class="bg-white font-sans">
    <!-- Fixed top navigation -->
-   <nav class="fixed top-0 z-50 w-full bg-white lg:bg-transparent border-b border-gray-200 lg:border-0 dark:bg-gray-800 dark:border-gray-700 lg:dark:border-0">
+   <nav class="fixed top-0 z-50 w-full bg-white xl:bg-transparent border-b border-gray-200 lg:border-0 dark:bg-gray-800 dark:border-gray-700 lg:dark:border-0">
       <div class="px-3 py-3 lg:px-5 lg:pl-3">
         <div class="flex items-center justify-between">
           <div class="flex items-center justify-start rtl:justify-end">
@@ -47,7 +47,7 @@
                 </svg>
              </button>
                   <%= link_to root_path, class: "flex items-center gap-3 ms-2 md:me-24" do %>
-                     <%= image_tag 'Foundation_Logo_Side.png', class: 'h-14 w-auto rounded-md lg:hidden', alt: 'TawHaZin Foundation' %>
+                     <%= image_tag 'Foundation_Logo_Side.png', class: 'h-14 w-auto rounded-md xl:hidden', alt: 'TawHaZin Foundation' %>
                   <% end %>
           </div>
           <div class="flex items-center">
@@ -91,17 +91,17 @@
     </nav>
 
    <!-- Sidebar -->
-    <aside id="logo-sidebar" class="fixed top-2 left-5 z-40 w-64 h-[90%] pt-15 rounded-lg transition-transform -translate-x-full bg-transparent border-r border-gray-200 lg:border-0 xl:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
+   <aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-transparent border-r border-gray-200 lg:border-0 xl:hidden xl:translate-x-0 xl:[transform:translateX(0!important)] dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
          <div class="h-full px-3 pb-4 overflow-y-auto bg-forange text-white dark:bg-gray-800 rounded-lg lg:rounded-xl">
                <!-- Sidebar logo (visible on lg and up) -->
-               <div class="hidden lg:block">
+               <div class="hidden xl:block">
                   <%= link_to root_path do %>
                      <%= image_tag 'Foundation_Logo_Side.png', class: 'bg-white rounded-2xl h-12 w-auto mx-auto my-4 rounded-md', alt: 'TawHaZin Foundation' %>
                   <% end %>
                </div>
                <!-- Center the list on large screens -->
-               <div class="w-full lg:flex lg:flex-col lg:items-center">
-                  <ul class="space-y-2 font-medium text-white w-full lg:w-auto">
+               <div class="w-full xl:flex xl:flex-col xl:items-center">
+                  <ul class="space-y-2 pt-4 font-medium text-white w-full lg:w-auto">
              <li>
                 <%= link_to dashboard_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
                    <i class="fa-solid fa-house shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
@@ -222,8 +222,140 @@
          </div>
     </aside>
 
+   <!-- Static sidebar for xl and up (no Flowbite) -->
+   <aside id="logo-sidebar-xl" class="hidden xl:block fixed top-2 left-5 z-40 w-64 h-[90%] pt-15 rounded-lg bg-transparent dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
+         <div class="h-full px-3 pb-4 overflow-y-auto bg-forange text-white dark:bg-gray-800 rounded-lg lg:rounded-xl">
+               <!-- Sidebar logo (visible on xl and up) -->
+               <div class="block">
+                  <%= link_to root_path do %>
+                     <%= image_tag 'Foundation_Logo_Side.png', class: 'bg-white rounded-2xl h-12 w-auto mx-auto my-4 rounded-md', alt: 'TawHaZin Foundation' %>
+                  <% end %>
+               </div>
+               <!-- Center the list on large screens -->
+               <div class="w-full xl:flex xl:flex-col xl:items-center">
+                  <ul class="space-y-2 font-medium text-white w-full lg:w-auto">
+             <li>
+                <%= link_to dashboard_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
+                   <i class="fa-solid fa-house shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                   <span class="ms-3">Dashboard</span>
+                <% end %>
+             </li>
+             
+             <!-- Projects Section -->
+             <li>
+                <%= link_to projects_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
+                   <i class="fa-solid fa-folder shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Projects</span>
+                <% end %>
+             </li>
+
+             <!-- Healthcare Section -->
+             <li>
+                <%= link_to healthcare_requests_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
+                   <i class="fa-solid fa-stethoscope shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Healthcare Requests</span>
+                <% end %>
+             </li>
+             <li>
+                <%= link_to healthcare_donations_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
+                   <i class="fa-solid fa-credit-card shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Healthcare Donations</span>
+                <% end %>
+             </li>
+
+             <!-- Volunteers Section -->
+             <li>
+                <%= link_to volunteers_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
+                   <i class="fa-solid fa-hands-helping shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Volunteers</span>
+                <% end %>
+             </li>
+             <li>
+                <%= link_to volunteers_teams_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
+                   <i class="fa-solid fa-users shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Volunteer Teams</span>
+                <% end %>
+             </li>
+             <li>
+                <%= link_to work_orders_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
+                   <i class="fa-solid fa-tools shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Work Orders</span>
+                <% end %>
+             </li>
+
+             <!-- Events Section -->
+             <li>
+                <%= link_to events_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
+                   <i class="fa-solid fa-calendar-days shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Events</span>
+                <% end %>
+             </li>
+             <li>
+                <%= link_to tickets_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
+                   <i class="fa-solid fa-ticket shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Tickets</span>
+                <% end %>
+             </li>
+             <li>
+                <%= link_to qr_scan_tickets_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
+                   <i class="fa-solid fa-qrcode shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">QR Scanner</span>
+                <% end %>
+             </li>
+             <% if current_user.is_volunteer? || current_user.role == 'admin' %>
+               <li>
+                  <%= link_to spot_registration_tickets_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
+                     <i class="fa-solid fa-tag shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                     <span class="flex-1 ms-3 whitespace-nowrap">Spot Registration</span>
+                  <% end %>
+               </li>
+             <% end %>
+
+             <!-- Financial Section -->
+             <li>
+                <%= link_to donations_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
+                   <i class="fa-solid fa-hand-holding-dollar shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Donations</span>
+                <% end %>
+             </li>
+             <li>
+                <%= link_to expenses_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
+                   <i class="fa-solid fa-chart-line shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Expenses</span>
+                <% end %>
+             </li>
+
+             <!-- Zakat Calculator -->
+             <li>
+                <%= link_to zakat_calculations_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
+                   <i class="fa-solid fa-calculator shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Zakat Calculator</span>
+                <% end %>
+             </li>
+
+             <% if current_user&.role == 'admin' %>
+             <!-- Nisab Rates (Admin Only) -->
+             <li>
+                <%= link_to nisab_rates_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg_gray-100 dark:hover:bg-gray-700 group" do %>
+                      <i class="fa-solid fa-balance-scale shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Nisab Rates</span>
+                <% end %>
+             </li>
+             <!-- User Management (Admin Only) -->
+             <li>
+                <%= link_to users_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
+                      <i class="fa-solid fa-user shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                   <span class="flex-1 ms-3 whitespace-nowrap">User Management</span>
+                <% end %>
+                   </li>
+                   <% end %>
+               </ul>
+            </div>
+         </div>
+    </aside>
+
     <!-- Main content area -->
-    <div class="p-4 sm:ml-64">
+   <div class="xl:ml-64">
       <!-- Flash Messages -->
       <% if flash[:notice] %>
         <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 mt-14" role="alert">
