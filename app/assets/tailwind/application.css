@@ -132,6 +132,23 @@ input[type="submit"].btn-donate:hover,
 }
 
 /* With opacity support (Tailwind 4 style) */
+
+/* Book ticket button: narrow, high-specificity override to ensure the
+   intended orange background is visible even when other styles compete.
+   Kept local and specific so it won't affect other buttons. */
+.btn-book-ticket,
+button.btn-book-ticket,
+input[type="submit"].btn-book-ticket {
+  background-color: rgb(var(--color-forange)) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+.btn-book-ticket:hover,
+button.btn-book-ticket:hover,
+input[type="submit"].btn-book-ticket:hover {
+  background-color: rgb(var(--color-forange) / 0.9) !important;
+  color: #ffffff !important;
+}
 .bg-foundation-primary\/50 { background-color: rgb(var(--color-foundation-primary) / 0.5); }
 .bg-foundation-secondary\/50 { background-color: rgb(var(--color-foundation-secondary) / 0.5); }
 .bg-foundation-accent\/50 { background-color: rgb(var(--color-foundation-accent) / 0.5); }

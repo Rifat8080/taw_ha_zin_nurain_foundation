@@ -56,14 +56,18 @@
 
           <div class="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div class="flex-1">
-              <%= link_to t('blog.index.read_more', default: 'Read More'), blog_path(blog), data: { turbo_frame: 'blog-main' }, 
-                  class: "inline-block w-full sm:w-auto px-6 py-3 rounded-lg bg-forange text-white font-semibold hover:bg-forange/90 transition-colors text-base text-center shadow-md" %>
+        <%= link_to t('blog.index.read_more', default: 'Read More'), blog_path(blog), data: { turbo_frame: 'blog-main' }, 
+          class: "inline-block w-full sm:w-auto px-4 sm:px-6 py-3 rounded-lg bg-forange text-white text-sm sm:text-base font-semibold hover:bg-forange/90 transition-colors text-center shadow-md whitespace-nowrap" %>
             </div>
-            <div class="flex items-center justify-center sm:justify-end gap-2">
+            <div class="flex flex-col sm:flex-row items-center justify-center sm:justify-end gap-2 w-full sm:w-auto">
               <% if current_user&.role == "admin" %>
-                <%= link_to edit_blog_path(blog), class: "inline-flex items-center btn-edit whitespace-nowrap font-semibold px-6 py-3 bg-white text-foundationprimarygreen border border-foundationprimarygreen rounded-md hover:bg-forange hover:text-white hover:border hover:border-white transition-colors" do %>
-                  <i class="fa-solid fa-pen mr-2" aria-hidden="true"></i>
+                <%= link_to edit_blog_path(blog), class: "inline-flex items-center justify-center w-full sm:w-auto px-4 sm:px-5 py-3 bg-white text-foundationprimarygreen text-sm sm:text-base font-semibold border border-foundationprimarygreen rounded-md hover:bg-forange hover:text-white transition-colors whitespace-nowrap" do %>
+                  <i class="fa-solid fa-pen mr-2 sm:mr-3" aria-hidden="true"></i>
                   Edit
+                <% end %>
+                <%= button_to blog_path(blog), method: :delete, data: { confirm: t('blogs.confirm_delete', default: 'Are you sure you want to delete this blog post?') }, class: "inline-flex items-center justify-center w-full sm:w-auto px-4 sm:px-5 py-3 bg-red-600 hover:bg-red-700 text-white text-sm sm:text-base font-semibold rounded-md transition-colors whitespace-nowrap" do %>
+                  <i class="fa-solid fa-trash mr-2 sm:mr-3" aria-hidden="true"></i>
+                  Delete
                 <% end %>
               <% end %>
             </div>
