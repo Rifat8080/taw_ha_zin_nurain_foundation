@@ -37,11 +37,11 @@
 }
 .sidebar-link:hover, .sidebar-link:focus {
   background-color: #ffffff; /* white bg on hover */
-  color: var(--forange, #f97316); /* use CSS variable if defined, fallback to orange */
+  color: var(--forange, #F29300); /* use CSS variable if defined, fallback to orange */
 }
 .sidebar-link-active {
   background-color: #ffffff;
-  color: var(--forange, #f97316);
+  color: var(--forange, #F29300);
   font-weight: 600;
 }
 .sidebar-icon {
@@ -58,5 +58,5 @@
 .sidebar-link:hover .sidebar-icon,
 .sidebar-link:focus .sidebar-icon,
 .sidebar-link-active .sidebar-icon {
-  color: var(--forange, #f97316);
+  color: var(--forange, #F29300);
 }
