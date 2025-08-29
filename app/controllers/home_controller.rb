@@ -59,7 +59,7 @@ class HomeController < ApplicationController
       }
     end
 
-    # Optimize queries with includes and select only needed columns
+  # Optimize queries with includes and select only needed columns
   # Load upcoming events (avoid multi-column select to keep relation.count safe)
   @upcoming_events = Event.upcoming
                .includes(:event_users)
