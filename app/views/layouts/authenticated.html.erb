@@ -103,77 +103,77 @@
                <div class="w-full xl:flex xl:flex-col xl:items-center">
                   <ul class="space-y-2 pt-4 font-medium text-white w-full lg:w-auto">
              <li>
-                <%= link_to dashboard_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-house shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to dashboard_path, class: "sidebar-link ".dup.concat(current_page?(dashboard_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-house sidebar-icon" aria-hidden="true"></i>
                    <span class="ms-3">Dashboard</span>
                 <% end %>
              </li>
              
              <!-- Projects Section -->
              <li>
-                <%= link_to projects_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-folder shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to projects_path, class: "sidebar-link ".dup.concat(current_page?(projects_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-folder sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Projects</span>
                 <% end %>
              </li>
 
              <!-- Healthcare Section -->
              <li>
-                <%= link_to healthcare_requests_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-stethoscope shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to healthcare_requests_path, class: "sidebar-link ".dup.concat(current_page?(healthcare_requests_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-stethoscope sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Healthcare Requests</span>
                 <% end %>
              </li>
              <li>
-                <%= link_to healthcare_donations_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-credit-card shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to healthcare_donations_path, class: "sidebar-link ".dup.concat(current_page?(healthcare_donations_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-credit-card sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Healthcare Donations</span>
                 <% end %>
              </li>
 
              <!-- Volunteers Section -->
              <li>
-                <%= link_to volunteers_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-hands-helping shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to volunteers_path, class: "sidebar-link ".dup.concat(current_page?(volunteers_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-hands-helping sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Volunteers</span>
                 <% end %>
              </li>
              <li>
-                <%= link_to volunteers_teams_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-users shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to volunteers_teams_path, class: "sidebar-link ".dup.concat(current_page?(volunteers_teams_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-users sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Volunteer Teams</span>
                 <% end %>
              </li>
              <li>
-                <%= link_to work_orders_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-tools shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to work_orders_path, class: "sidebar-link ".dup.concat(current_page?(work_orders_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-tools sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Work Orders</span>
                 <% end %>
              </li>
 
              <!-- Events Section -->
              <li>
-                <%= link_to events_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-calendar-days shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to events_path, class: "sidebar-link ".dup.concat(current_page?(events_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-calendar-days sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Events</span>
                 <% end %>
              </li>
              <li>
-                <%= link_to tickets_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-ticket shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to tickets_path, class: "sidebar-link ".dup.concat(current_page?(tickets_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-ticket sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Tickets</span>
                 <% end %>
              </li>
              <li>
-                <%= link_to qr_scan_tickets_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-qrcode shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to qr_scan_tickets_path, class: "sidebar-link ".dup.concat(current_page?(qr_scan_tickets_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-qrcode sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">QR Scanner</span>
                 <% end %>
              </li>
              <% if current_user.is_volunteer? || current_user.role == 'admin' %>
                <li>
-                  <%= link_to spot_registration_tickets_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                     <i class="fa-solid fa-tag shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                  <%= link_to spot_registration_tickets_path, class: "sidebar-link ".dup.concat(current_page?(spot_registration_tickets_path) ? ' sidebar-link-active' : '') do %>
+                     <i class="fa-solid fa-tag sidebar-icon" aria-hidden="true"></i>
                      <span class="flex-1 ms-3 whitespace-nowrap">Spot Registration</span>
                   <% end %>
                </li>
@@ -181,22 +181,22 @@
 
              <!-- Financial Section -->
              <li>
-                <%= link_to donations_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-hand-holding-dollar shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to donations_path, class: "sidebar-link ".dup.concat(current_page?(donations_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-hand-holding-dollar sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Donations</span>
                 <% end %>
              </li>
              <li>
-                <%= link_to expenses_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-chart-line shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to expenses_path, class: "sidebar-link ".dup.concat(current_page?(expenses_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-chart-line sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Expenses</span>
                 <% end %>
              </li>
 
              <!-- Zakat Calculator -->
              <li>
-                <%= link_to zakat_calculations_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-calculator shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to zakat_calculations_path, class: "sidebar-link ".dup.concat(current_page?(zakat_calculations_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-calculator sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Zakat Calculator</span>
                 <% end %>
              </li>
@@ -204,15 +204,15 @@
              <% if current_user&.role == 'admin' %>
              <!-- Nisab Rates (Admin Only) -->
              <li>
-                <%= link_to nisab_rates_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                      <i class="fa-solid fa-balance-scale shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to nisab_rates_path, class: "sidebar-link ".dup.concat(current_page?(nisab_rates_path) ? ' sidebar-link-active' : '') do %>
+                      <i class="fa-solid fa-balance-scale sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Nisab Rates</span>
                 <% end %>
              </li>
              <!-- User Management (Admin Only) -->
              <li>
-                <%= link_to users_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                      <i class="fa-solid fa-user shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to users_path, class: "sidebar-link ".dup.concat(current_page?(users_path) ? ' sidebar-link-active' : '') do %>
+                      <i class="fa-solid fa-user sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">User Management</span>
                 <% end %>
                    </li>
@@ -235,77 +235,77 @@
                <div class="w-full xl:flex xl:flex-col xl:items-center">
                   <ul class="space-y-2 font-medium text-white w-full lg:w-auto">
              <li>
-                <%= link_to dashboard_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-house shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to dashboard_path, class: "sidebar-link ".dup.concat(current_page?(dashboard_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-house sidebar-icon" aria-hidden="true"></i>
                    <span class="ms-3">Dashboard</span>
                 <% end %>
              </li>
              
              <!-- Projects Section -->
              <li>
-                <%= link_to projects_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-folder shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to projects_path, class: "sidebar-link ".dup.concat(current_page?(projects_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-folder sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Projects</span>
                 <% end %>
              </li>
 
              <!-- Healthcare Section -->
              <li>
-                <%= link_to healthcare_requests_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-stethoscope shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to healthcare_requests_path, class: "sidebar-link ".dup.concat(current_page?(healthcare_requests_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-stethoscope sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Healthcare Requests</span>
                 <% end %>
              </li>
              <li>
-                <%= link_to healthcare_donations_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-credit-card shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to healthcare_donations_path, class: "sidebar-link ".dup.concat(current_page?(healthcare_donations_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-credit-card sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Healthcare Donations</span>
                 <% end %>
              </li>
 
              <!-- Volunteers Section -->
              <li>
-                <%= link_to volunteers_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-hands-helping shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to volunteers_path, class: "sidebar-link ".dup.concat(current_page?(volunteers_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-hands-helping sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Volunteers</span>
                 <% end %>
              </li>
              <li>
-                <%= link_to volunteers_teams_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-users shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to volunteers_teams_path, class: "sidebar-link ".dup.concat(current_page?(volunteers_teams_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-users sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Volunteer Teams</span>
                 <% end %>
              </li>
              <li>
-                <%= link_to work_orders_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-tools shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to work_orders_path, class: "sidebar-link ".dup.concat(current_page?(work_orders_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-tools sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Work Orders</span>
                 <% end %>
              </li>
 
              <!-- Events Section -->
              <li>
-                <%= link_to events_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-calendar-days shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to events_path, class: "sidebar-link ".dup.concat(current_page?(events_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-calendar-days sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Events</span>
                 <% end %>
              </li>
              <li>
-                <%= link_to tickets_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-ticket shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to tickets_path, class: "sidebar-link ".dup.concat(current_page?(tickets_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-ticket sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Tickets</span>
                 <% end %>
              </li>
              <li>
-                <%= link_to qr_scan_tickets_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-qrcode shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to qr_scan_tickets_path, class: "sidebar-link ".dup.concat(current_page?(qr_scan_tickets_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-qrcode sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">QR Scanner</span>
                 <% end %>
              </li>
              <% if current_user.is_volunteer? || current_user.role == 'admin' %>
                <li>
-                  <%= link_to spot_registration_tickets_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                     <i class="fa-solid fa-tag shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                  <%= link_to spot_registration_tickets_path, class: "sidebar-link ".dup.concat(current_page?(spot_registration_tickets_path) ? ' sidebar-link-active' : '') do %>
+                     <i class="fa-solid fa-tag sidebar-icon" aria-hidden="true"></i>
                      <span class="flex-1 ms-3 whitespace-nowrap">Spot Registration</span>
                   <% end %>
                </li>
@@ -313,22 +313,22 @@
 
              <!-- Financial Section -->
              <li>
-                <%= link_to donations_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-hand-holding-dollar shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to donations_path, class: "sidebar-link ".dup.concat(current_page?(donations_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-hand-holding-dollar sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Donations</span>
                 <% end %>
              </li>
              <li>
-                <%= link_to expenses_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-chart-line shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to expenses_path, class: "sidebar-link ".dup.concat(current_page?(expenses_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-chart-line sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Expenses</span>
                 <% end %>
              </li>
 
              <!-- Zakat Calculator -->
              <li>
-                <%= link_to zakat_calculations_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                   <i class="fa-solid fa-calculator shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to zakat_calculations_path, class: "sidebar-link ".dup.concat(current_page?(zakat_calculations_path) ? ' sidebar-link-active' : '') do %>
+                   <i class="fa-solid fa-calculator sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Zakat Calculator</span>
                 <% end %>
              </li>
@@ -336,15 +336,15 @@
              <% if current_user&.role == 'admin' %>
              <!-- Nisab Rates (Admin Only) -->
              <li>
-                <%= link_to nisab_rates_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg_gray-100 dark:hover:bg-gray-700 group" do %>
-                      <i class="fa-solid fa-balance-scale shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to nisab_rates_path, class: "sidebar-link ".dup.concat(current_page?(nisab_rates_path) ? ' sidebar-link-active' : '') do %>
+                      <i class="fa-solid fa-balance-scale sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Nisab Rates</span>
                 <% end %>
              </li>
              <!-- User Management (Admin Only) -->
              <li>
-                <%= link_to users_path, class: "flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group" do %>
-                      <i class="fa-solid fa-user shrink-0 w-5 h-5 flex items-center justify-center text-white" aria-hidden="true"></i>
+                <%= link_to users_path, class: "sidebar-link ".dup.concat(current_page?(users_path) ? ' sidebar-link-active' : '') do %>
+                      <i class="fa-solid fa-user sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">User Management</span>
                 <% end %>
                    </li>

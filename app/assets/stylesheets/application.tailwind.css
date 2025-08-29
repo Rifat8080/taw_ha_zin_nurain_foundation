@@ -1,0 +1,62 @@
+@import "tailwindcss/preflight";
+@tailwind utilities;
+
+/* Sidebar component styles applied via Tailwind's component layer.
+   - .sidebar-link: base link appearance inside the sidebar
+   - hover/focus: white background with foundation orange text
+   - .sidebar-link-active: style for the active/current page link
+   - .sidebar-icon: icon sizing/placement
+*/
+@layer components {
+  .sidebar-link {
+    @apply flex items-center p-2 rounded-lg text-white transition-colors duration-150;
+  }
+
+  .sidebar-link:hover,
+  .sidebar-link:focus {
+    @apply bg-white text-forange;
+  }
+
+  .sidebar-link-active {
+    @apply bg-white text-forange font-semibold;
+  }
+
+  .sidebar-icon {
+    @apply shrink-0 w-5 h-5 flex items-center justify-center text-white;
+  }
+}
+
+/* Fallback CSS (keeps the design even if @apply isn't processed by a linter/viewer) */
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem; /* p-2 */
+  border-radius: 0.5rem; /* rounded-lg */
+  color: #ffffff;
+  transition: color 150ms, background-color 150ms;
+}
+.sidebar-link:hover, .sidebar-link:focus {
+  background-color: #ffffff; /* white bg on hover */
+  color: var(--forange, #f97316); /* use CSS variable if defined, fallback to orange */
+}
+.sidebar-link-active {
+  background-color: #ffffff;
+  color: var(--forange, #f97316);
+  font-weight: 600;
+}
+.sidebar-icon {
+  flex: 0 0 auto;
+  width: 1.25rem; /* w-5 */
+  height: 1.25rem; /* h-5 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+/* Ensure icons change color to foundation orange on hover/focus and when the link is active */
+.sidebar-link:hover .sidebar-icon,
+.sidebar-link:focus .sidebar-icon,
+.sidebar-link-active .sidebar-icon {
+  color: var(--forange, #f97316);
+}
