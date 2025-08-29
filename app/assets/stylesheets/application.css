@@ -9,6 +9,40 @@
  * Consider organizing styles into separate files for maintainability.
  */
 
+/* Override global height: auto for logo images to allow responsive height classes */
+img[alt*="Logo"] {
+  height: auto !important;
+}
+
+/* Header logo - responsive */
+img[alt="Taw Ha Zin Nurain Foundation Logo"] {
+  height: 2.5rem !important; /* h-10 */
+}
+
+@media (min-width: 640px) {
+  img[alt="Taw Ha Zin Nurain Foundation Logo"] {
+    height: 3.5rem !important; /* sm:h-14 */
+  }
+}
+
+@media (min-width: 768px) {
+  /* Sidebar logo uses md: breakpoint */
+  aside img[alt="Taw Ha Zin Nurain Foundation Logo"] {
+    height: 4rem !important; /* md:h-16 */
+  }
+}
+
+@media (min-width: 1024px) {
+  img[alt="Taw Ha Zin Nurain Foundation Logo"] {
+    height: 5rem !important; /* lg:h-20 */
+  }
+}
+
+/* Footer logo - fixed size */
+footer img[alt="Taw Ha Zin Nurain Foundation Logo"] {
+  height: 4rem !important; /* h-16 */
+}
+
 /* Flowbite is loaded non-blocking from the layouts (preload with onload swap).
 	Removed the @import here because CSS @import is render-blocking and hurts Lighthouse.
 	Keeping Flowbite inclusion in the layout ensures design stays identical while improving performance. */
