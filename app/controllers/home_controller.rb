@@ -60,19 +60,19 @@ class HomeController < ApplicationController
     end
 
     # Optimize queries with includes and select only needed columns
-    @upcoming_events = Event.upcoming
-                           .select(:id, :name, :start_date, :guest_description, :total_seats)
-                           .includes(:event_users)
-                           .limit(6)
+  # Load upcoming events (avoid multi-column select to keep relation.count safe)
+  @upcoming_events = Event.upcoming
+               .includes(:event_users)
+               .order(start_date: :asc)
 
-    @projects = Project.active
-                      .select(:id, :name, :description)
-                      .limit(10)
+  # Load full projects (avoid selecting multiple columns which can break relation.count with some DB adapters)
+  @projects = Project.active
+            .order(created_at: :desc)
 
-    @healthcare_requests = HealthcareRequest.visible_to_public
-                                           .select(:id, :user_id, :patient_name, :reason, :status, :approved, :donations_count, :total_donations_cents)
-                                           .includes(:user)
-                                           .limit(8)
+  # Load healthcare requests (avoid multi-column select which can break count queries)
+  @healthcare_requests = HealthcareRequest.visible_to_public
+                       .includes(:user)
+                       .order(created_at: :desc)
 
     @donation = Donation.new
     @submit_text = "Donate Now"

@@ -158,7 +158,7 @@
     <h1 class="text-white text-4xl md:text-5xl font-extrabold mb-4 drop-shadow-lg"><%= t('.hero_title') %></h1>
     <p class="text-white text-lg md:text-xl font-medium mb-6 max-w-2xl mx-auto drop-shadow"><%= t('.hero_subtitle') %></p>
     <div class="flex flex-col sm:flex-row gap-4 mb-8 justify-center">
-      <%= link_to t('.know_more_button'), "#", class: "px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded shadow transition" %>
+  <%= link_to t('.know_more_button'), about_path, class: "px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded shadow transition" %>
       <%= link_to t('.all_activities_button'), projects_path, class: "px-6 py-3 bg-white hover:bg-gray-100 text-gray-900 font-semibold rounded shadow border border-gray-300 transition" %>
     </div>
     <!-- Donation Form Card -->
@@ -252,7 +252,7 @@
         <div class="flex items-center"><i class="fas fa-people-group text-foundationprimarygreen mr-2"></i> <%= t('.unity_of_ummah') %></div>
       </div>
       <p class="text-gray-600 mb-6"><%= t('.mission_statement') %></p>
-      <button class="bg-green-700 hover:bg-green-800 text-white font-semibold px-8 py-3 rounded shadow transition mb-8"><%= t('.read_more_button') %></button>
+  <%= link_to t('.read_more_button'), gallery_path, class: "bg-foundationprimarygreen hover:bg-forange text-white font-semibold px-8 py-3 rounded shadow transition mb-8 inline-block text-center" %>
     </div>
     <div class="flex-1 flex justify-center">
       <img src="<%= asset_path('kid_image.jpg') %>" alt="Kid" class="rounded-[120px] rounded-br-none shadow-2xl w-full max-w-md object-cover" style="aspect-ratio: 1/1.1;" loading="lazy" decoding="async" width="448" height="407" />
