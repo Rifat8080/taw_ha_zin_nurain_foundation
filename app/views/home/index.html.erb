@@ -409,21 +409,38 @@
           <% @upcoming_events.each do |event| %>
             <div class="swiper-slide flex justify-center items-stretch">
               <div class="bg-white rounded-3xl shadow-xl flex flex-col items-center p-6 relative w-full max-w-xs mx-auto border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
-                <div class="w-full flex flex-col gap-1 mb-2">
-                  <div class="flex items-center justify-center text-xs text-blue-600 gap-1 mb-2">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span class="font-bold"><%= event.start_date.strftime("%B %d, %Y") %></span>
-                  </div>
-                </div>
+                <%# Prefer ActiveStorage attachment `event_image`, fall back to `image`, else placeholder %>
+                <% if (event.respond_to?(:event_image) && event.event_image.attached?) || (event.respond_to?(:image) && event.image.attached?) %>
+                  <% image_obj = event.respond_to?(:event_image) && event.event_image.attached? ? event.event_image : event.image %>
+                  <%= image_tag image_obj, class: "rounded-2xl w-full h-48 object-cover mb-4 border border-gray-200", style: "aspect-ratio: 1.5/1; object-fit: cover;", loading: "lazy", decoding: "async", width: 288, height: 192, alt: event.name %>
+                <% else %>
+                  <%= image_tag 'kid_image.jpg', class: "rounded-2xl w-full h-48 object-cover mb-4 border border-gray-200", style: "aspect-ratio: 1.5/1; object-fit: cover;", loading: "lazy", decoding: "async", width: 288, height: 192, alt: event.name %>
+                <% end %>
+
                 <h3 class="text-xl font-bold text-gray-900 text-center mb-1"><%= event.name %></h3>
-                <p class="text-gray-600 text-center mb-2 line-clamp-3 min-h-[48px]"> <%= truncate(event.guest_description, length: 100) %></p>
+
+                <p class="text-gray-600 text-center mb-2 line-clamp-3 min-h-[48px]"> <%= truncate(event.guest_description || event.description, length: 100) %></p>
+
                 <div class="w-full flex flex-col gap-1 mb-2">
+                  <% if event.respond_to?(:location) && event.location.present? %>
+                    <div class="flex items-center justify-center text-xs text-gray-500 gap-1">
+                      <i class="fas fa-map-marker-alt text-foundationprimarygreen"></i>
+                      <span><%= event.location %></span>
+                    </div>
+                  <% end %>
+
+                  <div class="flex items-center justify-center text-xs text-gray-500 gap-1">
+                    <i class="fas fa-calendar-alt text-foundationprimarygreen"></i>
+                    <span><%= event.start_date&.strftime('%b %d, %Y') %></span>
+                  </div>
+
                   <div class="flex items-center justify-center text-xs text-gray-500 gap-1">
                     <i class="fas fa-users text-foundationprimarygreen"></i>
                     <span><%= t('.max_attendees') %>: <%= event.total_seats %></span>
                   </div>
                 </div>
-                <%= link_to t('.view_event_button'), event_path(event), class: "w-full inline-block px-5 py-2 text-base font-semibold text-foundationprimarygreen border border-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen hover:text-white hover:border-white transition-colors duration-200 ease-in-out transform transform-gpu hover:scale-105 focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen/30 interactive-transition text-center mt-2" %>
+
+                <%= link_to t('.view_event_button'), event_path(event), class: "w-full mt-2 inline-block px-5 py-2 text-base font-semibold text-foundationprimarygreen border border-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen hover:text-white hover:border-white transition-colors duration-200 ease-in-out transform transform-gpu hover:scale-105 focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen/30 interactive-transition text-center" %>
               </div>
             </div>
           <% end %>
