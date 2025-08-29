@@ -2,7 +2,8 @@ class ExpensesController < ApplicationController
   before_action :set_expense, only: [ :show, :edit, :update, :destroy ]
 
   def index
-    @expenses = Expense.includes(:project).all.order(date: :desc)
+  # order by the `expense_date` column (column was renamed from `date`)
+  @expenses = Expense.includes(:project).all.order(expense_date: :desc)
   end
 
   def show
@@ -50,6 +51,6 @@ class ExpensesController < ApplicationController
   end
 
   def expense_params
-    params.require(:expense).permit(:title, :amount, :date, :project_id)
+  params.require(:expense).permit(:title, :amount, :expense_date, :project_id)
   end
 end

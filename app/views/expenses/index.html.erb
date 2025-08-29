@@ -21,7 +21,7 @@
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><%= expense.title %></td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">$<%= expense.amount %></td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= expense.project.name %></td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= expense.date.strftime("%B %d, %Y") %></td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= expense.expense_date.strftime("%B %d, %Y") %></td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
               <%= link_to "View", expense_path(expense), class: "text-indigo-600 hover:text-indigo-900 mr-2" %>
               <%= link_to "Edit", edit_expense_path(expense), class: "text-yellow-600 hover:text-yellow-900 mr-2" %>
