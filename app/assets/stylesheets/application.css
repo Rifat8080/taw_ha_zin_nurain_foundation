@@ -14,27 +14,51 @@ img[alt*="Logo"] {
   height: auto !important;
 }
 
-/* Header logo - responsive */
+/* Header logo - responsive with granular breakpoints */
 img[alt="Taw Ha Zin Nurain Foundation Logo"] {
-  height: 2.5rem !important; /* h-10 */
+  height: 2rem !important; /* 320px and up */
+}
+
+@media (min-width: 375px) {
+  img[alt="Taw Ha Zin Nurain Foundation Logo"] {
+    height: 2.25rem !important; /* xs breakpoint */
+  }
 }
 
 @media (min-width: 640px) {
   img[alt="Taw Ha Zin Nurain Foundation Logo"] {
-    height: 3.5rem !important; /* sm:h-14 */
+    height: 2.5rem !important; /* sm breakpoint */
   }
 }
 
 @media (min-width: 768px) {
-  /* Sidebar logo uses md: breakpoint */
-  aside img[alt="Taw Ha Zin Nurain Foundation Logo"] {
-    height: 4rem !important; /* md:h-16 */
+  img[alt="Taw Ha Zin Nurain Foundation Logo"] {
+    height: 3rem !important; /* md breakpoint */
   }
 }
 
 @media (min-width: 1024px) {
   img[alt="Taw Ha Zin Nurain Foundation Logo"] {
-    height: 5rem !important; /* lg:h-20 */
+    height: 3.5rem !important; /* lg breakpoint */
+  }
+}
+
+@media (min-width: 1280px) {
+  img[alt="Taw Ha Zin Nurain Foundation Logo"] {
+    height: 4rem !important; /* xl breakpoint */
+  }
+}
+
+@media (min-width: 1536px) {
+  img[alt="Taw Ha Zin Nurain Foundation Logo"] {
+    height: 5rem !important; /* 2xl breakpoint */
+  }
+}
+
+/* Sidebar logo uses md: breakpoint */
+@media (min-width: 768px) {
+  aside img[alt="Taw Ha Zin Nurain Foundation Logo"] {
+    height: 4rem !important; /* md:h-16 */
   }
 }
 

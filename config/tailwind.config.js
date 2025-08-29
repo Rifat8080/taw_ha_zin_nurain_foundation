@@ -80,6 +80,11 @@ module.exports = {
         info: 'rgb(var(--color-info) / <alpha-value>)',
       }
     }
+    ,
+    screens: {
+      // custom breakpoint for 1440px wide displays
+      wide: '1440px'
+    }
   },
   plugins: [
     flowbite.plugin

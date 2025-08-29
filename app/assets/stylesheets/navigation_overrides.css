@@ -1,0 +1,39 @@
+/* Flowbite-compatible overrides for navigation & sidebar typography at large screens
+   Placed in a separate file so the layout remains clean. This file is loaded after
+   Tailwind/Flowbite CSS to ensure the rules win where necessary. */
+
+@media (min-width: 1440px) {
+  /* Main nav links (including Flowbite nav layout) */
+  nav ul li a,
+  nav .inline-flex.group,
+  nav .max-w-screen-2xl a,
+  nav .items-center a {
+    font-size: 1.125rem !important; /* ~text-lg */
+    line-height: 1.35 !important;
+  }
+
+  /* Icons inside nav */
+  nav i.fa,
+  nav svg {
+    font-size: 1.125rem !important;
+    height: auto !important;
+  }
+
+  /* Language buttons and small controls */
+  nav .lang-switch button,
+  nav button[aria-controls] {
+    font-size: 1.125rem !important; /* match nav icons/login icon */
+    padding: .35rem .6rem !important;
+  }
+
+  /* Sidebar labels */
+  aside#logo-sidebar .space-y-2 span,
+  aside#logo-sidebar .space-y-2 .flex-1 {
+    font-size: 0.9375rem !important; /* slightly under text-base */
+    line-height: 1.25 !important;
+  }
+
+  aside#logo-sidebar i.fa {
+    font-size: 0.9375rem !important;
+  }
+}
