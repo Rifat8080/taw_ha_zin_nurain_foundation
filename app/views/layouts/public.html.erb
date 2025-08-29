@@ -69,7 +69,14 @@
             <% end %>
           </div>
 
-          <%= link_to new_user_session_path, class: "lg:inline-flex group relative items-center justify-center rounded-lg bg-forange text-white shadow transform transition-all duration-200 hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen/50 mr-2 border border-gray-200 px-4 py-2 text-sm h-10 overflow-hidden" do %>
+          <%# Keep visual design identical; route target depends on authentication state %>
+          <% if defined?(current_user) && current_user.present? %>
+            <%# Prefer `dashboard_path` if available, otherwise fall back to root_path to avoid errors %>
+            <% target_nav_path = respond_to?(:dashboard_path) ? dashboard_path : root_path %>
+          <% else %>
+            <% target_nav_path = new_user_session_path %>
+          <% end %>
+          <%= link_to target_nav_path, class: "lg:inline-flex group relative items-center justify-center rounded-lg bg-forange text-white shadow transform transition-all duration-200 hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen/50 mr-2 border border-gray-200 px-4 py-2 text-sm h-10 overflow-hidden" do %>
             <!-- Decorative gradient overlay -->
             <span aria-hidden="true" class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style="background: linear-gradient(90deg, rgba(247,183,49,0.12), rgba(34,197,94,0.12));"></span>
             <span class="relative z-10"><i class="fa-solid fa-user text-sm sm:text-base lg:text-lg xl:text-xl" aria-hidden="true"></i></span>
