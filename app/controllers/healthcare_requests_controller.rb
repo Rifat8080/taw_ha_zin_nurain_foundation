@@ -46,7 +46,7 @@ class HealthcareRequestsController < ApplicationController
             notifiable: @healthcare_request,
             action: 'healthcare_request_created',
             title: 'New healthcare request',
-            body: "#{current_user.name} created a new healthcare request: #{@healthcare_request.patient_name}"
+            body: "#{current_user.full_name || current_user.email} created a new healthcare request: #{@healthcare_request.patient_name}"
           )
         end
       rescue => e
