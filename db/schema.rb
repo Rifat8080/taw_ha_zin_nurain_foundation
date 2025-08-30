@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_28_170400) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_30_030000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -67,23 +67,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_170400) do
     t.index ["published_at"], name: "index_blogs_on_published_at"
   end
 
-  create_table "donation_cart_items", force: :cascade do |t|
-    t.uuid "donation_cart_id", null: false
-    t.uuid "project_id", null: false
-    t.integer "amount"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["donation_cart_id"], name: "index_donation_cart_items_on_donation_cart_id"
-    t.index ["project_id"], name: "index_donation_cart_items_on_project_id"
-  end
-
-  create_table "donation_carts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "user_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_donation_carts_on_user_id"
-  end
-
   create_table "donations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "amount"
     t.uuid "user_id", null: false
@@ -91,7 +74,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_170400) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["amount"], name: "index_donations_on_amount"
-    t.index ["project_id", "created_at"], name: "index_donations_on_project_and_date"
+    t.index ["project_id", "created_at"], name: "index_donations_on_project_id_and_created_at"
+    t.index ["user_id", "created_at"], name: "index_donations_on_user_id_and_created_at"
     t.index ["user_id", "project_id"], name: "index_donations_on_user_project"
   end
 
@@ -102,10 +86,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_170400) do
     t.string "status", default: "registered"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["event_id", "status"], name: "index_event_users_on_event_status"
     t.index ["event_id"], name: "index_event_users_on_event_id"
     t.index ["status"], name: "index_event_users_on_status"
     t.index ["ticket_code"], name: "index_event_users_on_ticket_code", unique: true
+    t.index ["user_id", "event_id", "status"], name: "index_event_users_covering"
     t.index ["user_id", "event_id"], name: "index_event_users_on_user_id_and_event_id", unique: true
+    t.index ["user_id", "status"], name: "index_event_users_on_user_status"
   end
 
   create_table "events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -127,8 +114,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_170400) do
     t.index ["created_at"], name: "index_events_on_created_at"
     t.index ["name"], name: "index_events_on_name"
     t.index ["start_date", "end_date"], name: "index_events_on_date_range"
-    t.index ["start_date"], name: "index_events_on_start_date"
     t.index ["ticket_category"], name: "index_events_on_ticket_category"
+    t.index ["ticket_types_config"], name: "index_events_on_ticket_types_config", using: :gin
   end
 
   create_table "expenses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -139,6 +126,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_170400) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["amount"], name: "index_expenses_on_amount"
+    t.index ["project_id", "created_at"], name: "index_expenses_on_project_id_and_created_at"
   end
 
   create_table "guests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -159,8 +147,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_170400) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["amount"], name: "index_healthcare_donations_on_amount"
+    t.index ["request_id", "amount"], name: "index_healthcare_donations_on_request_amount"
     t.index ["request_id", "created_at"], name: "index_healthcare_donations_on_request_and_date"
     t.index ["request_id", "user_id", "created_at"], name: "index_healthcare_donations_covering"
+    t.index ["user_id", "created_at"], name: "index_healthcare_donations_on_user_id_and_created_at"
     t.index ["user_id", "request_id"], name: "index_healthcare_donations_on_user_request"
   end
 
@@ -176,7 +166,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_170400) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["expense_date"], name: "index_healthcare_expenses_on_expense_date"
-    t.index ["healthcare_request_id", "created_at"], name: "index_healthcare_expenses_on_request_and_date"
+    t.index ["healthcare_request_id", "created_at"], name: "index_healthcare_expenses_on_request_id_created_at"
     t.index ["user_id"], name: "index_healthcare_expenses_on_user_id"
   end
 
@@ -193,6 +183,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_170400) do
     t.integer "total_donations_cents", default: 0, null: false
     t.index ["approved", "status"], name: "index_healthcare_requests_on_approved_and_status"
     t.index ["created_at"], name: "index_approved_healthcare_requests_on_created_at", where: "((approved = true) AND ((status)::text = 'approved'::text))"
+    t.index ["created_at"], name: "index_pending_healthcare_requests_on_created_at", where: "((status)::text = 'pending'::text)"
     t.index ["donations_count"], name: "index_healthcare_requests_on_donations_count"
     t.index ["status", "created_at"], name: "index_healthcare_requests_on_status_created_at"
     t.index ["total_donations_cents"], name: "index_healthcare_requests_on_total_donations_cents"
@@ -209,6 +200,31 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_170400) do
     t.check_constraint "amount >= 0::numeric", name: "check_amount_positive"
   end
 
+  create_table "mobility_string_translations", force: :cascade do |t|
+    t.string "locale", null: false
+    t.string "key", null: false
+    t.string "value"
+    t.string "translatable_type"
+    t.bigint "translatable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["translatable_id", "translatable_type", "key"], name: "index_mobility_string_translations_on_translatable_attribute"
+    t.index ["translatable_id", "translatable_type", "locale", "key"], name: "index_mobility_string_translations_on_keys", unique: true
+    t.index ["translatable_type", "key", "value", "locale"], name: "index_mobility_string_translations_on_query_keys"
+  end
+
+  create_table "mobility_text_translations", force: :cascade do |t|
+    t.string "locale", null: false
+    t.string "key", null: false
+    t.text "value"
+    t.string "translatable_type"
+    t.bigint "translatable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["translatable_id", "translatable_type", "key"], name: "index_mobility_text_translations_on_translatable_attribute"
+    t.index ["translatable_id", "translatable_type", "locale", "key"], name: "index_mobility_text_translations_on_keys", unique: true
+  end
+
   create_table "nisab_rates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "year", null: false
     t.decimal "gold_price_per_gram", precision: 8, scale: 2, null: false
@@ -218,6 +234,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_170400) do
     t.virtual "nisab_gold", type: :decimal, precision: 14, scale: 2, as: "(gold_price_per_gram * (85)::numeric)", stored: true
     t.virtual "nisab_silver", type: :decimal, precision: 14, scale: 2, as: "(silver_price_per_gram * (595)::numeric)", stored: true
     t.index ["year"], name: "index_nisab_rates_on_year", unique: true
+  end
+
+  create_table "notifications", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "recipient_id", null: false
+    t.uuid "actor_id"
+    t.datetime "read_at"
+    t.string "notifiable_type"
+    t.uuid "notifiable_id"
+    t.string "action"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "title"
+    t.text "body"
+    t.jsonb "data", default: {}
+    t.string "actor_type"
+    t.index ["actor_id"], name: "index_notifications_on_actor_id"
+    t.index ["notifiable_type", "notifiable_id"], name: "index_notifications_on_notifiable"
+    t.index ["read_at"], name: "index_notifications_on_read_at"
+    t.index ["recipient_id", "read_at"], name: "index_notifications_on_recipient_id_and_read_at"
+    t.index ["recipient_id"], name: "index_notifications_on_recipient_id"
   end
 
   create_table "payments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -236,6 +272,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_170400) do
     t.datetime "updated_at", null: false
     t.index ["bkash_payment_id"], name: "index_payments_on_bkash_payment_id"
     t.index ["created_at"], name: "index_payments_on_created_at"
+    t.index ["project_id", "status"], name: "index_payments_on_project_status"
     t.index ["status"], name: "index_payments_on_status"
     t.index ["transaction_id"], name: "index_payments_on_transaction_id", unique: true
     t.index ["user_id"], name: "index_payments_on_user_id"
@@ -248,6 +285,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_170400) do
     t.boolean "is_active", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "icon"
     t.index ["created_at"], name: "index_active_projects_on_created_at", where: "(is_active = true)"
     t.index ["created_at"], name: "index_projects_on_created_at"
     t.index ["is_active", "created_at"], name: "index_projects_on_active_and_created_at"
@@ -283,19 +321,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_170400) do
     t.datetime "break_started_at"
     t.datetime "last_exit_at"
     t.jsonb "scan_actions", default: {}, null: false
+    t.index ["created_at"], name: "index_active_tickets_on_created_at", where: "((status)::text = 'active'::text)"
     t.index ["event_id", "seat_number"], name: "index_tickets_on_event_id_and_seat_number", unique: true
+    t.index ["event_id", "status"], name: "index_tickets_on_event_status"
+    t.index ["event_id", "ticket_type", "status"], name: "index_tickets_on_event_type_status"
+    t.index ["event_id", "user_id", "status"], name: "index_tickets_covering"
     t.index ["event_id"], name: "index_tickets_on_event_id"
+    t.index ["last_scanned_at"], name: "index_tickets_on_last_scanned_at"
     t.index ["qr_code"], name: "index_tickets_on_qr_code", unique: true
     t.index ["registered_by_id"], name: "index_tickets_on_registered_by_id"
+    t.index ["scan_actions"], name: "index_tickets_on_scan_actions", using: :gin
     t.index ["status"], name: "index_tickets_on_status"
     t.index ["ticket_type"], name: "index_tickets_on_ticket_type"
+    t.index ["user_id", "event_id"], name: "index_tickets_on_user_event"
     t.index ["user_id", "status", "created_at"], name: "index_tickets_user_status_created_at"
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "first_name", limit: 50, null: false
     t.string "last_name", limit: 50, null: false
-    t.integer "phone_number"
+    t.string "phone_number"
     t.string "email", null: false
     t.string "role"
     t.string "address"
@@ -308,6 +353,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_170400) do
     t.index ["created_at"], name: "index_users_on_created_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token"
+    t.index ["role"], name: "index_users_on_role"
     t.check_constraint "email::text ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'::text", name: "check_users_email_format"
   end
 
@@ -359,9 +405,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_170400) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "assets", "zakat_calculations"
-  add_foreign_key "donation_cart_items", "donation_carts"
-  add_foreign_key "donation_cart_items", "projects"
-  add_foreign_key "donation_carts", "users"
   add_foreign_key "donations", "projects"
   add_foreign_key "donations", "users"
   add_foreign_key "event_users", "events"
@@ -374,6 +417,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_28_170400) do
   add_foreign_key "healthcare_expenses", "users"
   add_foreign_key "healthcare_requests", "users"
   add_foreign_key "liabilities", "zakat_calculations"
+  add_foreign_key "notifications", "users", column: "actor_id"
+  add_foreign_key "notifications", "users", column: "recipient_id"
   add_foreign_key "payments", "projects"
   add_foreign_key "payments", "users"
   add_foreign_key "team_assignments", "volunteers"

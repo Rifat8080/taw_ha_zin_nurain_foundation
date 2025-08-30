@@ -1,0 +1,34 @@
+<!-- Flowbite dropdown root: toggled by button with data-dropdown-toggle="notifications-dropdown" -->
+<div id="notifications-dropdown" class="z-50 absolute right-0 mt-2 w-80 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 hidden" data-popper-reference-hidden data-popper-escaped>
+  <div class="px-4 py-3">
+    <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Notifications</h3>
+    <p class="text-xs text-gray-500">New & recent</p>
+  </div>
+  <ul id="notifications-list" class="py-2 text-sm text-gray-700 dark:text-gray-300 max-h-64 overflow-y-auto">
+    <% notifications.each do |n| %>
+      <li data-notification-id="<%= n.id %>" class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 <%= 'bg-gray-100' if n.unread? %>">
+        <div class="flex items-start gap-3">
+          <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-forange text-white"><i class="fa-solid fa-bell"></i></span>
+          <div class="flex-1">
+            <div class="text-sm font-medium text-gray-900 dark:text-white">
+              <% if n.respond_to?(:title) %>
+                <%= n.title.presence || n.action&.titleize || 'Notification' %>
+              <% else %>
+                <%= n.action&.titleize || 'Notification' %>
+              <% end %>
+            </div>
+            <div class="text-xs text-gray-500 dark:text-gray-400 truncate">
+              <% if n.respond_to?(:body) %>
+                <%= n.body&.truncate(80) %>
+              <% end %>
+            </div>
+          </div>
+          <div class="text-xs text-gray-400 ms-2"><%= time_ago_in_words(n.created_at) %></div>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+  <div class="px-4 py-2">
+    <a href="#" id="notifications-view-all" class="block text-center text-sm font-medium text-forange">View all</a>
+  </div>
+</div>

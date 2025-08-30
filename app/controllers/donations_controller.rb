@@ -67,6 +67,38 @@ class DonationsController < ApplicationController
     end
 
     if @donation.save
+      # Notify admins about new donation and the donor themselves
+      begin
+        admins = User.where(role: 'admin')
+        admins.find_each do |admin|
+          NotificationService.notify(
+            recipient: admin,
+            actor: @donation.user,
+            notifiable: @donation,
+            action: 'donation_created',
+            title: "New donation received",
+            body: "#{@donation.user.full_name} donated $#{@donation.amount} to #{@donation.project&.name || 'the foundation'}"
+          )
+        end
+      rescue => e
+        Rails.logger.error("Notification error (donation): ")
+        Rails.logger.error(e.message)
+      end
+
+      # Notify donor (useful for guest donations that create user)
+      begin
+        NotificationService.notify(
+          recipient: @donation.user,
+          actor: @donation.user,
+          notifiable: @donation,
+          action: 'donation_received',
+          title: "Thank you for your donation",
+          body: "We received your donation of $#{@donation.amount}."
+        )
+      rescue => e
+        Rails.logger.error("Notification error (donor): #{e.message}")
+      end
+
       if current_user && !@donation.user.created_by_guest_donation
         redirect_to @donation, notice: "Donation was successfully created."
       else

@@ -7,6 +7,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_many :donations, dependent: :destroy
+  has_many :notifications, foreign_key: :recipient_id, dependent: :destroy
   has_one :volunteer, dependent: :destroy
   has_many :assigned_work_orders, class_name: "WorkOrder", foreign_key: :assigned_by, dependent: :nullify
 

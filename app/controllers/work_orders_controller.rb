@@ -38,6 +38,42 @@ class WorkOrdersController < ApplicationController
     @work_order.assigned_by ||= current_user.id
 
     if @work_order.save
+      # Notify team admins/volunteers and the assigner about the new work order
+      begin
+        # Prefer iterating team assignments -> volunteer -> user for robustness
+        volunteers_team = @work_order.volunteers_team
+        if volunteers_team.present?
+          volunteers_team.team_assignments.includes(:volunteer).find_each do |assignment|
+            volunteer = assignment.volunteer
+            user = volunteer&.user
+            next unless user
+            NotificationService.notify(
+              recipient: user,
+              actor: current_user,
+              notifiable: @work_order,
+              action: 'work_order_assigned',
+              title: "New work order assigned",
+              body: "#{@work_order.title} assigned for #{@work_order.assigned_date.strftime('%B %d, %Y')}."
+            )
+          end
+        end
+
+        # Notify the user who assigned the work order
+        if @work_order.assigned_by.present?
+          assigner = User.find_by(id: @work_order.assigned_by)
+          NotificationService.notify(
+            recipient: assigner || current_user,
+            actor: current_user,
+            notifiable: @work_order,
+            action: 'work_order_created',
+            title: "Work order created",
+            body: "You created a work order: #{@work_order.title}."
+          )
+        end
+      rescue => e
+        Rails.logger.error("Notification error (work order create): #{e.message}")
+      end
+
       redirect_to @work_order, notice: "Work order was successfully created and assigned to you for #{@work_order.assigned_date.strftime('%B %d, %Y')}."
     else
       @teams = VolunteersTeam.all
@@ -53,6 +89,25 @@ class WorkOrdersController < ApplicationController
 
   def update
     if @work_order.update(work_order_params)
+      # Notify assigned team members about the update
+      begin
+        team_members = @work_order.volunteers_team&.users
+        if team_members.present?
+          team_members.find_each do |member|
+            NotificationService.notify(
+              recipient: member,
+              actor: current_user,
+              notifiable: @work_order,
+              action: 'work_order_updated',
+              title: "Work order updated",
+              body: "#{@work_order.title} was updated."
+            )
+          end
+        end
+      rescue => e
+        Rails.logger.error("Notification error (work order update): #{e.message}")
+      end
+
       redirect_to @work_order, notice: "Work order was successfully updated."
     else
       @teams = VolunteersTeam.all

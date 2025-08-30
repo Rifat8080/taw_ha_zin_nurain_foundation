@@ -37,6 +37,22 @@ class HealthcareRequestsController < ApplicationController
     @healthcare_request = current_user.healthcare_requests.build(healthcare_request_params)
 
     if @healthcare_request.save
+      # Notify admins about the new healthcare request
+      begin
+        User.where(role: 'admin').find_each do |admin|
+          NotificationService.notify(
+            recipient: admin,
+            actor: current_user,
+            notifiable: @healthcare_request,
+            action: 'healthcare_request_created',
+            title: 'New healthcare request',
+            body: "#{current_user.name} created a new healthcare request: #{@healthcare_request.patient_name}"
+          )
+        end
+      rescue => e
+        Rails.logger.error("Notification error (healthcare request create): #{e.message}")
+      end
+
       redirect_to @healthcare_request, notice: "Healthcare request was successfully created."
     else
       render :new, status: :unprocessable_entity
@@ -68,7 +84,26 @@ class HealthcareRequestsController < ApplicationController
       request_params = request_params.merge(approved: false)
     end
 
+    previous_status = @healthcare_request.status
+
     if @healthcare_request.update(request_params)
+      # If status changed by an admin, notify the request owner
+      begin
+        if previous_status != @healthcare_request.status
+          # notify the request creator about status change
+          NotificationService.notify(
+            recipient: @healthcare_request.user,
+            actor: current_user,
+            notifiable: @healthcare_request,
+            action: 'healthcare_request_status_changed',
+            title: "Healthcare request #{ @healthcare_request.status.titleize }",
+            body: "Your healthcare request for #{@healthcare_request.patient_name} is now #{@healthcare_request.status}."
+          )
+        end
+      rescue => e
+        Rails.logger.error("Notification error (healthcare request update): #{e.message}")
+      end
+
       redirect_to @healthcare_request, notice: "Healthcare request was successfully updated."
     else
       render :edit, status: :unprocessable_entity
@@ -89,18 +124,57 @@ class HealthcareRequestsController < ApplicationController
   def approve
     authorize_admin!
     @healthcare_request.approve!
+    # notify the requester that their request was approved
+    begin
+      NotificationService.notify(
+        recipient: @healthcare_request.user,
+        actor: current_user,
+        notifiable: @healthcare_request,
+        action: 'healthcare_request_approved',
+        title: 'Healthcare request approved',
+        body: "Your healthcare request for #{@healthcare_request.patient_name} has been approved."
+      )
+    rescue => e
+      Rails.logger.error("Notification error (healthcare request approve): #{e.message}")
+    end
     redirect_to @healthcare_request, notice: "Healthcare request has been approved."
   end
 
   def reject
     authorize_admin!
     @healthcare_request.reject!
+    # notify the requester that their request was rejected
+    begin
+      NotificationService.notify(
+        recipient: @healthcare_request.user,
+        actor: current_user,
+        notifiable: @healthcare_request,
+        action: 'healthcare_request_rejected',
+        title: 'Healthcare request rejected',
+        body: "Your healthcare request for #{@healthcare_request.patient_name} has been rejected."
+      )
+    rescue => e
+      Rails.logger.error("Notification error (healthcare request reject): #{e.message}")
+    end
     redirect_to @healthcare_request, notice: "Healthcare request has been rejected."
   end
 
   def complete
     authorize_admin!
     @healthcare_request.mark_as_completed!
+    # notify the requester that their request was completed
+    begin
+      NotificationService.notify(
+        recipient: @healthcare_request.user,
+        actor: current_user,
+        notifiable: @healthcare_request,
+        action: 'healthcare_request_completed',
+        title: 'Healthcare request completed',
+        body: "Your healthcare request for #{@healthcare_request.patient_name} has been completed."
+      )
+    rescue => e
+      Rails.logger.error("Notification error (healthcare request complete): #{e.message}")
+    end
     redirect_to @healthcare_request, notice: "Healthcare request has been marked as completed."
   end
 

@@ -54,6 +54,45 @@ class TicketsController < ApplicationController
         event_user.status = "registered"
       end
 
+      # Notify event organizers/admins about new ticket purchase and the purchaser
+      begin
+        # Notify admins
+        User.where(role: 'admin').find_each do |admin|
+          NotificationService.notify(
+            recipient: admin,
+            actor: current_user,
+            notifiable: @ticket,
+            action: 'ticket_purchased',
+            title: "Ticket purchased for #{@event.name}",
+            body: "#{current_user.full_name} purchased a ticket (#{@ticket.ticket_type})"
+          )
+        end
+
+        # Optionally notify event organizers if the event has users flagged as organizers (event_users with organizer role)
+        @event.event_users.where(role: 'organizer').includes(:user).find_each do |eu|
+          NotificationService.notify(
+            recipient: eu.user,
+            actor: current_user,
+            notifiable: @ticket,
+            action: 'ticket_purchased',
+            title: "New attendee for #{@event.name}",
+            body: "#{current_user.full_name} purchased a ticket."
+          )
+        end
+
+        # Notify purchaser
+        NotificationService.notify(
+          recipient: current_user,
+          actor: current_user,
+          notifiable: @ticket,
+          action: 'ticket_purchase_confirmed',
+          title: "Ticket purchase confirmed",
+          body: "Your ticket for #{@event.name} is confirmed."
+        )
+      rescue => e
+        Rails.logger.error("Notification error (ticket purchase): #{e.message}")
+      end
+
       redirect_to ticket_path(@ticket), notice: "Ticket purchased successfully! Your QR code is ready."
     else
       redirect_to @event, alert: @ticket.errors.full_messages.join(", ")
@@ -137,6 +176,31 @@ class TicketsController < ApplicationController
         end
 
         total_amount = created_tickets.sum(&:price)
+
+        # Notify admins and purchaser about bulk purchase
+        begin
+          User.where(role: 'admin').find_each do |admin|
+            NotificationService.notify(
+              recipient: admin,
+              actor: current_user,
+              notifiable: @event,
+              action: 'tickets_bulk_purchased',
+              title: "#{created_tickets.count} tickets purchased for #{@event.name}",
+              body: "#{current_user.full_name} purchased #{created_tickets.count} tickets."
+            )
+          end
+
+          NotificationService.notify(
+            recipient: current_user,
+            actor: current_user,
+            notifiable: @event,
+            action: 'tickets_bulk_confirmed',
+            title: "Bulk purchase confirmed",
+            body: "Your purchase of #{created_tickets.count} tickets for #{@event.name} is confirmed."
+          )
+        rescue => e
+          Rails.logger.error("Notification error (bulk ticket purchase): #{e.message}")
+        end
 
         redirect_to @event, notice: "Successfully purchased #{created_tickets.count} ticket(s) for $#{total_amount}! Check your tickets in the 'Your Tickets' section below."
       else
@@ -441,6 +505,32 @@ class TicketsController < ApplicationController
     # Create EventUser registration if it doesn't exist
     event.event_users.find_or_create_by(user: user) do |event_user|
       event_user.status = "registered"
+    end
+
+    # Notify admins and optionally event organizers about spot registration and the created/used user
+    begin
+      User.where(role: 'admin').find_each do |admin|
+        NotificationService.notify(
+          recipient: admin,
+          actor: current_user,
+          notifiable: event,
+          action: 'spot_registration',
+          title: "Walk-in registration for #{event.name}",
+          body: "#{user.full_name} was registered by #{current_user.full_name} for #{event.name}."
+        )
+      end
+
+      # Notify the registered user
+      NotificationService.notify(
+        recipient: user,
+        actor: current_user,
+        notifiable: event,
+        action: 'registration_confirmed',
+        title: "Event registration confirmed",
+        body: "You have been registered for #{event.name}."
+      )
+    rescue => e
+      Rails.logger.error("Notification error (spot registration): #{e.message}")
     end
 
     {

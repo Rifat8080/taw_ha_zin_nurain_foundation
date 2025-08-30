@@ -20,3 +20,4 @@ import "modules/carousel";
 import "modules/stats";
 import "modules/bulk_ticket_modal_fallback";
 import "modules/gallery_tabs";
+import "modules/notifications";

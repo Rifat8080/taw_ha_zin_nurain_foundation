@@ -128,6 +128,18 @@ class Event < ApplicationRecord
     end
   end
 
+  # Notify admins and volunteers when events are created or updated.
+  after_commit :notify_event_created, on: :create
+  after_commit :notify_event_updated, on: :update
+
+  def notify_event_created
+    EventNotificationJob.perform_later(id, 'created')
+  end
+
+  def notify_event_updated
+    EventNotificationJob.perform_later(id, 'updated')
+  end
+
   private
 
   def ticket_types_config_format
