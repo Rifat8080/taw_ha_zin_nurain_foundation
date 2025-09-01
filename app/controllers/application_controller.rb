@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
 
   before_action :authenticate_user!, unless: :public_action?
   before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :track_layout_mode
 
   layout :determine_layout
 
@@ -18,12 +19,24 @@ class ApplicationController < ActionController::Base
   private
 
   def determine_layout
-    if public_action?
-      "public"
-    elsif user_signed_in?
-      "authenticated"
+    # For specific resources we allow the user's current layout context
+    # to decide whether the index/show is rendered inside the public
+    # layout or the authenticated layout. This respects where the user
+    # is currently browsing (public site vs authenticated app).
+    if controller_name.in?(%w[events projects healthcare_requests]) && action_name.in?(%w[index show])
+      if session[:layout_mode] == 'authenticated' && user_signed_in?
+        'authenticated'
+      else
+        'public'
+      end
     else
-      "public"
+      if public_action?
+        'public'
+      elsif user_signed_in?
+        'authenticated'
+      else
+        'public'
+      end
     end
   end
 
@@ -38,9 +51,12 @@ class ApplicationController < ActionController::Base
     return true if devise_controllers
 
     # Always use public layout for these resources' index/show actions, for all users
-    return true if controller_name == "healthcare_requests" && action_name.in?(%w[index show])
-    return true if controller_name == "events" && action_name.in?(%w[index show])
-    return true if controller_name == "projects" && action_name.in?(%w[index show])
+  # These resources are accessible publicly, but layout selection is
+  # handled by `determine_layout` which will consult the session
+  # layout_mode to decide between public/authenticated rendering.
+  return true if controller_name == "healthcare_requests" && action_name.in?(%w[index show])
+  return true if controller_name == "events" && action_name.in?(%w[index show])
+  return true if controller_name == "projects" && action_name.in?(%w[index show])
 
     # Allow public access to about, gallery, and contact pages
     if controller_name == "pages" && action_name.in?(%w[about gallery contact])
@@ -51,6 +67,32 @@ class ApplicationController < ActionController::Base
     return true if controller_name == "application" && action_name == "switch_language"
 
     false
+  end
+
+  # Track the user's current layout context so we can render shared
+  # index pages (events/projects/healthcare_requests) inside the UI
+  # the user is currently using. We only set the mode to
+  # 'authenticated' when the user visits authenticated-only areas.
+  # For public landing pages (home, pages, devise) we set 'public'.
+  def track_layout_mode
+    # If the user is navigating authenticated parts of the app, prefer that
+    if !public_action? && user_signed_in?
+      session[:layout_mode] = 'authenticated'
+      return
+    end
+
+    # Explicit public landing pages should set the public mode.
+    if controller_name == 'home' && action_name == 'index'
+      session[:layout_mode] = 'public'
+      return
+    end
+
+    if controller_name == 'pages' && action_name.in?(%w[about gallery contact])
+      session[:layout_mode] = 'public'
+      return
+    end
+
+    # Keep existing session[:layout_mode] if present for ambiguous pages
   end
 
   def require_admin
