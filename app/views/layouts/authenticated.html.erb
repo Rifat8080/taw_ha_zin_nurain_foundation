@@ -135,21 +135,21 @@
              
              <!-- Projects Section -->
              <li>
-                <%= link_to projects_path, class: "sidebar-link ".dup.concat(current_page?(projects_path) ? ' sidebar-link-active' : '') do %>
+                <%= link_to projects_path(layout: 'authenticated'), class: "sidebar-link ".dup.concat(current_page?(projects_path) ? ' sidebar-link-active' : '') do %>
                    <i class="fa-solid fa-folder sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Projects</span>
                 <% end %>
              </li>
              <!-- Events Section -->
              <li>
-                <%= link_to events_path, class: "sidebar-link ".dup.concat(current_page?(events_path) ? ' sidebar-link-active' : '') do %>
+                <%= link_to events_path(layout: 'authenticated'), class: "sidebar-link ".dup.concat(current_page?(events_path) ? ' sidebar-link-active' : '') do %>
                    <i class="fa-solid fa-calendar-days sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Events</span>
                 <% end %>
              </li>
              <!-- Healthcare Section -->
              <li>
-                <%= link_to healthcare_requests_path, class: "sidebar-link ".dup.concat(current_page?(healthcare_requests_path) ? ' sidebar-link-active' : '') do %>
+                <%= link_to healthcare_requests_path(layout: 'authenticated'), class: "sidebar-link ".dup.concat(current_page?(healthcare_requests_path) ? ' sidebar-link-active' : '') do %>
                    <i class="fa-solid fa-stethoscope sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Healthcare Requests</span>
                 <% end %>
@@ -318,21 +318,21 @@
              
              <!-- Projects Section -->
              <li>
-                <%= link_to projects_path, class: "sidebar-link ".dup.concat(current_page?(projects_path) ? ' sidebar-link-active' : '') do %>
+                <%= link_to projects_path(layout: 'authenticated'), class: "sidebar-link ".dup.concat(current_page?(projects_path) ? ' sidebar-link-active' : '') do %>
                    <i class="fa-solid fa-folder sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Projects</span>
                 <% end %>
              </li>
              <!-- Events Section -->
              <li>
-                <%= link_to events_path, class: "sidebar-link ".dup.concat(current_page?(events_path) ? ' sidebar-link-active' : '') do %>
+                <%= link_to events_path(layout: 'authenticated'), class: "sidebar-link ".dup.concat(current_page?(events_path) ? ' sidebar-link-active' : '') do %>
                    <i class="fa-solid fa-calendar-days sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Events</span>
                 <% end %>
              </li>
              <!-- Healthcare Section -->
              <li>
-                <%= link_to healthcare_requests_path, class: "sidebar-link ".dup.concat(current_page?(healthcare_requests_path) ? ' sidebar-link-active' : '') do %>
+                <%= link_to healthcare_requests_path(layout: 'authenticated'), class: "sidebar-link ".dup.concat(current_page?(healthcare_requests_path) ? ' sidebar-link-active' : '') do %>
                    <i class="fa-solid fa-stethoscope sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Healthcare Requests</span>
                 <% end %>

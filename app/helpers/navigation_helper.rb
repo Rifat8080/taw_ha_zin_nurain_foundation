@@ -99,11 +99,33 @@ module NavigationHelper
     navigation_categories.map do |category|
       category.merge(
         count: send(category[:count_method]),
-        url: category[:is_zakat] ? zakat_calculator_url :
-             category[:is_healthcare] ? healthcare_requests_path :
-             category[:is_events] ? events_path :
-             projects_path(filter: category[:filter])
+        url: category_url_for(category)
       )
+    end
+  end
+
+  def category_url_for(category)
+    base_url = if category[:is_zakat]
+      zakat_calculator_url
+    elsif category[:is_healthcare]
+      healthcare_requests_path
+    elsif category[:is_events]
+      events_path
+    else
+      projects_path(filter: category[:filter])
+    end
+
+    # If the current session is in authenticated mode, preserve that layout
+    # when generating URLs for shared resources so clicks from the dashboard
+    # keep the authenticated UI.
+    if session[:layout_mode] == 'authenticated' && user_signed_in?
+      uri = URI.parse(base_url)
+      # Append layout param safely
+      query = Rack::Utils.parse_nested_query(uri.query).merge('layout' => 'authenticated')
+      uri.query = query.to_query
+      uri.to_s
+    else
+      base_url
     end
   end
 

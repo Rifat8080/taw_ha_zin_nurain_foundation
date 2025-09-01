@@ -75,6 +75,18 @@ class ApplicationController < ActionController::Base
   # 'authenticated' when the user visits authenticated-only areas.
   # For public landing pages (home, pages, devise) we set 'public'.
   def track_layout_mode
+    # Honor explicit layout override in params first. Useful for links
+    # inside the authenticated UI that should keep the authenticated layout
+    # when navigating to shared pages.
+    if params[:layout].present?
+      if params[:layout] == 'authenticated' && user_signed_in?
+        session[:layout_mode] = 'authenticated'
+      elsif params[:layout] == 'public'
+        session[:layout_mode] = 'public'
+      end
+      return
+    end
+
     # If the user is navigating authenticated parts of the app, prefer that
     if !public_action? && user_signed_in?
       session[:layout_mode] = 'authenticated'
