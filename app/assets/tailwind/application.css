@@ -226,14 +226,32 @@ button.btn-notif:hover {
   border-color: #ffffff !important; /* ensure border becomes white on hover */
 }
 
-/* Delete button stable color */
-.btn-delete {
+/* Delete button stable color
+   Ensure selectors cover these cases:
+   - element has class .btn-delete (button or input)
+   - form wrapper has class .btn-delete (Rails button_to often puts class on the form)
+   This narrow set of selectors avoids globally forcing fonts/colors and keeps
+   the visual style consistent even when different markup is generated. */
+.btn-delete,
+button.btn-delete,
+input[type="submit"].btn-delete,
+form.btn-delete,
+form.btn-delete button,
+form.btn-delete input[type="submit"] {
   background-color: rgb(var(--color-error));
   border-color: rgb(var(--color-error));
   color: #ffffff;
   transition: background-color 180ms cubic-bezier(.4,0,.2,1), border-color 180ms cubic-bezier(.4,0,.2,1), box-shadow 180ms;
 }
-.btn-delete:hover, .btn-delete:focus {
+
+.btn-delete:hover,
+.btn-delete:focus,
+button.btn-delete:hover,
+input[type="submit"].btn-delete:hover,
+form.btn-delete:hover button,
+form.btn-delete:hover input[type="submit"],
+form.btn-delete:focus button,
+form.btn-delete:focus input[type="submit"] {
   background-color: rgb(var(--color-error) / 0.9);
   border-color: rgb(var(--color-error) / 0.9);
   box-shadow: 0 10px 24px rgba(239,68,68,0.12);
