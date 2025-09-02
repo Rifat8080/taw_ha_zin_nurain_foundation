@@ -1,4 +1,54 @@
-<div>
-  <h1 class="font-bold text-4xl">HealthcareDonations#index</h1>
-  <p>Find me in app/views/healthcare_donations/index.html.erb</p>
+<% content_for :title, t('.my_donations_title', default: 'My Donations') %>
+<div class="max-w-5xl mx-auto px-4 py-8">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold"><%= t('.my_donations_title', default: 'My Donations') %></h1>
+    <div class="flex items-center gap-2">
+      <%= link_to healthcare_requests_path, class: 'inline-flex items-center px-4 py-2 bg-foundationprimarygreen text-white rounded-md' do %>
+        <i class="fas fa-donate mr-2" aria-hidden="true"></i>
+        <span><%= t('.make_donation', default: 'Make a Donation') %></span>
+      <% end %>
+      <%= link_to healthcare_requests_path, class: 'inline-flex items-center px-3 py-2 border rounded-md text-gray-700' do %>
+        <i class="fas fa-list mr-2" aria-hidden="true"></i>
+        <span><%= t('.browse_requests', default: 'Browse Requests') %></span>
+      <% end %>
+
+      <% if current_user&.role == 'admin' %>
+        <%= link_to manual_new_healthcare_donations_path, class: 'inline-flex items-center px-3 py-2 border rounded-md text-gray-700' do %>
+          <i class="fas fa-user-plus mr-2" aria-hidden="true"></i>
+          <span>Create Manual Donation</span>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <% if @healthcare_donations.any? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <% @healthcare_donations.each do |donation| %>
+        <div class="bg-white rounded-2xl shadow p-4 border border-gray-100">
+          <div class="flex items-start gap-3">
+            <div class="flex-1">
+              <h3 class="font-semibold"><%= link_to donation.healthcare_request.patient_name, healthcare_request_path(donation.healthcare_request), class: 'text-foundationprimarygreen hover:underline' %></h3>
+              <div class="text-sm text-gray-500"><%= truncate(donation.healthcare_request.reason, length: 80) %></div>
+            </div>
+            <div class="text-right">
+              <div class="text-lg font-bold text-green-600">৳<%= number_with_delimiter(donation.amount) %></div>
+              <div class="text-xs text-gray-500"><%= donation.created_at.strftime('%b %d, %Y') %></div>
+            </div>
+          </div>
+          <div class="mt-3 flex gap-2">
+            <%= link_to 'View', healthcare_donation_path(donation), class: 'px-3 py-2 bg-foundationprimarygreen text-white rounded-md' %>
+            <%= link_to 'View Request', healthcare_request_path(donation.healthcare_request), class: 'px-3 py-2 border rounded-md text-gray-700' %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="mt-6">
+      <%= paginate @healthcare_donations if defined?(paginate) %>
+    </div>
+  <% else %>
+    <div class="text-center py-12 text-gray-500">
+      <%= t('.no_donations', default: "You haven't made any healthcare donations yet.") %>
+    </div>
+  <% end %>
 </div>

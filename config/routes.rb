@@ -46,7 +46,12 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :healthcare_donations, only: [ :index, :show ]
+  resources :healthcare_donations, only: [ :index, :show ] do
+    collection do
+      get :manual_new
+      post :manual_create
+    end
+  end
 
   # Event Management System Routes
   resources :events do

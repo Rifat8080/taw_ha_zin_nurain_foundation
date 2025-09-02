@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_01_000000) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_02_090000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -146,7 +146,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_01_000000) do
     t.integer "amount", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "manual", default: false, null: false
     t.index ["amount"], name: "index_healthcare_donations_on_amount"
+    t.index ["manual"], name: "index_healthcare_donations_on_manual"
     t.index ["request_id", "amount"], name: "index_healthcare_donations_on_request_amount"
     t.index ["request_id", "created_at"], name: "index_healthcare_donations_on_request_and_date"
     t.index ["request_id", "user_id", "created_at"], name: "index_healthcare_donations_covering"

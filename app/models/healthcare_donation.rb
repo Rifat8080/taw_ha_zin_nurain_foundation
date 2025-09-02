@@ -8,6 +8,7 @@ class HealthcareDonation < ApplicationRecord
   scope :by_request, ->(request) { where(request_id: request.id) }
   scope :recent, -> { order(created_at: :desc) }
   scope :total_amount, -> { sum(:amount) }
+  scope :manual, -> { where(manual: true) }
 
   after_create :update_request_counters
   after_update :update_request_counters

@@ -4,10 +4,12 @@ class HealthcareDonationsController < ApplicationController
   before_action :set_healthcare_request, only: [ :new, :create ]
 
   def index
-    @healthcare_donations = current_user.healthcare_donations
-                                       .includes(:healthcare_request)
-                                       .recent
-                                       .page(params[:page])
+  # Index should list manual donations only (admin view)
+  authorize_admin!
+  @healthcare_donations = HealthcareDonation.manual
+                         .includes(:healthcare_request, :user)
+                         .recent
+                         .page(params[:page])
   end
 
   def show
@@ -38,6 +40,30 @@ class HealthcareDonationsController < ApplicationController
     end
   end
 
+  # Admin-only manual donation creation for a specified request and donor
+  def manual_new
+    authorize_admin!
+    @healthcare_donation = HealthcareDonation.new
+  @healthcare_requests = HealthcareRequest.accepting_donations
+    @users = User.order(:email).limit(500)
+  end
+
+  def manual_create
+    authorize_admin!
+
+  @healthcare_donation = HealthcareDonation.new(manual_donation_params)
+  @healthcare_donation.user ||= current_user
+  @healthcare_donation.manual = true
+
+    if @healthcare_donation.save
+      redirect_to healthcare_donations_path, notice: 'Manual donation created.'
+    else
+  @healthcare_requests = HealthcareRequest.accepting_donations
+      @users = User.order(:email).limit(500)
+      render :manual_new, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_healthcare_donation
@@ -50,5 +76,15 @@ class HealthcareDonationsController < ApplicationController
 
   def healthcare_donation_params
     params.require(:healthcare_donation).permit(:amount)
+  end
+
+  def manual_donation_params
+    params.require(:healthcare_donation).permit(:amount, :user_id, :request_id)
+  end
+
+  def authorize_admin!
+    unless current_user&.role == 'admin'
+      redirect_to healthcare_donations_path, alert: 'Not authorized.'
+    end
   end
 end
