@@ -46,7 +46,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :healthcare_donations, only: [ :index, :show ] do
+  resources :healthcare_donations, only: [ :index, :show, :edit, :update ] do
     collection do
       get :manual_new
       post :manual_create
@@ -80,7 +80,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :notifications, only: [:index, :show] do
+  resources :notifications, only: [ :index, :show ] do
     member do
       post :mark_as_read
     end

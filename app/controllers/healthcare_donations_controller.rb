@@ -28,6 +28,61 @@ class HealthcareDonationsController < ApplicationController
   def show
   end
 
+  # Admin edit form for a manual donation
+  def edit
+    authorize_admin!
+  set_healthcare_donation
+  @users = User.order(:email).limit(500)
+  @healthcare_requests = HealthcareRequest.accepting_donations
+  end
+
+  # Admin update action for manual donations
+  def update
+    authorize_admin!
+    set_healthcare_donation
+
+    # Handle user assignment/creation similar to manual_create
+    if manual_donation_params[:user_id].present?
+      @healthcare_donation.user_id = manual_donation_params[:user_id]
+    elsif manual_donation_params[:user_attributes].present?
+      ua = manual_donation_params[:user_attributes].slice(:first_name, :last_name, :email, :phone_number).transform_keys(&:to_s)
+
+      user = nil
+      if ua["email"].present?
+        user = User.find_by(email: ua["email"])
+      end
+      if user.blank? && ua["phone_number"].present?
+        user = User.find_by(phone_number: ua["phone_number"])
+      end
+
+      if user.blank? && ua["email"].present?
+        user = User.new(first_name: ua["first_name"] || "Guest", last_name: ua["last_name"] || "Donor", email: ua["email"], phone_number: ua["phone_number"])
+        user.created_by_guest_donation = true
+        pw = SecureRandom.hex(12)
+        user.password = pw
+        user.password_confirmation = pw
+        user.role = "member"
+        user.address = user.address || "N/A"
+        unless user.save
+          @healthcare_requests = HealthcareRequest.accepting_donations
+          @users = User.order(:email).limit(500)
+          @healthcare_donation.errors.add(:base, "Could not create user for donation: " + user.errors.full_messages.join(", "))
+          render :edit, status: :unprocessable_entity and return
+        end
+      end
+
+      @healthcare_donation.user = user if user.present?
+    end
+
+    if @healthcare_donation.update(manual_donation_params.except(:user_attributes, :user_id))
+      redirect_to healthcare_donations_path, notice: "Donation updated."
+    else
+      @healthcare_requests = HealthcareRequest.accepting_donations
+      @users = User.order(:email).limit(500)
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
   def new
     unless @healthcare_request.can_receive_donations?
       redirect_to @healthcare_request, alert: "This request is not accepting donations at the moment."
@@ -96,32 +151,32 @@ class HealthcareDonationsController < ApplicationController
   elsif params.dig(:healthcare_donation, :user_attributes).present?
     ua = params[:healthcare_donation][:user_attributes].slice(:first_name, :last_name, :email, :phone_number).transform_keys(&:to_s)
     # Try to find existing user by email first
-    if ua['email'].present?
-      user = User.find_by(email: ua['email'])
+    if ua["email"].present?
+      user = User.find_by(email: ua["email"])
     end
 
     # If not found by email, try phone number
-    if user.blank? && ua['phone_number'].present?
-      user = User.find_by(phone_number: ua['phone_number'])
+    if user.blank? && ua["phone_number"].present?
+      user = User.find_by(phone_number: ua["phone_number"])
     end
 
-    if user.blank? && ua['email'].present?
+    if user.blank? && ua["email"].present?
       # Build minimal attributes for user creation
-      user = User.new(first_name: ua['first_name'] || 'Guest', last_name: ua['last_name'] || 'Donor', email: ua['email'], phone_number: ua['phone_number'])
+      user = User.new(first_name: ua["first_name"] || "Guest", last_name: ua["last_name"] || "Donor", email: ua["email"], phone_number: ua["phone_number"])
       # mark so validations that depend on full profile can skip
       user.created_by_guest_donation = true
       # set a random password for Devise requirement
       pw = SecureRandom.hex(12)
       user.password = pw
       user.password_confirmation = pw
-      user.role = 'member'
-      user.address = user.address || 'N/A'
+      user.role = "member"
+      user.address = user.address || "N/A"
       if user.save
         # optionally send welcome email — intentionally omitted
       else
         @healthcare_requests = HealthcareRequest.accepting_donations
         @users = User.order(:email).limit(500)
-        @healthcare_donation.errors.add(:base, 'Could not create user for donation: ' + user.errors.full_messages.join(', '))
+        @healthcare_donation.errors.add(:base, "Could not create user for donation: " + user.errors.full_messages.join(", "))
         render :manual_new, status: :unprocessable_entity and return
       end
     end
@@ -130,7 +185,7 @@ class HealthcareDonationsController < ApplicationController
   end
 
     if @healthcare_donation.save
-      redirect_to healthcare_donations_path, notice: 'Manual donation created.'
+      redirect_to healthcare_donations_path, notice: "Manual donation created."
     else
       @healthcare_requests = HealthcareRequest.accepting_donations
       @users = User.order(:email).limit(500)
@@ -153,12 +208,12 @@ class HealthcareDonationsController < ApplicationController
   end
 
   def manual_donation_params
-  params.require(:healthcare_donation).permit(:amount, :user_id, :request_id, user_attributes: [:first_name, :last_name, :email, :phone_number])
+  params.require(:healthcare_donation).permit(:amount, :user_id, :request_id, user_attributes: [ :first_name, :last_name, :email, :phone_number ])
   end
 
   def authorize_admin!
-    unless current_user&.role == 'admin'
-      redirect_to healthcare_donations_path, alert: 'Not authorized.'
+    unless current_user&.role == "admin"
+      redirect_to healthcare_donations_path, alert: "Not authorized."
     end
   end
 end

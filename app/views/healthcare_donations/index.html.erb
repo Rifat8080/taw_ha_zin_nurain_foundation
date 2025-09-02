@@ -73,6 +73,9 @@
             </div>
             <div class="mt-4 flex gap-2">
               <%= link_to 'View', healthcare_donation_path(donation), class: 'px-3 py-2 bg-foundationprimarygreen text-white rounded-md' %>
+              <% if current_user&.role == 'admin' %>
+                <%= link_to 'Edit', edit_healthcare_donation_path(donation), class: 'px-3 py-2 border rounded-md text-forange hover:bg-forange/10' %>
+              <% end %>
               <%= link_to 'Request', healthcare_request_path(donation.healthcare_request), class: 'px-3 py-2 border rounded-md text-gray-700' %>
             </div>
           </div>
