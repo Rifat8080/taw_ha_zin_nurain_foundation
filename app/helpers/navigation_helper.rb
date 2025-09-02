@@ -118,10 +118,10 @@ module NavigationHelper
     # If the current session is in authenticated mode, preserve that layout
     # when generating URLs for shared resources so clicks from the dashboard
     # keep the authenticated UI.
-    if session[:layout_mode] == 'authenticated' && user_signed_in?
+    if session[:layout_mode] == "authenticated" && user_signed_in?
       uri = URI.parse(base_url)
       # Append layout param safely
-      query = Rack::Utils.parse_nested_query(uri.query).merge('layout' => 'authenticated')
+      query = Rack::Utils.parse_nested_query(uri.query).merge("layout" => "authenticated")
       uri.query = query.to_query
       uri.to_s
     else
@@ -131,36 +131,36 @@ module NavigationHelper
 
   # Dynamic count methods
   def palestine_projects_count
-  Project.active.by_category('Palestine').count
+  Project.active.by_category("Palestine").count
   end
 
   def orphan_projects_count
-  Project.active.by_category('Orphans').count
+  Project.active.by_category("Orphans").count
   end
 
   def food_water_projects_count
   # Stored category is 'Food&Water' — allow fallback matches for legacy entries
-  Project.active.by_category('Food&Water').count
+  Project.active.by_category("Food&Water").count
   end
 
   def crisis_projects_count
-  Project.active.by_category('Crisis_Relief').count
+  Project.active.by_category("Crisis_Relief").count
   end
 
   def sadaqah_projects_count
-  Project.active.by_category('Sadaqah').count
+  Project.active.by_category("Sadaqah").count
   end
 
   def education_projects_count
-  Project.active.by_category('Education').count
+  Project.active.by_category("Education").count
   end
 
   def emergency_projects_count
-  Project.active.by_category('Emergency').count
+  Project.active.by_category("Emergency").count
   end
 
   def community_projects_count
-  Project.active.by_category('Community').count
+  Project.active.by_category("Community").count
   end
 
   def zakat_eligible_count

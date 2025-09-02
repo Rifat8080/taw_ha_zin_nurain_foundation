@@ -239,6 +239,24 @@ button.btn-notif:hover {
   box-shadow: 0 10px 24px rgba(239,68,68,0.12);
 }
 
+/* Primary button: foundation primary green (high specificity to win over competing utilities) */
+.btn-primary,
+button.btn-primary,
+input[type="submit"].btn-primary {
+  background-color: rgb(var(--color-foundationprimarygreen)) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+  box-shadow: 0 8px 18px rgba(var(--color-foundationprimarygreen), 0.12);
+}
+.btn-primary:hover,
+button.btn-primary:hover,
+input[type="submit"].btn-primary:hover {
+  background-color: rgb(var(--color-foundationprimarygreen) / 0.9) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+
 /* Fallback helpers: ensure transform and transition utilities exist for hover effects
   These mirror the Tailwind utilities used in templates (transition, transform-gpu, hover:scale-105)
   and provide a graceful fallback when generated utilities are not present in the compiled CSS. */

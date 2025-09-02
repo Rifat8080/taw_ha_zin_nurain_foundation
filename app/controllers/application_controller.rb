@@ -24,18 +24,18 @@ class ApplicationController < ActionController::Base
     # layout or the authenticated layout. This respects where the user
     # is currently browsing (public site vs authenticated app).
     if controller_name.in?(%w[events projects healthcare_requests]) && action_name.in?(%w[index show])
-      if session[:layout_mode] == 'authenticated' && user_signed_in?
-        'authenticated'
+      if session[:layout_mode] == "authenticated" && user_signed_in?
+        "authenticated"
       else
-        'public'
+        "public"
       end
     else
       if public_action?
-        'public'
+        "public"
       elsif user_signed_in?
-        'authenticated'
+        "authenticated"
       else
-        'public'
+        "public"
       end
     end
   end
@@ -50,7 +50,7 @@ class ApplicationController < ActionController::Base
     return true if controller_name == "home" && action_name == "index"
     return true if devise_controllers
 
-    # Always use public layout for these resources' index/show actions, for all users
+  # Always use public layout for these resources' index/show actions, for all users
   # These resources are accessible publicly, but layout selection is
   # handled by `determine_layout` which will consult the session
   # layout_mode to decide between public/authenticated rendering.
@@ -79,29 +79,29 @@ class ApplicationController < ActionController::Base
     # inside the authenticated UI that should keep the authenticated layout
     # when navigating to shared pages.
     if params[:layout].present?
-      if params[:layout] == 'authenticated' && user_signed_in?
-        session[:layout_mode] = 'authenticated'
-      elsif params[:layout] == 'public'
-        session[:layout_mode] = 'public'
+      if params[:layout] == "authenticated" && user_signed_in?
+        session[:layout_mode] = "authenticated"
+      elsif params[:layout] == "public"
+        session[:layout_mode] = "public"
       end
       return
     end
 
     # If the user is navigating authenticated parts of the app, prefer that
     if !public_action? && user_signed_in?
-      session[:layout_mode] = 'authenticated'
+      session[:layout_mode] = "authenticated"
       return
     end
 
     # Explicit public landing pages should set the public mode.
-    if controller_name == 'home' && action_name == 'index'
-      session[:layout_mode] = 'public'
+    if controller_name == "home" && action_name == "index"
+      session[:layout_mode] = "public"
       return
     end
 
-    if controller_name == 'pages' && action_name.in?(%w[about gallery contact])
-      session[:layout_mode] = 'public'
-      return
+    if controller_name == "pages" && action_name.in?(%w[about gallery contact])
+      session[:layout_mode] = "public"
+      nil
     end
 
     # Keep existing session[:layout_mode] if present for ambiguous pages

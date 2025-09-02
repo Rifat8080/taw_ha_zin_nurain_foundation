@@ -34,7 +34,7 @@ class Project < ApplicationRecord
 
   public
 
-  # Scopes
+    # Scopes
     scope :active, -> { where(is_active: true) }
     scope :inactive, -> { where(is_active: false) }
     scope :by_category, ->(category) { where("categories ILIKE ?", "%#{category}%") }
