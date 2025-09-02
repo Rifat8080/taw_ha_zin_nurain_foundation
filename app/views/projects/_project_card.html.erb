@@ -26,6 +26,38 @@
   <div class="flex-1 flex flex-col p-6 gap-2">
     <h3 class="text-2xl font-bold text-gray-900 mb-1 group-hover:text-foundationprimarygreen transition-colors"><%= project.name %></h3>
     <p class="text-gray-600 mb-2 line-clamp-3 text-base"><%= project.description %></p>
+
+    <%# Project metrics: Total Donations, Total Expenses, Balance, Donors %>
+    <% total_donations = project.respond_to?(:total_donations) ? project.total_donations.to_f : 0.0 %>
+    <% total_expenses = project.respond_to?(:total_expenses) ? project.total_expenses.to_f : 0.0 %>
+    <% balance = total_donations - total_expenses %>
+    <% donors = project.respond_to?(:donors_count) ? project.donors_count : (project.donations&.count || 0) %>
+
+    <div class="mt-3 w-full grid grid-cols-2 gap-2 text-sm text-gray-700">
+      <div class="bg-gray-50 p-3 rounded-lg text-center">
+        <div class="text-xs text-gray-500">Total Donations:</div>
+        <div class="font-bold text-foundationprimarygreen">৳<%= number_with_precision(total_donations, precision: 1) %></div>
+      </div>
+      <div class="bg-gray-50 p-3 rounded-lg text-center">
+        <div class="text-xs text-gray-500">Total Expenses:</div>
+        <div class="font-bold text-gray-700">৳<%= number_with_precision(total_expenses, precision: 1) %></div>
+      </div>
+
+      <%# Show Balance and Donors only to admins %>
+      <% if current_user&.role == "admin" %>
+        <div class="bg-gray-50 p-3 rounded-lg text-center">
+          <div class="text-xs text-gray-500">Balance:</div>
+          <% balance_sign = balance >= 0 ? '+' : '-' %>
+          <% balance_abs = balance.abs %>
+          <div class="font-bold <%= balance >= 0 ? 'text-foundationprimarygreen' : 'text-red-500' %>"><%= balance_sign %>৳<%= number_with_precision(balance_abs, precision: 1) %></div>
+        </div>
+        <div class="bg-gray-50 p-3 rounded-lg text-center">
+          <div class="text-xs text-gray-500">Donors:</div>
+          <div class="font-bold text-gray-700"><%= donors %></div>
+        </div>
+      <% end %>
+    </div>
+
     <div class="flex flex-wrap gap-2 mt-auto">
   <%= link_to project, class: "flex-1 min-w-[120px] text-center px-4 py-2 bg-[rgb(var(--color-foundationprimarygreen))] text-white font-semibold rounded-lg transition-all duration-200 shadow-md scale-100 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-foundationprimarygreen))]/60 transform will-change-transform hover:shadow-lg hover:shadow-[rgba(var(--color-foundationprimarygreen),0.25)] hover:-translate-y-1 hover:-rotate-x-2 hover:scale-105 active:scale-95 active:shadow-inner" do %>
         <i class="fas fa-eye mr-1"></i> View
