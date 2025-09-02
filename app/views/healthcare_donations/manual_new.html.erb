@@ -41,13 +41,16 @@
           <div>
             <%= f.label :user_id, 'Donor (User)', class: 'block text-sm font-medium text-foundationprimarygreen' %>
             <div class="mt-1 flex flex-col md:flex-row gap-3 items-center">
-              <div class="flex-1">
-                <%= f.select :user_id, options_for_select(@users.map { |u| ["#{u.full_name} — #{u.email}", u.id] }, selected: @healthcare_donation.user_id), { include_blank: 'Select an existing user (or leave blank to create new)' }, class: 'block w-full rounded-md shadow-sm sm:text-sm px-3 py-2 border bg-white' %>
-              </div>
               <div class="w-full md:w-80 relative">
                 <label for="live_user_search" class="sr-only">Search users</label>
                 <input id="live_user_search" type="search" placeholder="Search users (name/email/phone)..." class="w-full px-3 py-2 rounded-md border" autocomplete="off">
                 <div id="live_user_results" class="md:absolute z-50 left-0 right-0 mt-1 bg-white border rounded-md shadow max-h-60 overflow-auto hidden w-full"></div>
+                <!-- hidden field used to submit selected user_id when there is no native select on the page -->
+                <%= hidden_field_tag 'healthcare_donation[user_id]', params.dig(:healthcare_donation, :user_id), id: 'healthcare_donation_user_id' %>
+                <!-- visual selected user display (hidden until a user is chosen) -->
+                <div id="selected_user_display" class="mt-2 hidden">
+                  <!-- Filled in by JS when a user is chosen -->
+                </div>
               </div>
             </div>
 
@@ -116,94 +119,3 @@
   <% end %>
 </div>
 
-  <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var input = document.getElementById('live_user_search');
-    var resultsBox = document.getElementById('live_user_results');
-    var serverResultsList = document.getElementById('server_search_results');
-    var serverResultsContainer = document.getElementById('server_search_results_container');
-    var donorSelect = document.querySelector('select#healthcare_donation_user_id');
-
-    function renderResults(users) {
-      resultsBox.innerHTML = '';
-      serverResultsList.innerHTML = '';
-      if (!users || users.length === 0) {
-        resultsBox.classList.add('hidden');
-        serverResultsContainer.classList.remove('hidden');
-        serverResultsList.innerHTML = '<li class="text-sm text-gray-500 p-2">No users found. You can create a new user below.</li>';
-        return;
-      }
-
-      serverResultsContainer.classList.remove('hidden');
-      users.forEach(function(u) {
-        var li = document.createElement('li');
-        li.className = 'flex items-center justify-between p-2 border rounded-md bg-white';
-        li.innerHTML = '<div class="text-sm text-gray-800"><div class="font-medium">' + (u.full_name || u.email) + '</div><div class="text-xs text-gray-500">' + u.email + (u.phone_number ? ' • ' + u.phone_number : '') + '</div></div>';
-        var btn = document.createElement('button');
-        btn.type = 'button';
-  btn.className = 'inline-flex items-center px-3 py-1 btn-primary text-white rounded-md text-sm';
-        btn.textContent = 'Select';
-        btn.dataset.userId = u.id;
-        btn.dataset.userLabel = (u.full_name || u.email) + ' — ' + u.email;
-        btn.addEventListener('click', function() {
-          var uid = this.dataset.userId;
-          var ulabel = this.dataset.userLabel;
-          if (donorSelect) {
-            // if option doesn't exist, create it so the form will submit with this value
-            if (!donorSelect.querySelector('option[value="' + uid + '"]')) {
-              var opt = document.createElement('option');
-              opt.value = uid;
-              opt.text = ulabel;
-              donorSelect.appendChild(opt);
-            }
-            donorSelect.value = uid;
-            // hide results and clear input
-            input.value = '';
-            serverResultsContainer.classList.add('hidden');
-            resultsBox.classList.add('hidden');
-            // focus the amount field
-            var amountEl = document.getElementById('healthcare_donation_amount');
-            if (amountEl) amountEl.focus();
-          }
-          // small toast
-          var notice = document.createElement('div');
-          notice.className = 'fixed bottom-4 right-4 bg-foundationprimarygreen text-white px-4 py-2 rounded shadow';
-          notice.textContent = 'Selected: ' + ulabel;
-          document.body.appendChild(notice);
-          setTimeout(function(){ notice.remove(); }, 2200);
-        });
-        li.appendChild(btn);
-        serverResultsList.appendChild(li);
-      });
-      resultsBox.classList.remove('hidden');
-    }
-
-    var debounceTimer;
-    input.addEventListener('input', function(e) {
-      clearTimeout(debounceTimer);
-      var q = e.target.value.trim();
-      if (q.length < 2) {
-        serverResultsContainer.classList.add('hidden');
-        resultsBox.classList.add('hidden');
-        return;
-      }
-      debounceTimer = setTimeout(function() {
-        fetch('/healthcare_donations/user_search.json?q=' + encodeURIComponent(q), { headers: { 'Accept': 'application/json' } })
-          .then(function(r) { return r.json(); })
-          .then(function(data) {
-            renderResults(data.users || []);
-          }).catch(function() {
-            serverResultsContainer.classList.remove('hidden');
-            serverResultsList.innerHTML = '<li class="text-sm text-red-600 p-2">Search failed. Try again.</li>';
-          });
-      }, 250);
-    });
-
-    // click outside to close
-    document.addEventListener('click', function(ev) {
-      if (!input.contains(ev.target) && !resultsBox.contains(ev.target) && !serverResultsContainer.contains(ev.target)) {
-        resultsBox.classList.add('hidden');
-      }
-    });
-  });
-  </script>
