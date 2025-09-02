@@ -79,6 +79,7 @@ Rails.application.routes.draw do
       post :mark_as_read
     end
     collection do
+  get :unread_count
       post :mark_all_as_read
     end
   end

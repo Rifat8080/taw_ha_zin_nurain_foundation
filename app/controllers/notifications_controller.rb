@@ -9,6 +9,17 @@ class NotificationsController < ApplicationController
     end
   end
 
+  def unread_count
+    # prefer counter column if present for performance, fallback to query
+    count = if current_user.respond_to?(:unread_notifications_count) && current_user.unread_notifications_count.present?
+      current_user.unread_notifications_count.to_i
+    else
+      current_user.notifications.unread.count
+    end
+
+    render json: { unread: count }
+  end
+
   def mark_as_read
     notification = current_user.notifications.find(params[:id])
     notification.mark_as_read!
