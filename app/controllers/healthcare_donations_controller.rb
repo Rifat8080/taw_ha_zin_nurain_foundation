@@ -6,10 +6,23 @@ class HealthcareDonationsController < ApplicationController
   def index
   # Index should list manual donations only (admin view)
   authorize_admin!
-  @healthcare_donations = HealthcareDonation.manual
-                         .includes(:healthcare_request, :user)
-                         .recent
-                         .page(params[:page])
+  @requests = HealthcareRequest.all.order(created_at: :desc).limit(200)
+  donations = HealthcareDonation.manual.includes(:healthcare_request, :user).recent
+
+  if params[:request_id].present?
+    donations = donations.where(request_id: params[:request_id])
+  end
+
+  if params[:search].present?
+    q = "%#{params[:search]}%"
+    # users.full_name is a Ruby method, not a DB column — search first_name/last_name instead
+    donations = donations.joins(:user, :healthcare_request).where(
+      "users.email ILIKE ? OR users.first_name ILIKE ? OR users.last_name ILIKE ? OR healthcare_requests.patient_name ILIKE ? OR healthcare_requests.reason ILIKE ?",
+      q, q, q, q, q
+    )
+  end
+
+  @healthcare_donations = donations.page(params[:page])
   end
 
   def show
