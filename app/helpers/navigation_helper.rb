@@ -16,7 +16,7 @@ module NavigationHelper
         icon: "👦".html_safe,
         description: I18n.t("navigation.category_description.orphans"),
         route_method: :orphan_projects_path,
-        filter: { categories: "Orphan" },
+  filter: { categories: "Orphans" },
         count_method: :orphan_projects_count
       },
       {
@@ -24,16 +24,16 @@ module NavigationHelper
         icon: "💧".html_safe,
         description: I18n.t("navigation.category_description.food_water"),
         route_method: :food_water_projects_path,
-        filter: { categories: "Food & Water" },
-        count_method: :food_water_projects_count
+  filter: { categories: "Food&Water" },
+  count_method: :food_water_projects_count
       },
       {
         name: I18n.t("navigation.category_name.crisis_relief"),
         icon: "🌍".html_safe,
         description: I18n.t("navigation.category_description.crisis_relief"),
         route_method: :crisis_projects_path,
-        filter: { categories: "Crisis" },
-        count_method: :crisis_projects_count
+  filter: { categories: "Crisis_Relief" },
+  count_method: :crisis_projects_count
       },
       {
         name: I18n.t("navigation.category_name.pay_zakat"),
@@ -131,35 +131,36 @@ module NavigationHelper
 
   # Dynamic count methods
   def palestine_projects_count
-    Project.active.where("categories ILIKE ?", "%Palestine%").count
+  Project.active.by_category('Palestine').count
   end
 
   def orphan_projects_count
-    Project.active.where("categories ILIKE ?", "%Orphan%").count
+  Project.active.by_category('Orphans').count
   end
 
   def food_water_projects_count
-    Project.active.where("categories ILIKE ? OR categories ILIKE ?", "%Food%", "%Water%").count
+  # Stored category is 'Food&Water' — allow fallback matches for legacy entries
+  Project.active.by_category('Food&Water').count
   end
 
   def crisis_projects_count
-    Project.active.where("categories ILIKE ?", "%Crisis%").count
+  Project.active.by_category('Crisis_Relief').count
   end
 
   def sadaqah_projects_count
-    Project.active.where("categories ILIKE ?", "%Sadaqah%").count
+  Project.active.by_category('Sadaqah').count
   end
 
   def education_projects_count
-    Project.active.where("categories ILIKE ?", "%Education%").count
+  Project.active.by_category('Education').count
   end
 
   def emergency_projects_count
-    Project.active.where("categories ILIKE ?", "%Emergency%").count
+  Project.active.by_category('Emergency').count
   end
 
   def community_projects_count
-    Project.active.where("categories ILIKE ?", "%Community%").count
+  Project.active.by_category('Community').count
   end
 
   def zakat_eligible_count
