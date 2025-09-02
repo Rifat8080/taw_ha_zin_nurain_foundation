@@ -50,6 +50,7 @@ Rails.application.routes.draw do
     collection do
       get :manual_new
       post :manual_create
+  get :user_search
     end
   end
 

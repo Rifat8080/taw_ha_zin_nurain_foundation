@@ -1,28 +1,209 @@
 <% content_for :title, 'Create Manual Donation' %>
-<div class="max-w-3xl mx-auto px-4 py-8">
-  <h1 class="text-2xl font-bold mb-4">Create Manual Healthcare Donation</h1>
+<div class="max-w-6xl mx-auto px-4 py-8">
+  <%= form_with model: @healthcare_donation, url: manual_create_healthcare_donations_path, local: true, class: 'space-y-6' do |f| %>
 
-  <%= form_with model: @healthcare_donation, url: manual_create_healthcare_donations_path, local: true do |f| %>
-    <div class="grid grid-cols-1 gap-4">
-      <div>
-        <%= f.label :request_id, 'Healthcare Request', class: 'block text-sm font-medium text-gray-700' %>
-        <%= f.collection_select :request_id, @healthcare_requests, :id, :patient_name, prompt: 'Select a request', class: 'mt-1 block w-full rounded-md border-gray-300' %>
+    <% if @healthcare_donation.errors.any? %>
+      <div id="error_explanation" class="rounded-md bg-red-50 border border-red-100 p-4">
+        <div class="flex items-start gap-3">
+          <svg class="h-5 w-5 text-red-600 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M8.257 3.099c.366-.446.957-.596 1.5-.34l.094.05 6.5 3.75A1 1 0 0117 7.5v6a1 1 0 01-.553.894l-.094.05-6.5 3.75a1 1 0 01-1.5-.34L3 15.5V4.5a1 1 0 01.257-.701l.0-.0 5-.7z" clip-rule="evenodd"></path></svg>
+          <div>
+            <p class="text-sm font-semibold text-red-700"><%= pluralize(@healthcare_donation.errors.count, "error") %> prevented this donation from being saved</p>
+            <ul class="mt-2 text-sm text-red-600 list-disc ml-5">
+              <% @healthcare_donation.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="bg-white border border-foundationprimarygreen/10 rounded-lg shadow-lg p-6">
+      <div class="mb-4 text-center">
+        <h2 class="text-4xl font-bold">
+          <span class="text-foundationprimarygreen">Create</span>
+          <span class="text-forange"> Manual Donation</span>
+        </h2>
+        <p class="mt-2 text-sm text-gray-500">Create a donation on behalf of a donor for a healthcare request.</p>
       </div>
 
-      <div>
-        <%= f.label :user_id, 'Donor (User)', class: 'block text-sm font-medium text-gray-700' %>
-        <%= f.collection_select :user_id, @users, :id, :email, prompt: 'Select a user', class: 'mt-1 block w-full rounded-md border-gray-300' %>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left: main inputs -->
+        <div class="lg:col-span-2 space-y-4">
+          <div>
+            <%= f.label :request_id, 'Healthcare Request', class: 'block text-sm font-medium text-foundationprimarygreen' %>
+            <div class="mt-1">
+              <%= f.collection_select :request_id, @healthcare_requests, :id, :patient_name, { prompt: 'Select a request' }, class: 'block w-full rounded-md shadow-sm sm:text-sm px-3 py-2 border' %>
+            </div>
+            <p class="mt-1 text-sm text-gray-400">Choose the healthcare request this donation should apply to.</p>
+          </div>
+
+          <div>
+            <%= f.label :user_id, 'Donor (User)', class: 'block text-sm font-medium text-foundationprimarygreen' %>
+            <div class="mt-1 flex flex-col md:flex-row gap-3 items-center">
+              <div class="flex-1">
+                <%= f.select :user_id, options_for_select(@users.map { |u| ["#{u.full_name} — #{u.email}", u.id] }, selected: @healthcare_donation.user_id), { include_blank: 'Select an existing user (or leave blank to create new)' }, class: 'block w-full rounded-md shadow-sm sm:text-sm px-3 py-2 border bg-white' %>
+              </div>
+              <div class="w-full md:w-80 relative">
+                <label for="live_user_search" class="sr-only">Search users</label>
+                <input id="live_user_search" type="search" placeholder="Search users (name/email/phone)..." class="w-full px-3 py-2 rounded-md border" autocomplete="off">
+                <div id="live_user_results" class="md:absolute z-50 left-0 right-0 mt-1 bg-white border rounded-md shadow max-h-60 overflow-auto hidden w-full"></div>
+              </div>
+            </div>
+
+            <div id="server_search_results_container" class="mt-3 hidden">
+              <div class="text-sm text-gray-600 mb-2">Search results</div>
+              <ul id="server_search_results" class="space-y-2"></ul>
+            </div>
+            <p class="mt-2 text-sm text-gray-500">Select an existing user, or create a new one inline below.</p>
+
+            <div class="mt-3 p-4 border rounded-md bg-gray-50">
+              <div class="text-sm text-gray-600 mb-2">Create a new user (optional)</div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <%= label_tag 'healthcare_donation_user_first_name', 'First name', class: 'block text-sm font-medium text-gray-700' %>
+                  <%= text_field_tag 'healthcare_donation[user_attributes][first_name]', params.dig(:healthcare_donation, :user_attributes, :first_name), class: 'mt-1 block w-full rounded-md border-gray-300 px-3 py-2' %>
+                </div>
+                <div>
+                  <%= label_tag 'healthcare_donation_user_last_name', 'Last name', class: 'block text-sm font-medium text-gray-700' %>
+                  <%= text_field_tag 'healthcare_donation[user_attributes][last_name]', params.dig(:healthcare_donation, :user_attributes, :last_name), class: 'mt-1 block w-full rounded-md border-gray-300 px-3 py-2' %>
+                </div>
+                <div class="md:col-span-2">
+                  <%= label_tag 'healthcare_donation_user_email', 'Email', class: 'block text-sm font-medium text-gray-700' %>
+                  <%= email_field_tag 'healthcare_donation[user_attributes][email]', params.dig(:healthcare_donation, :user_attributes, :email), class: 'mt-1 block w-full rounded-md border-gray-300 px-3 py-2' %>
+                </div>
+                <div class="md:col-span-2">
+                  <%= label_tag 'healthcare_donation_user_phone_number', 'Phone number', class: 'block text-sm font-medium text-gray-700' %>
+                  <%= text_field_tag 'healthcare_donation[user_attributes][phone_number]', params.dig(:healthcare_donation, :user_attributes, :phone_number), class: 'mt-1 block w-full rounded-md border-gray-300 px-3 py-2' %>
+                </div>
+              </div>
+              <p class="mt-2 text-xs text-gray-500">Provide email and name to create a new user if none is selected. A random password will be generated.</p>
+            </div>
+          </div>
+
+          <div>
+            <%= f.label :amount, 'Amount (৳)', class: 'block text-sm font-medium text-foundationprimarygreen' %>
+            <div class="mt-1">
+              <%= f.number_field :amount, step: 1, min: 1, class: 'block w-full rounded-md shadow-sm sm:text-sm px-3 py-2 border' %>
+            </div>
+            <p class="mt-1 text-sm text-gray-400">Enter the donation amount in BDT.</p>
+          </div>
+        </div>
+
+        <!-- Right: help/flags -->
+        <div class="space-y-4">
+          <div class="border border-dashed border-forange/20 rounded-md p-4 flex flex-col items-start text-left bg-forange/5">
+            <p class="text-sm font-medium text-foundationprimarygreen">Manual donations</p>
+            <p class="text-xs text-forange mt-1">These donations will be marked as manual and shown in the admin list.</p>
+            <div class="mt-3 w-full">
+              <p class="text-sm text-gray-600">Tip: If donor already exists, select them to retain donation history.</p>
+            </div>
+          </div>
+
+          <div class="p-3 border border-foundationprimarygreen/10 rounded-md bg-foundationprimarygreen/3">
+            <p class="text-sm font-medium text-foundationprimarygreen">Validation</p>
+            <p class="text-xs text-gray-500 mt-1">If user creation fails, the form will show errors for correction.</p>
+          </div>
+        </div>
       </div>
 
-      <div>
-        <%= f.label :amount, 'Amount (৳)', class: 'block text-sm font-medium text-gray-700' %>
-        <%= f.number_field :amount, step: 1, min: 1, class: 'mt-1 block w-full rounded-md border-gray-300' %>
-      </div>
-
-      <div class="flex gap-2">
-        <%= f.submit 'Create Donation', class: 'px-4 py-2 bg-foundationprimarygreen text-white rounded-md' %>
-        <%= link_to 'Cancel', healthcare_donations_path, class: 'px-4 py-2 border rounded-md text-gray-700' %>
+      <!-- Actions -->
+      <div class="mt-6 flex flex-col sm:flex-row items-center justify-end gap-3">
+        <%= link_to 'Cancel', healthcare_donations_path, class: "w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-forange/30 rounded-md bg-white text-sm text-foundationprimarygreen hover:bg-forange/10" %>
+        <%= f.submit 'Create Donation', class: "w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 rounded-md text-sm text-white font-medium shadow-md btn-primary" %>
       </div>
     </div>
   <% end %>
 </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var input = document.getElementById('live_user_search');
+    var resultsBox = document.getElementById('live_user_results');
+    var serverResultsList = document.getElementById('server_search_results');
+    var serverResultsContainer = document.getElementById('server_search_results_container');
+    var donorSelect = document.querySelector('select#healthcare_donation_user_id');
+
+    function renderResults(users) {
+      resultsBox.innerHTML = '';
+      serverResultsList.innerHTML = '';
+      if (!users || users.length === 0) {
+        resultsBox.classList.add('hidden');
+        serverResultsContainer.classList.remove('hidden');
+        serverResultsList.innerHTML = '<li class="text-sm text-gray-500 p-2">No users found. You can create a new user below.</li>';
+        return;
+      }
+
+      serverResultsContainer.classList.remove('hidden');
+      users.forEach(function(u) {
+        var li = document.createElement('li');
+        li.className = 'flex items-center justify-between p-2 border rounded-md bg-white';
+        li.innerHTML = '<div class="text-sm text-gray-800"><div class="font-medium">' + (u.full_name || u.email) + '</div><div class="text-xs text-gray-500">' + u.email + (u.phone_number ? ' • ' + u.phone_number : '') + '</div></div>';
+        var btn = document.createElement('button');
+        btn.type = 'button';
+  btn.className = 'inline-flex items-center px-3 py-1 btn-primary text-white rounded-md text-sm';
+        btn.textContent = 'Select';
+        btn.dataset.userId = u.id;
+        btn.dataset.userLabel = (u.full_name || u.email) + ' — ' + u.email;
+        btn.addEventListener('click', function() {
+          var uid = this.dataset.userId;
+          var ulabel = this.dataset.userLabel;
+          if (donorSelect) {
+            // if option doesn't exist, create it so the form will submit with this value
+            if (!donorSelect.querySelector('option[value="' + uid + '"]')) {
+              var opt = document.createElement('option');
+              opt.value = uid;
+              opt.text = ulabel;
+              donorSelect.appendChild(opt);
+            }
+            donorSelect.value = uid;
+            // hide results and clear input
+            input.value = '';
+            serverResultsContainer.classList.add('hidden');
+            resultsBox.classList.add('hidden');
+            // focus the amount field
+            var amountEl = document.getElementById('healthcare_donation_amount');
+            if (amountEl) amountEl.focus();
+          }
+          // small toast
+          var notice = document.createElement('div');
+          notice.className = 'fixed bottom-4 right-4 bg-foundationprimarygreen text-white px-4 py-2 rounded shadow';
+          notice.textContent = 'Selected: ' + ulabel;
+          document.body.appendChild(notice);
+          setTimeout(function(){ notice.remove(); }, 2200);
+        });
+        li.appendChild(btn);
+        serverResultsList.appendChild(li);
+      });
+      resultsBox.classList.remove('hidden');
+    }
+
+    var debounceTimer;
+    input.addEventListener('input', function(e) {
+      clearTimeout(debounceTimer);
+      var q = e.target.value.trim();
+      if (q.length < 2) {
+        serverResultsContainer.classList.add('hidden');
+        resultsBox.classList.add('hidden');
+        return;
+      }
+      debounceTimer = setTimeout(function() {
+        fetch('/healthcare_donations/user_search.json?q=' + encodeURIComponent(q), { headers: { 'Accept': 'application/json' } })
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            renderResults(data.users || []);
+          }).catch(function() {
+            serverResultsContainer.classList.remove('hidden');
+            serverResultsList.innerHTML = '<li class="text-sm text-red-600 p-2">Search failed. Try again.</li>';
+          });
+      }, 250);
+    });
+
+    // click outside to close
+    document.addEventListener('click', function(ev) {
+      if (!input.contains(ev.target) && !resultsBox.contains(ev.target) && !serverResultsContainer.contains(ev.target)) {
+        resultsBox.classList.add('hidden');
+      }
+    });
+  });
+  </script>
