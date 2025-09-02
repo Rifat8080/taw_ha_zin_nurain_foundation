@@ -80,3 +80,20 @@
 .fa-chevron-down:hover {
   color: var(--forange, #F29300) !important;
 }
+
+/* Font Awesome helper: match size and vertical alignment to surrounding text in buttons */
+.fa {
+  /* roughly matches w-4 h-4 with vertical alignment */
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  line-height: 1rem;
+  vertical-align: -0.125rem; /* nudge to align with button text */
+}
+
+/* Utility for small icon spacing when used inside buttons */
+.fa + *,
+.fa + span,
+.fa.mr-2 {
+  margin-left: 0.5rem;
+}

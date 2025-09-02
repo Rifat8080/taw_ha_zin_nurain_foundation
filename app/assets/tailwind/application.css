@@ -264,14 +264,24 @@ input[type="submit"].btn-primary {
   background-color: rgb(var(--color-foundationprimarygreen)) !important;
   color: #ffffff !important;
   border-color: transparent !important;
-  box-shadow: 0 8px 18px rgba(var(--color-foundationprimarygreen), 0.12);
+  /* make primary buttons larger and bolder */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1rem; /* ~py-2 px-4 */
+  font-weight: 700; /* bolder */
+  font-size: 0.99rem;
+  letter-spacing: 0.01em;
+  border-radius: 0.5rem; /* rounded-md */
+  box-shadow: 0 10px 24px rgba(var(--color-foundationprimarygreen), 0.14);
 }
 .btn-primary:hover,
 button.btn-primary:hover,
 input[type="submit"].btn-primary:hover {
   background-color: rgb(var(--color-foundationprimarygreen) / 0.9) !important;
   color: #ffffff !important;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(var(--color-foundationprimarygreen), 0.16);
 }
 
 
