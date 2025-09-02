@@ -26,6 +26,22 @@ class NotificationsController < ApplicationController
   head :no_content
   end
 
+  def show
+    notification = current_user.notifications.find(params[:id])
+    # mark as read first
+    notification.mark_as_read!
+
+    # attempt to resolve a target path for the notification
+    target = helpers.notification_target_path(notification)
+
+    if target.present?
+      redirect_to target
+    else
+      # fallback to notifications index
+      redirect_to notifications_path
+    end
+  end
+
   def mark_all_as_read
   Notification.mark_all_read_for(current_user)
   head :no_content

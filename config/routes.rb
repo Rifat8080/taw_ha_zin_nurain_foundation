@@ -74,7 +74,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :notifications, only: [:index] do
+  resources :notifications, only: [:index, :show] do
     member do
       post :mark_as_read
     end
