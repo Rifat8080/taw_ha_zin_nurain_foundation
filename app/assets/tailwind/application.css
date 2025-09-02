@@ -276,3 +276,11 @@ input[type="submit"].btn-primary:hover {
 
 /* Fallback border color on hover */
 .hover\:border-white:hover { border-color: #ffffff; }
+
+/* Global font preference: set Roboto as the application's default via the CSS variable.
+   Use a narrow selector (root/body and common form elements) and avoid forcing it on
+   every element or using !important so author styles (for example Font Awesome's
+   icon font classes) can still set their own font-family when needed. */
+html, body, :root, .font-sans, .font-body, input, textarea, button, select {
+  font-family: var(--font-body);
+}
