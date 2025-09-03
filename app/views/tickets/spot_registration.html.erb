@@ -158,6 +158,9 @@
               </ul>
             </div>
 
+            <!-- Ticket type cards (populated dynamically) -->
+            <div id="ticket_type_cards" class="space-y-3"></div>
+
             <div class="bg-gray-50 p-4 rounded-md border border-gray-100">
               <div class="flex flex-col gap-3">
                 <%= link_to "Cancel", root_path, class: "w-full inline-flex items-center justify-center px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-forange hover:text-white transition-colors duration-200" %>
@@ -170,56 +173,3 @@
     </div>
   </div>
 </div>
-
-<script>
-// Bind behavior on Turbo/DOMContentLoaded for robust event attachment
-function initSpotRegistration() {
-  const phone = document.getElementById('spot_registration_phone_number');
-  const firstName = document.getElementById('spot_registration_first_name');
-  const lastName = document.getElementById('spot_registration_last_name');
-  const eventSelect = document.getElementById('spot_registration_event_id');
-
-  if (phone) {
-    phone.addEventListener('input', function(e) {
-      let value = e.target.value.replace(/\D/g, '');
-      if (value.length >= 6) {
-        value = value.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
-      } else if (value.length >= 3) {
-        value = value.replace(/(\d{3})(\d{0,3})/, '($1) $2');
-      }
-      e.target.value = value;
-    });
-  }
-
-  if (firstName) {
-    firstName.addEventListener('input', function(e) { e.target.value = e.target.value.replace(/\b\w/g, l => l.toUpperCase()); });
-  }
-  if (lastName) {
-    lastName.addEventListener('input', function(e) { e.target.value = e.target.value.replace(/\b\w/g, l => l.toUpperCase()); });
-  }
-
-  // Placeholder for dynamic ticket fetching when event changes
-  if (eventSelect) {
-    eventSelect.addEventListener('change', function() {
-      // Example: implement fetch(`/events/${this.value}/ticket_types`) to update ticket type select
-      // For now, this keeps static options.
-    });
-
-    // Wire up quick-select chips
-    document.querySelectorAll('.event-chip').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        const id = this.getAttribute('data-event-id');
-        if (!id) return;
-        eventSelect.value = id;
-        eventSelect.dispatchEvent(new Event('change', { bubbles: true }));
-        // make selected chip visually active
-        document.querySelectorAll('.event-chip').forEach(c => c.classList.remove('bg-forange/10','text-forange','border-forange'));
-        this.classList.add('bg-forange/10','text-forange');
-      });
-    });
-  }
-}
-
-document.addEventListener('turbo:load', initSpotRegistration);
-document.addEventListener('DOMContentLoaded', initSpotRegistration);
-</script>

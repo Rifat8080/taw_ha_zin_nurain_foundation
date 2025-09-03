@@ -1,5 +1,7 @@
 class EventsController < ApplicationController
-  before_action :set_event, only: [ :show, :edit, :update, :destroy, :attendees ]
+  before_action :set_event, only: [ :show, :edit, :update, :destroy, :attendees, :ticket_types ]
+  # Allow public access to ticket type metadata (used by dynamic spot registration form)
+  skip_before_action :authenticate_user!, only: [ :ticket_types ]
   # before_action :require_admin, only: [:new, :create, :edit, :update, :destroy]
 
   def index
@@ -89,6 +91,23 @@ end
   def attendees
     @event_users = @event.event_users.includes(:user).order(:created_at)
     @tickets = @event.tickets.includes(:user).order(:created_at)
+  end
+
+  # GET /events/:id/ticket_types.json
+  def ticket_types
+    types = @event.available_ticket_types.map do |t|
+      {
+        name: t['name'],
+        category: t['category'],
+        price: t['price'],
+        seats_available: t['seats_available'],
+        seats_remaining: t['seats_remaining'],
+        sold_out: t['sold_out'],
+        description: t['description']
+      }
+    end
+
+    render json: { ticket_types: types }
   end
 
   private

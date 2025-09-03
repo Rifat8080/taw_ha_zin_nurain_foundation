@@ -68,6 +68,8 @@ Rails.application.routes.draw do
     end
     member do
       get :attendees
+      # Return ticket types for an event as JSON for dynamic forms
+      get :ticket_types, defaults: { format: :json }
     end
   end
 
