@@ -1,4 +1,69 @@
-<div>
-  <h1 class="font-bold text-4xl">NisabRates#index</h1>
-  <p>Find me in app/views/nisab_rates/index.html.erb</p>
+<% content_for :title, "Nisab Rates" %>
+<div class="container mx-auto px-8 py-8">
+  <% if notice.present? %>
+    <div class="mb-6 p-4 bg-forange/10 border-l-4 border-forange rounded-r-lg shadow-sm flex items-center ">
+      <svg class="h-5 w-5 text-forange mr-2" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+      </svg>
+      <span class="text-forange font-medium"><%= notice %></span>
+    </div>
+  <% end %>
+
+  <div class="flex flex-col md:flex-row justify-between items-center text-center mb-8 gap-4">
+    <div class="w-full">
+      <h1 class="text-4xl md:text-5xl font-bold text-foundationprimarygreen tracking-tight text-center">
+        Our <span class="text-forange">Nisab</span> Rates
+      </h1>
+      <p class="mt-2 text-lg text-gray-700 text-center">Manage yearly gold/silver prices used for nisab calculations.</p>
+      <% if @current_rate %>
+        <div class="mt-3 flex items-center justify-center space-x-2">
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-forange/10 text-forange border border-forange">
+            <svg class="w-4 h-4 mr-1 text-forange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.567-3 3.5S10.343 15 12 15s3-1.567 3-3.5S13.657 8 12 8z"></path>
+            </svg>
+            Current: <%= @current_rate.year %> • <%= @current_rate.formatted_min_nisab %>
+          </span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+ <div class="mt-4  mb-4 md:mt-0 flex items-center gap-3">
+      <%= link_to new_nisab_rate_path, class: "inline-flex items-center whitespace-nowrap px-4 py-2 btn-primary bg-foundationprimarygreen text-white rounded-lg shadow hover:shadow-lg" do %>
+        <i class="fa-solid fa-plus mr-2"></i>
+        New Rate
+      <% end %>
+    </div>
+  <div class="bg-white rounded-lg shadow border border-foundationprimarygreen/20 p-6">
+    <% if @nisab_rates.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <% @nisab_rates.each do |rate| %>
+          <div class="p-4 border rounded-lg hover:shadow-md transition-shadow bg-gray-50">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-lg font-semibold text-foundationprimarygreen"><%= rate.year %></h3>
+                <div class="text-sm text-gray-700">
+                  Gold: <span class="font-medium text-blue-900"><%= number_with_delimiter(rate.gold_price_per_gram) %>/g</span>
+                  · Silver: <span class="font-medium text-blue-900"><%= number_with_delimiter(rate.silver_price_per_gram) %>/g</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <%= link_to nisab_rate_path(rate), class: "px-3 py-2 text-sm bg-white border rounded hover:bg-forange/10" do %>
+                  View
+                <% end %>
+                <%= link_to edit_nisab_rate_path(rate), class: "px-3 py-2 text-sm bg-white border rounded hover:bg-forange/10" do %>
+                  Edit
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="mt-6">
+        <%= paginate @nisab_rates %>
+      </div>
+    <% else %>
+      <div class="p-6 text-center text-gray-600">No nisab rates found. <%= link_to "Create one", new_nisab_rate_path, class: "text-forange" %></div>
+    <% end %>
+  </div>
 </div>
