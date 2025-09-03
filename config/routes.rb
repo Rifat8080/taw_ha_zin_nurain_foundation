@@ -30,7 +30,11 @@ Rails.application.routes.draw do
   resources :projects
 
   # Volunteer Management System Routes
-  resources :volunteers
+  resources :volunteers do
+    collection do
+      get :user_search
+    end
+  end
   resources :volunteers_teams
   resources :team_assignments, except: [ :edit, :update ]
   resources :work_orders
