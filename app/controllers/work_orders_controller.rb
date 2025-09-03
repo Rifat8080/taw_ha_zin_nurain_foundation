@@ -3,9 +3,10 @@ class WorkOrdersController < ApplicationController
   before_action :set_work_order, only: [ :show, :edit, :update, :destroy ]
 
   def index
-    @work_orders = WorkOrder.includes(:volunteers_team, :assigned_by_user).all
-    @work_orders = @work_orders.by_team(params[:team_id]) if params[:team_id].present?
-    @work_orders = @work_orders.assigned_by(params[:assigned_by]) if params[:assigned_by].present?
+  @work_orders = WorkOrder.includes(:volunteers_team, :assigned_by_user).all
+  @work_orders = @work_orders.search(params[:search]) if params[:search].present?
+  @work_orders = @work_orders.by_team(params[:team_id]) if params[:team_id].present?
+  @work_orders = @work_orders.assigned_by(params[:assigned_by]) if params[:assigned_by].present?
 
     case params[:status]
     when "upcoming"

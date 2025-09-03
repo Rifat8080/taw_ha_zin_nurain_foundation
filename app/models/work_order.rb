@@ -11,6 +11,12 @@ class WorkOrder < ApplicationRecord
   scope :past, -> { where("assigned_date < ?", Date.current) }
   scope :by_team, ->(team_id) { where(team_id: team_id) }
   scope :assigned_by, ->(user_id) { where(assigned_by: user_id) }
+  scope :search, ->(q) {
+    joins(:volunteers_team).where(
+      "work_orders.title ILIKE :q OR work_orders.description ILIKE :q OR volunteers_teams.name ILIKE :q OR volunteers_teams.district ILIKE :q",
+      q: "%#{q}%"
+    )
+  }
 
   def team_name
     volunteers_team.name
