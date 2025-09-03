@@ -1,77 +1,94 @@
-<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <div class="bg-white shadow-md rounded-lg overflow-hidden">
-    <div class="px-6 py-5 border-b bg-gradient-to-r from-green-600 to-blue-600">
-      <div class="flex items-center justify-between">
+<div class="container mx-auto px-8 py-8">
+  <div class="mb-6">
+    <div class="flex flex-col md:flex-row justify-between items-center text-center mb-8 gap-4">
+      <div class="w-full">
+        <h1 class="text-4xl md:text-5xl font-bold text-foundationprimarygreen tracking-tight text-center">
+          Live <span class="text-forange">QR</span> Scanner
+        </h1>
+        <p class="mt-2 text-lg text-gray-700 text-center">Fast check-ins, meals, breaks, and re-entry — streamlined for the team.</p>
+      </div>
+      <div class="mt-4 md:mt-0">
+        <div class="text-sm text-gray-500">Ready to scan</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white shadow rounded-lg overflow-hidden">
+    <div class="bg-gradient-to-r from-foundationprimarygreen to-forange px-6 py-4">
+      <div class="flex items-center gap-3">
+        <svg class="h-7 w-7 text-white p-1 rounded-full" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 7v10a2 2 0 0 0 2 2h14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <div>
-          <h1 class="text-2xl font-semibold text-white">QR Code Scanner</h1>
-          <p class="text-green-100 mt-1 text-sm">Fast check-ins • Meals • Breaks • Re-entry</p>
+          <h2 class="text-white text-lg font-medium">Live QR Scanner</h2>
+          <p class="text-foundationprimarygreen/20 text-sm mt-0.5">Point the camera at a QR code to validate quickly.</p>
         </div>
-        <div class="text-right text-sm text-green-100">Ready to scan</div>
       </div>
     </div>
 
-    <div class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Camera / Scanner -->
-      <div class="col-span-1 lg:col-span-2">
-        <div id="qr-scanner" class="w-full h-full rounded-md bg-gray-50 p-4 flex flex-col" data-validate-url="<%= validate_qr_tickets_path %>" data-default-operation="entry">
-          <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center gap-3">
-              <svg class="h-6 w-6 text-white bg-green-600 rounded-full p-1" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 7v10a2 2 0 0 0 2 2h14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <h2 class="text-lg font-medium text-gray-900">Live Camera</h2>
+    <div class="p-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        <!-- Scanner Column -->
+        <div class="lg:col-span-2">
+          <div id="qr-scanner" class="w-full rounded-md bg-gray-50 p-4 flex flex-col space-y-4" data-validate-url="<%= validate_qr_tickets_path %>" data-default-operation="entry">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <h3 class="text-lg font-medium text-gray-900">Camera</h3>
+                <span class="text-sm text-gray-500">Live feed</span>
+              </div>
+
+              <div class="w-full sm:w-auto flex items-center gap-2">
+                <label for="qr-operation-select" class="text-sm font-medium text-gray-700">Operation</label>
+                <select id="qr-operation-select" class="w-full sm:w-auto rounded-md border-gray-300 shadow-sm text-sm">
+                  <option value="entry" selected>Entry</option>
+                  <option value="reentry">Re-entry</option>
+                  <option value="meal">Meal</option>
+                  <option value="start_break">Start Break</option>
+                  <option value="end_break">End Break</option>
+                  <option value="status_check">Status Check</option>
+                </select>
+              </div>
             </div>
-            <div class="flex items-center gap-2">
-              <label for="qr-operation-select" class="text-sm font-medium text-gray-700">Operation</label>
-              <select id="qr-operation-select" class="rounded-md border-gray-300 shadow-sm text-sm">
-                <option value="entry" selected>Entry</option>
-                <option value="reentry">Re-entry</option>
-                <option value="meal">Meal</option>
-                <option value="start_break">Start Break</option>
-                <option value="end_break">End Break</option>
-                <option value="status_check">Status Check</option>
-              </select>
+
+            <div class="rounded border border-dashed border-gray-200 overflow-hidden bg-black">
+              <video id="video" class="w-full h-48 sm:h-72 md:h-96 object-cover" autoplay muted playsinline></video>
             </div>
-          </div>
 
-          <div class="rounded border border-dashed border-gray-200 overflow-hidden bg-black">
-            <video id="video" class="w-full h-80 object-cover" autoplay muted playsinline></video>
-          </div>
+            <div class="flex flex-col sm:flex-row items-center gap-3">
+              <button id="start-scan" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 bg-foundationprimarygreen text-white rounded-md shadow-sm hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen/50">
+                Start Scanning
+              </button>
+              <button id="stop-scan" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 bg-red-600 text-white rounded-md shadow-sm hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-red-400 hidden">
+                Stop Scanning
+              </button>
 
-          <div class="mt-4 flex items-center gap-3">
-            <button id="start-scan" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
-              Start Scanning
-            </button>
-            <button id="stop-scan" class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 hidden">
-              Stop Scanning
-            </button>
-
-            <div class="ml-auto text-sm text-gray-500">Tip: Aim the QR code at the center of the frame</div>
+              <div class="ml-auto text-sm text-gray-500">Tip: Center the QR code in the frame</div>
+            </div>
           </div>
         </div>
+
+        <!-- Manual Entry & Results Column -->
+        <div>
+          <div class="space-y-4">
+      <div class="p-4 bg-white border rounded-md shadow-sm">
+              <h4 class="text-sm font-medium text-gray-900 mb-2">Manual QR Code Entry</h4>
+      <div class="flex flex-col sm:flex-row gap-2 min-w-0">
+    <input type="text" id="manual-qr" placeholder="Paste or type QR code..." class="w-full sm:flex-1 min-w-0 rounded-md border-gray-300 shadow-sm focus:border-foundationprimarygreen focus:ring-foundationprimarygreen/50" />
+    <button data-action="validate-qr" class="w-full sm:w-auto px-4 py-2 bg-forange text-white rounded-md hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-forange/50 text-sm">Validate</button>
       </div>
-
-      <!-- Manual Entry & Results -->
-      <div class="col-span-1">
-        <div class="space-y-4">
-          <div class="p-4 bg-white border rounded-md shadow-sm">
-            <h3 class="text-sm font-medium text-gray-900 mb-2">Manual QR Code Entry</h3>
-            <div class="flex gap-2">
-              <input type="text" id="manual-qr" placeholder="Paste or type QR code..." class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
-              <button data-action="validate-qr" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">Validate</button>
+              <p class="mt-2 text-xs text-gray-500">Choose the operation above before validating if needed.</p>
             </div>
-            <p class="mt-2 text-xs text-gray-500">You can also choose the operation above before validating.</p>
-          </div>
 
-          <div id="scan-results" class="p-4 bg-gray-50 border rounded-md hidden">
-            <h3 class="text-sm font-medium text-gray-900 mb-3">Scan Results</h3>
-            <div id="result-content" class="space-y-3"></div>
-          </div>
+            <div id="scan-results" class="p-4 bg-gray-50 border rounded-md hidden">
+              <h4 class="text-sm font-medium text-gray-900 mb-3">Scan Results</h4>
+              <div id="result-content" class="space-y-3"></div>
+            </div>
 
-          <div class="p-3 text-xs text-gray-500 bg-white border rounded-md">
-            <strong>Notes:</strong>
-            <ul class="list-disc pl-5 mt-2">
-              <li>Each operation (Entry, Meal, Break) is recorded once per ticket.</li>
-              <li>Use <em>Status Check</em> to view current ticket state without changing it.</li>
-            </ul>
+            <div class="p-3 text-xs text-gray-500 bg-white border rounded-md">
+              <strong>Notes:</strong>
+              <ul class="list-disc pl-5 mt-2">
+                <li>Each operation (Entry, Meal, Break) is recorded once per ticket.</li>
+                <li>Use <em>Status Check</em> to view current ticket state without changing it.</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
