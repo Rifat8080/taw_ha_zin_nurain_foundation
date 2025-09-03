@@ -312,3 +312,8 @@ input[type="submit"].btn-primary:hover {
 html, body, :root, .font-sans, .font-body, input, textarea, button, select {
   font-family: var(--font-body);
 }
+
+/* Custom gradient background combining foundation green and orange */
+.bg-foundation-gradient {
+  background: linear-gradient(90deg, rgba(var(--color-foundationprimarygreen) / 0.08) 0%, rgba(var(--color-foundationprimarygreen) / 0.04) 50%, rgba(var(--color-forange) / 0.06) 100%);
+}

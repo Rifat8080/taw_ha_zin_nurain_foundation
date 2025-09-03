@@ -1,50 +1,57 @@
-<div class="container mx-auto px-8 py-10">
-  <div class="max-w-4xl mx-auto">
-    <div class="bg-white shadow-lg rounded-lg overflow-hidden border border-foundationprimarygreen/10">
-      <div class="px-6 py-4 bg-gray-50 border-b">
-        <h1 class="text-2xl font-bold text-gray-900">User Details</h1>
-      </div>
+<% content_for :title, "Showing user" %>
 
-      <div class="px-6 py-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label class="block text-sm font-medium text-gray-700">First Name</label>
-            <p class="mt-1 text-lg font-semibold text-gray-900"><%= @user.first_name %></p>
+<div class="md:w-3/4 w-full px-8 lg:px-12 mx-auto">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-foundationprimarygreen/10 mb-5 text-foundationprimarygreen font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <header class="flex items-center justify-between mb-6">
+    <h1 class="font-extrabold text-4xl text-gray-900">Profile</h1>
+    <div class="text-right">
+      <p class="text-sm text-gray-500">Member since <%= @user.created_at.strftime('%b %d, %Y') rescue '—' %></p>
+    </div>
+  </header>
+
+  <div class="bg-foundation-gradient p-6 rounded-xl shadow-xl">
+    <div class="bg-white rounded-lg shadow-md overflow-hidden border border-foundationprimarygreen/10 p-6">
+      <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
+        <div class="flex-shrink-0">
+          <div class="w-36 h-36 rounded-full overflow-hidden bg-foundationprimarygreen/5 ring-4 ring-foundationprimarygreen/10">
+            <% if @user.avatar.attached? && @user.avatar.blob.persisted? %>
+              <%= image_tag url_for(@user.avatar), class: "object-cover w-full h-full" %>
+            <% else %>
+              <div class="w-full h-full flex items-center justify-center bg-foundationprimarygreen/5 text-foundationprimarygreen">
+                <span class="text-4xl font-bold"><%= @user.first_name.to_s.first || '?' %></span>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="flex-1">
+          <h2 class="text-2xl font-semibold text-gray-900"><%= [@user.first_name, @user.last_name].compact.join(' ') %></h2>
+          <p class="mt-1 text-sm text-gray-600"><%= @user.email %></p>
+
+          <div class="mt-4 flex flex-wrap items-center gap-3">
+            <span class="inline-flex items-center px-3 py-1 rounded-full bg-foundationprimarygreen/10 text-foundationprimarygreen text-sm font-medium">Role: <span class="ml-2 font-semibold"><%= @user.role %></span></span>
+            <span class="inline-flex items-center px-3 py-1 rounded-full bg-forange/10 text-forange text-sm font-medium">Phone: <span class="ml-2 font-semibold text-forange"><%= @user.phone_number.presence || '—' %></span></span>
           </div>
 
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Last Name</label>
-            <p class="mt-1 text-lg font-semibold text-gray-900"><%= @user.last_name %></p>
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Email</label>
-            <p class="mt-1 text-sm text-gray-900"><%= @user.email %></p>
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Phone Number</label>
-            <p class="mt-1 text-sm text-gray-900"><%= @user.phone_number %></p>
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Role</label>
-            <p class="mt-1 text-sm text-gray-900"><%= @user.role %></p>
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Address</label>
-            <p class="mt-1 text-sm text-gray-900"><%= @user.address %></p>
+          <div class="mt-6 text-sm text-gray-700">
+            <h3 class="text-sm text-gray-500 mb-1">Address</h3>
+            <p class="text-base"><%= @user.address.presence || 'No address provided' %></p>
           </div>
         </div>
       </div>
 
-      <div class="px-6 py-4 bg-gray-50 border-t flex justify-between">
-        <div>
-          <%= link_to 'Edit', edit_user_path(@user), class: "bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mr-2" %>
-          <%= link_to 'Delete', @user, method: :delete, data: { confirm: 'Are you sure?' }, class: "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" %>
+      <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="flex gap-2">
+          <%= link_to 'Edit', edit_user_path(@user), class: "inline-flex items-center px-4 py-2 bg-foundationprimarygreen hover:bg-foundationprimarygreen/80 text-white font-medium rounded-lg shadow" %>
+          <%= button_to 'Delete', @user, method: :delete, data: { turbo_confirm: 'Are you sure?' }, class: "inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg shadow" %>
         </div>
-        <%= link_to 'Back to Users', users_path, class: "bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" %>
+
+        <div class="flex gap-2">
+          <%= link_to 'Back to users', users_path, class: "inline-flex items-center px-4 py-2 border border-foundationprimarygreen/20 text-foundationprimarygreen rounded-lg hover:bg-foundationprimarygreen/5" %>
+        </div>
       </div>
     </div>
   </div>
