@@ -1,1 +1,332 @@
-<% content_for :title, "Zakat Calculator" %><div class="max-w-4xl mx-auto px-4 py-8 space-y-8">  <!-- Header -->  <div class="text-center">    <h1 class="text-4xl font-bold text-gray-900 mb-4">      <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-600">Zakat Calculator</span>    </h1>    <p class="text-lg text-gray-600 max-w-2xl mx-auto">      Calculate your Zakat obligations based on Islamic principles. Zakat is due on wealth that has been in your possession for a full lunar year.    </p>        <% unless user_signed_in? %>      <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">        <p class="text-blue-800">          💡 <strong>Note:</strong>           <%= link_to "Sign up", new_user_registration_path, class: "text-blue-600 underline hover:text-blue-800" %>          or           <%= link_to "sign in", new_user_session_path, class: "text-blue-600 underline hover:text-blue-800" %>          to save your calculations and track them over time.        </p>      </div>    <% end %>  </div>  <!-- Quick Calculation Results -->  <% if @quick_calculation_result %>    <div class="bg-green-50 border border-green-200 rounded-lg p-6">      <h2 class="text-xl font-semibold text-green-900 mb-4 flex items-center">        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>        </svg>        Calculation Results      </h2>      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">        <div>          <p class="text-sm text-green-700">Total Assets:</p>          <p class="text-lg font-semibold text-green-900">৳<%= number_with_delimiter(@quick_calculation_result[:total_assets]) %></p>        </div>        <div>          <p class="text-sm text-green-700">Total Liabilities:</p>          <p class="text-lg font-semibold text-green-900">৳<%= number_with_delimiter(@quick_calculation_result[:total_liabilities]) %></p>        </div>        <div>          <p class="text-sm text-green-700">Net Assets:</p>          <p class="text-lg font-semibold text-green-900">৳<%= number_with_delimiter(@quick_calculation_result[:net_assets]) %></p>        </div>        <div>          <p class="text-sm text-green-700">Nisab Threshold:</p>          <p class="text-lg font-semibold text-green-900">৳<%= number_with_delimiter(@quick_calculation_result[:nisab_value]) %></p>        </div>      </div>      <div class="mt-4 p-4 bg-white rounded-lg border-2 <%= @quick_calculation_result[:zakat_eligible] ? 'border-green-300' : 'border-gray-300' %>">        <p class="text-2xl font-bold <%= @quick_calculation_result[:zakat_eligible] ? 'text-green-600' : 'text-gray-600' %>">          <% if @quick_calculation_result[:zakat_eligible] %>            💰 Zakat Due: ৳<%= number_with_delimiter(@quick_calculation_result[:zakat_due]) %>          <% else %>            ℹ️ No Zakat Due (Below Nisab Threshold)          <% end %>        </p>        <% if @quick_calculation_result[:zakat_eligible] %>          <p class="text-sm text-green-700 mt-2">            This represents 2.5% of your net assets above the Nisab threshold.          </p>        <% end %>      </div>      <% if @quick_calculation_result[:zakat_eligible] %>        <div class="mt-6 text-center">          <%= link_to "#", class: "inline-flex items-center px-8 py-3 border border-transparent text-lg font-medium rounded-md text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-300 shadow-lg hover:shadow-xl" do %>            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>            </svg>            Pay Zakat (৳<%= number_with_delimiter(@quick_calculation_result[:zakat_due]) %>)          <% end %>        </div>      <% end %>    </div>  <% end %>  <!-- Nisab Information -->  <% if @nisab_rate %>    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">      <h3 class="text-lg font-semibold text-blue-900 mb-3">Current Nisab Rates (<%= @nisab_rate.year %>)</h3>      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">        <div>          <p class="text-blue-700 font-medium">Gold Price</p>          <p class="text-blue-900">৳<%= number_with_delimiter(@nisab_rate.gold_price_per_gram) %>/gram</p>        </div>        <div>          <p class="text-blue-700 font-medium">Silver Price</p>          <p class="text-blue-900">৳<%= number_with_delimiter(@nisab_rate.silver_price_per_gram) %>/gram</p>        </div>        <div>          <p class="text-blue-700 font-medium">Gold Nisab</p>          <p class="text-blue-900">৳<%= number_with_delimiter(@nisab_rate.nisab_gold) %></p>        </div>        <div>          <p class="text-blue-700 font-medium">Silver Nisab</p>          <p class="text-blue-900">৳<%= number_with_delimiter(@nisab_rate.nisab_silver) %></p>        </div>      </div>      <div class="mt-4 p-3 bg-blue-100 rounded">        <p class="text-sm text-blue-800">          <strong>Minimum Nisab Threshold:</strong> ৳<%= number_with_delimiter(@nisab_rate.min_nisab) %>          (Lower of gold or silver nisab, more favorable for the payer)        </p>      </div>    </div>  <% else %>    <div class="bg-amber-50 border border-amber-200 rounded-lg p-6">      <div class="flex items-center">        <svg class="w-8 h-8 text-amber-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>        </svg>        <div>          <h3 class="text-lg font-medium text-amber-900">No Nisab Rates Available</h3>          <p class="text-amber-700">Please contact an administrator to set up current Nisab rates.</p>        </div>      </div>    </div>  <% end %>  <!-- Detailed Zakat Calculator Form -->  <div class="bg-white border border-gray-200 rounded-lg shadow-sm">    <%= form_with url: quick_calculate_zakat_calculations_path, method: :post, local: true,         class: "space-y-6 p-6", id: "detailed-calculator-form" do |form| %>      <div class="flex items-center justify-between mb-6">        <h2 class="text-2xl font-semibold text-gray-900 flex items-center">          <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>          </svg>          Detailed Zakat Calculator        </h2>        <% if user_signed_in? %>          <%= link_to new_zakat_calculation_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" do %>            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>            </svg>            Save Detailed Calculation          <% end %>        <% end %>      </div>      <!-- Basic Information -->      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">        <div>          <%= form.label :year, "Calculation Year", class: "block text-sm font-medium text-gray-700 mb-2" %>          <%= form.select :year,               options_for_select(((Date.current.year - 2)..(Date.current.year + 1)).map { |y| [y, y] }, @current_year),              {},              class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" %>        </div>        <div class="flex items-end">          <button type="button" id="toggle-detailed" class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">            <span id="toggle-text">Show Simple Calculator</span>          </button>        </div>      </div>      <!-- Assets Section -->      <div class="bg-white border border-gray-200 rounded-lg p-6">        <div class="flex items-center justify-between mb-4">          <h3 class="text-lg font-semibold text-gray-900">Assets</h3>          <span class="text-sm text-gray-500" id="assets-count">Add your zakatable assets</span>        </div>        <div id="assets-section" class="space-y-4">          <!-- Initial Asset Fields -->          <div class="asset-fields bg-gray-50 rounded-lg p-4">            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">              <div class="md:col-span-3">                <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>                <select name="assets[0][category]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">                  <option value="">Select category</option>                  <option value="cash">Cash</option>                  <option value="bank">Bank</option>                  <option value="gold">Gold</option>                  <option value="silver">Silver</option>                  <option value="business_inventory">Business Inventory</option>                  <option value="receivables">Receivables</option>                  <option value="livestock">Livestock</option>                  <option value="agriculture">Agriculture</option>                  <option value="investments">Investments</option>                  <option value="property_rent">Property Rent</option>                </select>              </div>              <div class="md:col-span-5">                <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>                <textarea name="assets[0][description]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" rows="2" placeholder="Description (optional)"></textarea>              </div>              <div class="md:col-span-3">                <label class="block text-sm font-medium text-gray-700 mb-1">Amount (৳)</label>                <input type="number" name="assets[0][amount]" step="0.01" min="0" placeholder="0.00" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm asset-amount">              </div>              <div class="md:col-span-1 flex items-end">                <button type="button" class="remove-asset w-full px-3 py-2 text-red-600 hover:text-red-800 focus:outline-none">                  <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>                  </svg>                </button>              </div>            </div>          </div>        </div>        <button type="button" id="add-asset" class="mt-4 px-4 py-2 border border-dashed border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm transition-colors">          <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>          </svg>          Add Asset        </button>      </div>      <!-- Liabilities Section -->      <div class="bg-white border border-gray-200 rounded-lg p-6">        <div class="flex items-center justify-between mb-4">          <h3 class="text-lg font-semibold text-gray-900">Liabilities</h3>          <span class="text-sm text-gray-500" id="liabilities-count">Add your debts and obligations</span>        </div>        <div id="liabilities-section" class="space-y-4">          <!-- Initial Liability Fields -->          <div class="liability-fields bg-gray-50 rounded-lg p-4">            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">              <div class="md:col-span-8">                <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>                <textarea name="liabilities[0][description]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" rows="2" placeholder="Describe the liability..."></textarea>              </div>              <div class="md:col-span-3">                <label class="block text-sm font-medium text-gray-700 mb-1">Amount (৳)</label>                <input type="number" name="liabilities[0][amount]" step="0.01" min="0" placeholder="0.00" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm liability-amount">              </div>              <div class="md:col-span-1 flex items-end">                <button type="button" class="remove-liability w-full px-3 py-2 text-red-600 hover:text-red-800 focus:outline-none">                  <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>                  </svg>                </button>              </div>            </div>          </div>        </div>        <button type="button" id="add-liability" class="mt-4 px-4 py-2 border border-dashed border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm transition-colors">          <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>          </svg>          Add Liability        </button>      </div>      <!-- Calculation Summary -->      <div id="calculation-summary" class="bg-blue-50 border border-blue-200 rounded-lg p-6 hidden">        <h3 class="text-lg font-semibold text-blue-900 mb-4">Calculation Summary</h3>        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">          <div>            <p class="text-blue-700 font-medium">Total Assets</p>            <p class="text-blue-900 text-lg" id="summary-assets">৳0</p>          </div>          <div>            <p class="text-blue-700 font-medium">Total Liabilities</p>            <p class="text-blue-900 text-lg" id="summary-liabilities">৳0</p>          </div>          <div>            <p class="text-blue-700 font-medium">Net Assets</p>            <p class="text-blue-900 text-lg" id="summary-net">৳0</p>          </div>          <div>            <p class="text-blue-700 font-medium">Zakat Due</p>            <p class="text-blue-900 text-lg font-bold" id="summary-zakat">৳0</p>          </div>        </div>      </div>      <!-- Simple Calculator (Hidden by default) -->      <div id="simple-calculator" class="bg-gray-50 border border-gray-200 rounded-lg p-6 hidden">        <h3 class="text-lg font-semibold text-gray-900 mb-4">Simple Calculator</h3>        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">          <div>            <%= form.label :total_assets, "Total Assets (৳)", class: "block text-sm font-medium text-gray-700 mb-2" %>            <%= form.number_field :total_assets,                 placeholder: "Enter total value of your assets",                 step: 0.01,                 min: 0,                class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500",                required: true %>            <p class="text-xs text-gray-500 mt-1">Cash, bank savings, gold, silver, business inventory, etc.</p>          </div>          <div>            <%= form.label :total_liabilities, "Total Liabilities (৳)", class: "block text-sm font-medium text-gray-700 mb-2" %>            <%= form.number_field :total_liabilities,                 placeholder: "Enter total debts and obligations",                 step: 0.01,                 min: 0,                value: 0,                class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" %>            <p class="text-xs text-gray-500 mt-1">Debts, loans, outstanding bills, etc.</p>          </div>        </div>      </div>      <div class="text-center">        <%= form.submit "Calculate Zakat",             class: "inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-300" %>      </div>    <% end %>  </div>  <!-- Authenticated User Section: Saved Calculations -->  <% if user_signed_in? %>    <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">      <div class="flex items-center justify-between mb-6">        <h2 class="text-2xl font-semibold text-gray-900 flex items-center">          <svg class="w-6 h-6 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>          </svg>          Your Saved Calculations        </h2>        <%= link_to new_zakat_calculation_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" do %>          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>          </svg>          Detailed Calculation        <% end %>      </div>      <!-- Current Year Calculation -->      <% if @current_calculation %>        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">          <div class="flex items-center justify-between">            <div>              <h3 class="text-xl font-semibold text-blue-900">Current Year (<%= @current_year %>) Calculation</h3>              <div class="mt-2 space-y-1">                <p class="text-sm text-blue-700">Net Assets: <%= @current_calculation.formatted_net_assets %></p>                <p class="text-sm text-blue-700">Nisab Threshold: <%= @current_calculation.formatted_nisab_value %></p>                <p class="text-lg font-semibold text-blue-900">                  Zakat Due: <%= @current_calculation.formatted_zakat_due %>                  <% if @current_calculation.zakat_eligible? %>                    <span class="text-sm font-normal text-green-600">(Eligible)</span>                  <% else %>                    <span class="text-sm font-normal text-gray-500">(Below Nisab)</span>                  <% end %>                </p>              </div>            </div>            <div class="flex space-x-2">              <%= link_to @current_calculation, class: "inline-flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" do %>                View              <% end %>              <%= link_to edit_zakat_calculation_path(@current_calculation), class: "inline-flex items-center px-3 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700" do %>                Edit              <% end %>            </div>          </div>        </div>      <% else %>        <div class="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-6">          <div class="flex items-center">            <svg class="w-8 h-8 text-amber-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>            </svg>            <div>              <h3 class="text-lg font-medium text-amber-900">No Detailed Calculation for Current Year</h3>              <p class="text-amber-700">Create a detailed calculation for <%= @current_year %> to track your assets and liabilities precisely.</p>            </div>          </div>        </div>      <% end %>      <!-- Previous Calculations -->      <% if @zakat_calculations.any? %>        <div>          <h3 class="text-lg font-semibold text-gray-900 mb-4">Previous Calculations</h3>          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">            <% @zakat_calculations.each do |calculation| %>              <% next if calculation == @current_calculation %>              <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">                <div class="flex items-center justify-between mb-2">                  <h4 class="font-medium text-gray-900"><%= calculation.calculation_year %></h4>                  <span class="text-xs px-2 py-1 rounded-full <%= calculation.zakat_eligible? ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600' %>">                    <%= calculation.zakat_eligible? ? 'Eligible' : 'Below Nisab' %>                  </span>                </div>                <div class="space-y-1 text-sm text-gray-600">                  <p>Net Assets: <%= calculation.formatted_net_assets %></p>                  <p>Zakat Due: <%= calculation.formatted_zakat_due %></p>                </div>                <div class="mt-3 flex space-x-2">                  <%= link_to calculation, class: "text-xs text-blue-600 hover:text-blue-500" do %>View<% end %>                  <%= link_to edit_zakat_calculation_path(calculation), class: "text-xs text-gray-600 hover:text-gray-500" do %>Edit<% end %>                </div>              </div>            <% end %>          </div>        </div>      <% end %>    </div>  <% end %>  <!-- Information Section -->  <div class="bg-gray-50 border border-gray-200 rounded-lg p-6">    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">      <svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>      </svg>      About Zakat    </h3>    <div class="prose prose-sm max-w-none text-gray-700">      <p>        Zakat is one of the Five Pillars of Islam and is obligatory for every Muslim who meets the nisab threshold.        It is calculated as 2.5% of your net wealth that has been in your possession for a full lunar year.      </p>      <p class="mt-2">        <strong>Assets to include:</strong> Cash, bank savings, gold, silver, business inventory, investments, and receivables.      </p>      <p class="mt-2">        <strong>Deductions allowed:</strong> Outstanding debts, loans, and immediate expenses.      </p>    </div>  </div></div>
+<% content_for :title, "Zakat Calculator" %>
+
+<div class="container mx-auto px-8 py-10">
+	<% if notice.present? %>
+		<div class="mb-6 p-4 bg-forange/10 border-l-4 border-forange rounded-r-lg shadow-sm flex items-center" id="notice">
+			<svg class="h-5 w-5 text-forange mr-2" viewBox="0 0 20 20" fill="currentColor">
+				<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+			</svg>
+			<span class="text-forange font-medium"><%= notice %></span>
+		</div>
+	<% end %>
+
+	<!-- Header -->
+	<div class="flex flex-col md:flex-row justify-between items-center text-center mb-8 gap-4">
+		<div class="w-full">
+			<h1 class="text-4xl md:text-5xl font-bold text-foundationprimarygreen tracking-tight">
+				Our <span class="text-forange">Zakat</span> Calculator
+			</h1>
+			<p class="mt-2 text-lg text-gray-700">
+				Quickly estimate your Zakat obligations and store detailed calculations when signed in.
+			</p>
+
+			<% if @nisab_rate %>
+				<div class="mt-3 flex items-center justify-center space-x-3">
+					<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-forange/10 text-forange border border-forange">
+						Current Nisab: <span class="ml-2 font-semibold text-forange">৳<%= number_with_delimiter(@nisab_rate.min_nisab) %></span>
+					</span>
+					<%= link_to nisab_rates_path, class: "text-sm text-gray-600 hover:text-forange" do %>
+						View rates
+					<% end %>
+				</div>
+			<% end %>
+
+			<% unless user_signed_in? %>
+				<div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg max-w-2xl mx-auto">
+					<p class="text-blue-800 text-sm">
+						💡 <strong>Note:</strong>
+						<%= link_to "Sign up", new_user_registration_path, class: "text-blue-600 underline hover:text-blue-800" %>
+						or
+						<%= link_to "sign in", new_user_session_path, class: "text-blue-600 underline hover:text-blue-800" %>
+						to save and manage your detailed calculations.
+					</p>
+				</div>
+			<% end %>
+		</div>
+	</div>
+
+	<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+		<!-- Main column: Quick results + form -->
+		<div class="lg:col-span-2 space-y-6">
+			<% if @quick_calculation_result %>
+				<div class="bg-green-50 border border-green-200 rounded-lg p-6 shadow-sm">
+					<h2 class="text-xl font-semibold text-green-900 mb-4 flex items-center">
+						<svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+						</svg>
+						Calculation Results
+					</h2>
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<div>
+							<p class="text-sm text-green-700">Total Assets:</p>
+							<p class="text-lg font-semibold text-green-900">৳<%= number_with_delimiter(@quick_calculation_result[:total_assets]) %></p>
+						</div>
+						<div>
+							<p class="text-sm text-green-700">Total Liabilities:</p>
+							<p class="text-lg font-semibold text-green-900">৳<%= number_with_delimiter(@quick_calculation_result[:total_liabilities]) %></p>
+						</div>
+						<div>
+							<p class="text-sm text-green-700">Net Assets:</p>
+							<p class="text-lg font-semibold text-green-900">৳<%= number_with_delimiter(@quick_calculation_result[:net_assets]) %></p>
+						</div>
+						<div>
+							<p class="text-sm text-green-700">Nisab Threshold:</p>
+							<p class="text-lg font-semibold text-green-900">৳<%= number_with_delimiter(@quick_calculation_result[:nisab_value]) %></p>
+						</div>
+					</div>
+
+					<div class="mt-4 p-4 bg-white rounded-lg border-2 <%= @quick_calculation_result[:zakat_eligible] ? 'border-green-300' : 'border-gray-300' %>">
+						<p class="text-2xl font-bold <%= @quick_calculation_result[:zakat_eligible] ? 'text-green-600' : 'text-gray-600' %>">
+							<% if @quick_calculation_result[:zakat_eligible] %>
+								💰 Zakat Due: ৳<%= number_with_delimiter(@quick_calculation_result[:zakat_due]) %>
+							<% else %>
+								ℹ️ No Zakat Due (Below Nisab Threshold)
+							<% end %>
+						</p>
+						<% if @quick_calculation_result[:zakat_eligible] %>
+							<p class="text-sm text-green-700 mt-2">This represents 2.5% of your net assets above the Nisab threshold.</p>
+						<% end %>
+					</div>
+
+					<% if @quick_calculation_result[:zakat_eligible] %>
+						<div class="mt-6 text-center">
+							<%= link_to "#", class: "inline-flex items-center px-8 py-3 border border-transparent text-lg font-medium rounded-md text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-300 shadow-lg hover:shadow-xl" do %>
+								<svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+								</svg>
+								Pay Zakat (৳<%= number_with_delimiter(@quick_calculation_result[:zakat_due]) %>)
+							<% end %>
+						</div>
+					<% end %>
+				</div>
+			<% end %>
+
+			<!-- Detailed Zakat Calculator Form (preserve ids and hooks) -->
+			<div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+				<%= form_with url: quick_calculate_zakat_calculations_path, method: :post, local: true, id: "detailed-calculator-form", class: "space-y-6 p-6" do |form| %>
+					<div class="flex items-center justify-between mb-6">
+						<h2 class="text-2xl font-semibold text-gray-900 flex items-center">
+							<svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+							</svg>
+							Detailed Zakat Calculator
+						</h2>
+
+						<% if user_signed_in? %>
+							<%= link_to new_zakat_calculation_path, class: "inline-flex items-center whitespace-nowrap px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" do %>
+								<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+								</svg>
+								Save Detailed Calculation
+							<% end %>
+						<% end %>
+					</div>
+
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+						<div>
+							<%= form.label :year, "Calculation Year", class: "block text-sm font-medium text-gray-700 mb-2" %>
+							<%= form.select :year, options_for_select(((Date.current.year - 2)..(Date.current.year + 1)).map { |y| [y, y] }, @current_year), {}, class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" %>
+						</div>
+						<div class="flex items-end">
+							<button type="button" id="toggle-detailed" class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+								<span id="toggle-text">Show Simple Calculator</span>
+							</button>
+						</div>
+					</div>
+
+					<!-- Assets -->
+					<div class="bg-white border border-gray-200 rounded-lg p-6">
+						<div class="flex items-center justify-between mb-4">
+							<h3 class="text-lg font-semibold text-gray-900">Assets</h3>
+							<span class="text-sm text-gray-500" id="assets-count">Add your zakatable assets</span>
+						</div>
+						<div id="assets-section" class="space-y-4">
+							<!-- existing asset block preserved -->
+							<div class="asset-fields bg-gray-50 rounded-lg p-4">
+								<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+									<div class="md:col-span-3">
+										<label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+										<select name="assets[0][category]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+											<option value="">Select category</option>
+											<option value="cash">Cash</option>
+											<option value="bank">Bank</option>
+											<option value="gold">Gold</option>
+											<option value="silver">Silver</option>
+											<option value="business_inventory">Business Inventory</option>
+											<option value="receivables">Receivables</option>
+											<option value="livestock">Livestock</option>
+											<option value="agriculture">Agriculture</option>
+											<option value="investments">Investments</option>
+											<option value="property_rent">Property Rent</option>
+										</select>
+									</div>
+									<div class="md:col-span-5">
+										<label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+										<textarea name="assets[0][description]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" rows="2" placeholder="Description (optional)"></textarea>
+									</div>
+									<div class="md:col-span-3">
+										<label class="block text-sm font-medium text-gray-700 mb-1">Amount (৳)</label>
+										<input type="number" name="assets[0][amount]" step="0.01" min="0" placeholder="0.00" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm asset-amount">
+									</div>
+									<div class="md:col-span-1 flex items-end">
+										<button type="button" class="remove-asset w-full px-3 py-2 text-red-600 hover:text-red-800 focus:outline-none">
+											<svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+											</svg>
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<button type="button" id="add-asset" class="mt-4 px-4 py-2 border border-dashed border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm transition-colors">
+							<svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+							</svg>
+							Add Asset
+						</button>
+					</div>
+
+					<!-- Liabilities -->
+					<div class="bg-white border border-gray-200 rounded-lg p-6">
+						<div class="flex items-center justify-between mb-4">
+							<h3 class="text-lg font-semibold text-gray-900">Liabilities</h3>
+							<span class="text-sm text-gray-500" id="liabilities-count">Add your debts and obligations</span>
+						</div>
+						<div id="liabilities-section" class="space-y-4">
+							<div class="liability-fields bg-gray-50 rounded-lg p-4">
+								<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+									<div class="md:col-span-8">
+										<label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+										<textarea name="liabilities[0][description]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" rows="2" placeholder="Describe the liability..."></textarea>
+									</div>
+									<div class="md:col-span-3">
+										<label class="block text-sm font-medium text-gray-700 mb-1">Amount (৳)</label>
+										<input type="number" name="liabilities[0][amount]" step="0.01" min="0" placeholder="0.00" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm liability-amount">
+									</div>
+									<div class="md:col-span-1 flex items-end">
+										<button type="button" class="remove-liability w-full px-3 py-2 text-red-600 hover:text-red-800 focus:outline-none">
+											<svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+											</svg>
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<button type="button" id="add-liability" class="mt-4 px-4 py-2 border border-dashed border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm transition-colors">
+							<svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+							</svg>
+							Add Liability
+						</button>
+					</div>
+
+					<div id="calculation-summary" class="bg-blue-50 border border-blue-200 rounded-lg p-6 hidden">
+						<h3 class="text-lg font-semibold text-blue-900 mb-4">Calculation Summary</h3>
+						<div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+							<div>
+								<p class="text-blue-700 font-medium">Total Assets</p>
+								<p class="text-blue-900 text-lg" id="summary-assets">৳0</p>
+							</div>
+							<div>
+								<p class="text-blue-700 font-medium">Total Liabilities</p>
+								<p class="text-blue-900 text-lg" id="summary-liabilities">৳0</p>
+							</div>
+							<div>
+								<p class="text-blue-700 font-medium">Net Assets</p>
+								<p class="text-blue-900 text-lg" id="summary-net">৳0</p>
+							</div>
+							<div>
+								<p class="text-blue-700 font-medium">Zakat Due</p>
+								<p class="text-blue-900 text-lg font-bold" id="summary-zakat">৳0</p>
+							</div>
+						</div>
+					</div>
+
+					<div id="simple-calculator" class="bg-gray-50 border border-gray-200 rounded-lg p-6 hidden">
+						<h3 class="text-lg font-semibold text-gray-900 mb-4">Simple Calculator</h3>
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+							<div>
+								<%= form.label :total_assets, "Total Assets (৳)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+								<%= form.number_field :total_assets, placeholder: "Enter total value of your assets", step: 0.01, min: 0, class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500", required: true %>
+								<p class="text-xs text-gray-500 mt-1">Cash, bank savings, gold, silver, business inventory, etc.</p>
+							</div>
+							<div>
+								<%= form.label :total_liabilities, "Total Liabilities (৳)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+								<%= form.number_field :total_liabilities, placeholder: "Enter total debts and obligations", step: 0.01, min: 0, value: 0, class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" %>
+								<p class="text-xs text-gray-500 mt-1">Debts, loans, outstanding bills, etc.</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="text-center">
+						<%= form.submit "Calculate Zakat", class: "inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-300" %>
+					</div>
+				<% end %>
+			</div>
+		</div>
+
+		<!-- Sidebar: Saved calculations + info -->
+		<aside class="space-y-6">
+			<% if user_signed_in? %>
+				<div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+					<div class="flex items-center justify-between mb-4">
+						<h3 class="text-lg font-semibold text-gray-900">Your Saved Calculations</h3>
+						<%= link_to new_zakat_calculation_path, class: "text-sm text-purple-600 hover:text-purple-700" do %>New<% end %>
+					</div>
+
+					<% if @current_calculation %>
+						<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+							<h4 class="font-semibold text-blue-900">Current Year (<%= @current_year %>)</h4>
+							<p class="text-sm text-blue-700 mt-1">Net: <%= @current_calculation.formatted_net_assets %></p>
+							<p class="text-sm text-blue-700">Zakat: <%= @current_calculation.formatted_zakat_due %></p>
+							<div class="mt-3 flex gap-2">
+								<%= link_to @current_calculation, class: "inline-flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" do %>View<% end %>
+								<%= link_to edit_zakat_calculation_path(@current_calculation), class: "inline-flex items-center px-3 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700" do %>Edit<% end %>
+							</div>
+						</div>
+					<% else %>
+						<div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
+							<p class="text-amber-800 text-sm">No detailed calculation for the current year. Create one to track your zakat precisely.</p>
+						</div>
+					<% end %>
+
+					<% if @zakat_calculations.any? %>
+						<div class="space-y-3">
+							<% @zakat_calculations.each do |calculation| %>
+								<% next if calculation == @current_calculation %>
+								<div class="border border-gray-200 rounded-lg p-3 hover:shadow-sm">
+									<div class="flex items-center justify-between">
+										<div>
+											<h5 class="font-medium text-gray-900"><%= calculation.calculation_year %></h5>
+											<p class="text-sm text-gray-600"><%= calculation.formatted_net_assets %> • <%= calculation.formatted_zakat_due %></p>
+										</div>
+										<div class="text-xs px-2 py-1 rounded-full <%= calculation.zakat_eligible? ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600' %>"><%= calculation.zakat_eligible? ? 'Eligible' : 'Below Nisab' %></div>
+									</div>
+									<div class="mt-2 flex gap-2">
+										<%= link_to calculation, class: "text-xs text-blue-600" do %>View<% end %>
+										<%= link_to edit_zakat_calculation_path(calculation), class: "text-xs text-gray-600" do %>Edit<% end %>
+									</div>
+								</div>
+							<% end %>
+						</div>
+					<% end %>
+				</div>
+			<% end %>
+
+			<div class="bg-gray-50 border border-gray-200 rounded-lg p-6">
+				<h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+					<svg class="w-5 h-5 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+					</svg>
+					About Zakat
+				</h3>
+				<div class="prose prose-sm max-w-none text-gray-700">
+					<p>Zakat is one of the Five Pillars of Islam and is obligatory for every Muslim who meets the nisab threshold. It is calculated as 2.5% of your net wealth that has been in your possession for a full lunar year.</p>
+					<p><strong>Assets to include:</strong> Cash, bank savings, gold, silver, business inventory, investments, and receivables.</p>
+					<p class="mt-2"><strong>Deductions allowed:</strong> Outstanding debts, loans, and immediate expenses.</p>
+				</div>
+			</div>
+		</aside>
+	</div>
+</div>

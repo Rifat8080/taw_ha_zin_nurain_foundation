@@ -97,13 +97,13 @@ end
   def ticket_types
     types = @event.available_ticket_types.map do |t|
       {
-        name: t['name'],
-        category: t['category'],
-        price: t['price'],
-        seats_available: t['seats_available'],
-        seats_remaining: t['seats_remaining'],
-        sold_out: t['sold_out'],
-        description: t['description']
+        name: t["name"],
+        category: t["category"],
+        price: t["price"],
+        seats_available: t["seats_available"],
+        seats_remaining: t["seats_remaining"],
+        sold_out: t["sold_out"],
+        description: t["description"]
       }
     end
 

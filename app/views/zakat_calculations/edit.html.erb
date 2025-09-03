@@ -1,4 +1,19 @@
-<div>
-  <h1 class="font-bold text-4xl">ZakatCalculations#edit</h1>
-  <p>Find me in app/views/zakat_calculations/edit.html.erb</p>
+<% content_for :title, "Edit Zakat Calculation" %>
+
+<div class="container mx-auto px-8 py-8">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-foundationprimarygreen">Edit Zakat Calculation (<%= @zakat_calculation.calculation_year %>)</h1>
+      <p class="text-sm text-gray-600">Update assets, liabilities, or nisab values for this calculation.</p>
+    </div>
+    <div>
+      <%= link_to @zakat_calculation, class: "px-4 py-2 bg-gray-100 rounded-md hover:bg-forange/10" do %>
+        Back
+      <% end %>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow border border-foundationprimarygreen/20 p-6">
+    <%= render 'form', zakat_calculation: @zakat_calculation %>
+  </div>
 </div>

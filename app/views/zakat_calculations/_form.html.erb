@@ -1,0 +1,78 @@
+<%= form_with model: zakat_calculation, local: true, data: { turbo: true }, class: "space-y-6" do |form| %>
+  <% if zakat_calculation.errors.any? %>
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+      <div class="flex">
+        <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">Please correct the following errors:</h3>
+          <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+            <% zakat_calculation.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="bg-white shadow-sm rounded-lg p-6 space-y-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div>
+        <%= form.label :calculation_year, class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= form.number_field :calculation_year, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500", min: 1400, max: Date.current.year + 1 %>
+      </div>
+
+      <div>
+        <%= form.label :nisab_value, "Nisab Threshold", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= form.number_field :nisab_value, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500", step: 0.01, min: 0 %>
+        <p class="text-xs text-gray-500 mt-1">Automatically set based on current rates</p>
+      </div>
+
+      <div class="flex items-end">
+        <button type="button" id="quick-calculate" class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">Quick Calculate</button>
+      </div>
+    </div>
+
+    <!-- Assets -->
+    <div class="bg-white rounded-lg p-6 border border-gray-200">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">Assets</h3>
+        <span class="text-sm text-gray-500" id="assets-count">Add your zakatable assets</span>
+      </div>
+
+      <div id="assets-section">
+        <%= form.fields_for :assets do |asset_form| %>
+          <%= render 'asset_fields', form: asset_form %>
+        <% end %>
+      </div>
+
+      <button type="button" id="add-asset" class="mt-4 px-4 py-2 border border-dashed border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 text-sm">Add Asset</button>
+    </div>
+
+    <!-- Liabilities -->
+    <div class="bg-white rounded-lg p-6 border border-gray-200">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">Liabilities</h3>
+        <span class="text-sm text-gray-500" id="liabilities-count">Add your debts</span>
+      </div>
+
+      <div id="liabilities-section">
+        <%= form.fields_for :liabilities do |liability_form| %>
+          <%= render 'liability_fields', form: liability_form %>
+        <% end %>
+      </div>
+
+      <button type="button" id="add-liability" class="mt-4 px-4 py-2 border border-dashed border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 text-sm">Add Liability</button>
+    </div>
+
+    <div class="flex items-center justify-between">
+      <%= link_to zakat_calculations_path, data: { turbo: true }, class: "px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50" do %>
+        Back to Calculations
+      <% end %>
+
+      <%= form.submit zakat_calculation.persisted? ? "Update Calculation" : "Create Zakat Calculation", class: "px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" %>
+    </div>
+  </div>
+<% end %>
