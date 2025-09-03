@@ -4,9 +4,30 @@ class TicketsController < ApplicationController
   before_action :set_event, only: [ :create, :bulk_create ]
 
   def index
-    @tickets = current_user&.tickets&.includes(:event, :user) || []
+    @tickets = current_user&.tickets&.includes(:event, :user) || Ticket.none
+
+    # status filter
     @tickets = @tickets.where(status: params[:status]) if params[:status].present?
+
+    # search across ticket id, event name and venue
+    if params[:search].present?
+      q = params[:search].to_s.strip
+      # Use ILIKE for Postgres, fallback to LIKE
+      if ActiveRecord::Base.connection.adapter_name.downcase.include?('postgres')
+        @tickets = @tickets.joins(:event).where("tickets.id::text ILIKE :q OR events.name ILIKE :q OR events.venue ILIKE :q", q: "%#{q}%")
+      else
+        @tickets = @tickets.joins(:event).where("tickets.id LIKE :q OR events.name LIKE :q OR events.venue LIKE :q", q: "%#{q}%")
+      end
+    end
+
     @tickets = @tickets.order(created_at: :desc)
+
+    # Total spent for the current user excluding cancelled tickets
+    if current_user
+      @total_spent = current_user.tickets.where.not(status: 'cancelled').sum(:price) || 0
+    else
+      @total_spent = 0
+    end
   end
 
   def show
