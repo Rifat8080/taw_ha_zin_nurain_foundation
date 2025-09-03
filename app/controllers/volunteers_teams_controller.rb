@@ -2,8 +2,10 @@ class VolunteersTeamsController < ApplicationController
   before_action :set_volunteers_team, only: [ :show, :edit, :update, :destroy ]
 
   def index
-    @volunteers_teams = VolunteersTeam.includes(:volunteers, :work_orders).all
-    @volunteers_teams = @volunteers_teams.by_district(params[:district]) if params[:district].present?
+  @volunteers_teams = VolunteersTeam.includes(:volunteers, :work_orders).all
+  @volunteers_teams = @volunteers_teams.search(params[:search]) if params[:search].present?
+  @volunteers_teams = @volunteers_teams.by_district(params[:district]) if params[:district].present?
+  @volunteers_teams = @volunteers_teams.order(:name)
   end
 
   def show

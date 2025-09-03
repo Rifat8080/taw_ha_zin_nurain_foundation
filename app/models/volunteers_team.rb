@@ -7,6 +7,9 @@ class VolunteersTeam < ApplicationRecord
   validates :district, presence: true
 
   scope :by_district, ->(district) { where(district: district) }
+  scope :search, ->(q) {
+    where("volunteers_teams.name ILIKE :q OR volunteers_teams.district ILIKE :q", q: "%#{q}%")
+  }
   scope :with_volunteers, -> { joins(:volunteers).distinct }
 
   def volunteers_count

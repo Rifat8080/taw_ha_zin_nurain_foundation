@@ -1,64 +1,97 @@
-<div class="container mx-auto px-4 py-8">
-  <div class="flex justify-between items-center mb-6">
-    <h1 class="text-3xl font-bold text-gray-900">Volunteer Teams</h1>
-    <div class="flex gap-2">
-      <%= link_to 'New Team', new_volunteers_team_path, class: 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' %>
-      <%= link_to 'All Volunteers', volunteers_path, class: 'bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded' %>
-      <%= link_to 'Team Assignments', team_assignments_path, class: 'bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded' %>
-      <%= link_to 'Work Orders', work_orders_path, class: 'bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded' %>
+<% content_for :title, "Volunteer Teams" %>
+<div class="container mx-auto px-8 py-8">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row justify-between items-center text-center mb-6 gap-4">
+    <div class="w-full">
+      <h1 class="text-4xl md:text-5xl font-bold text-foundationprimarygreen tracking-tight text-center">
+        Volunteer <span class="text-forange">Teams</span>
+      </h1>
+      <p class="mt-2 text-lg text-gray-700 text-center">Organize and manage volunteers by district and team assignments.</p>
     </div>
   </div>
 
-  <div class="mb-4 flex gap-4 items-center">
-    <%= form_with url: volunteers_teams_path, method: :get, local: true, class: 'flex gap-4 items-center' do |form| %>
-      <%= form.select :district, options_for_select([['All Districts', '']] + district_options, params[:district]), 
-                      {}, { class: 'border border-gray-300 rounded px-3 py-2' } %>
-      <%= form.submit 'Filter', class: 'bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded' %>
-      <% if params[:district].present? %>
-        <%= link_to 'Clear Filter', volunteers_teams_path, class: 'bg-red-400 hover:bg-red-600 text-white font-bold py-2 px-4 rounded' %>
-      <% end %>
+  <!-- Controls (search / filter / actions) -->
+  <div class="mb-8 bg-white rounded-lg shadow border border-foundationprimarygreen/20 p-6">
+    <%= form_with url: volunteers_teams_path, method: :get, local: true, class: "flex flex-col md:flex-row gap-4" do |form| %>
+      <div class="flex-1">
+        <%= form.text_field :search, placeholder: "Search teams by name or district...", value: params[:search], class: "w-full px-4 py-3 border border-foundationprimarygreen/30 rounded-lg focus:ring-2 focus:ring-forange focus:border-forange text-gray-900 placeholder-gray-500" %>
+      </div>
+      <div class="flex items-center gap-3">
+        <%= form.select :district, options_for_select([['All Districts', '']] + district_options, params[:district]), {}, { class: 'px-4 py-3 border border-foundationprimarygreen/30 rounded-lg text-sm' } %>
+        <%= form.submit 'Filter', class: 'px-6 py-3 btn-primary text-white font-semibold rounded-lg transition-all duration-200 transform will-change-transform hover:scale-105 hover:shadow-xl' %>
+        <% if params[:search].present? || params[:district].present? %>
+          <%= link_to 'Clear', volunteers_teams_path, class: 'px-6 py-3 bg-gray-200 hover:bg-forange hover:text-white text-gray-700 font-semibold rounded-lg transition-colors' %>
+        <% end %>
+      </div>
     <% end %>
-    
-    <div class="ml-auto text-sm text-gray-600">
-      Total: <%= @volunteers_teams.count %> teams
+
+    <div class="mt-4 flex items-center justify-between">
+      <div class="flex flex-wrap gap-2">
+        <span class="text-sm font-medium text-gray-600 mr-2">Popular districts:</span>
+        <% (district_options || []).first(5).each do |label, val| %>
+          <% next if val.blank? %>
+          <%= link_to volunteers_teams_path(district: val), class: "inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-700 hover:bg-forange/10 hover:text-forange border border-transparent" do %>
+            <%= label %>
+          <% end %>
+        <% end %>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <% if current_user&.role == 'admin' %>
+          <%= link_to new_volunteers_team_path, class: "inline-flex items-center whitespace-nowrap px-6 py-3 bg-foundationprimarygreen hover:bg-forange text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200" do %>
+            <i class="fa-solid fa-plus mr-2" aria-hidden="true"></i>
+            New Team
+          <% end %>
+        <% end %>
+        <%= link_to volunteers_path, class: 'px-4 py-2 bg-white border border-foundationprimarygreen text-foundationprimarygreen rounded-md hover:bg-foundationprimarygreen/10 text-sm' do %>
+          All Volunteers
+        <% end %>
+      </div>
     </div>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <% @volunteers_teams.each do |team| %>
-      <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-        <div class="px-6 py-4">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-xl font-semibold text-gray-900"><%= team.name %></h3>
-            <%= team_status_badge(team) %>
-          </div>
-          <p class="text-gray-600 mb-4"><%= team.district %></p>
-          
-          <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
-            <span><%= link_to "#{team.volunteers_count} volunteers", team_assignments_path(team_id: team.id), class: 'text-blue-600 hover:text-blue-900' %></span>
-            <span><%= link_to "#{team.active_work_orders_count} active orders", work_orders_path(team_id: team.id), class: 'text-orange-600 hover:text-orange-900' %></span>
-          </div>
+  <!-- Teams grid -->
+  <div id="teams" class="relative z-10">
+    <% if @volunteers_teams.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @volunteers_teams.each do |team| %>
+          <div class="bg-white rounded-lg shadow-lg overflow-hidden border border-foundationprimarygreen/10">
+            <div class="px-6 py-5">
+              <div class="flex items-start justify-between">
+                <div>
+                  <h3 class="text-xl font-semibold text-gray-900"><%= team.name %></h3>
+                  <p class="mt-1 text-sm text-gray-500"><%= team.district %></p>
+                </div>
+                <div class="text-sm"><%= team_status_badge(team) %></div>
+              </div>
 
-          <div class="grid grid-cols-2 gap-2 mb-3">
-            <%= link_to 'View Details', team, class: 'bg-indigo-500 hover:bg-indigo-700 text-white text-center py-2 px-3 rounded text-sm' %>
-            <%= link_to 'Edit Team', edit_volunteers_team_path(team), class: 'bg-green-500 hover:bg-green-700 text-white text-center py-2 px-3 rounded text-sm' %>
-            <%= link_to 'Add Member', new_team_assignment_path(team_id: team.id), class: 'bg-blue-500 hover:bg-blue-700 text-white text-center py-2 px-3 rounded text-sm' %>
-            <%= link_to 'New Work Order', new_work_order_path(team_id: team.id), class: 'bg-orange-500 hover:bg-orange-700 text-white text-center py-2 px-3 rounded text-sm' %>
+              <div class="mt-4 flex items-center justify-between text-sm text-gray-600">
+                <div>
+                  <%= link_to "#{team.volunteers_count} volunteers", team_assignments_path(team_id: team.id), class: 'text-foundationprimarygreen hover:text-forange font-medium' %>
+                </div>
+                <div>
+                  <%= link_to "#{team.active_work_orders_count} active orders", work_orders_path(team_id: team.id), class: 'text-forange hover:text-foundationprimarygreen font-medium' %>
+                </div>
+              </div>
+
+              <div class="mt-4 grid grid-cols-2 gap-2">
+                <%= link_to 'View Details', team, class: 'px-3 py-2 rounded text-sm bg-foundationprimarygreen hover:bg-forange text-white text-center' %>
+                <%= link_to 'Edit Team', edit_volunteers_team_path(team), class: 'px-3 py-2 rounded text-sm bg-white border border-foundationprimarygreen text-foundationprimarygreen text-center' %>
+                <%= link_to 'Add Member', new_team_assignment_path(team_id: team.id), class: 'px-3 py-2 rounded text-sm bg-forange hover:bg-forange/90 text-white text-center' %>
+                <%= link_to 'New Work Order', new_work_order_path(team_id: team.id), class: 'px-3 py-2 rounded text-sm bg-white border border-forange text-forange text-center' %>
+              </div>
+
+              <div class="mt-4 text-center">
+                <%= link_to 'Delete Team', team, method: :delete, data: { confirm: 'Are you sure? This will remove all team assignments and work orders.' }, class: 'inline-flex items-center px-4 py-2 rounded-md bg-red-500 hover:bg-red-700 text-white text-sm' %>
+              </div>
+            </div>
           </div>
-          
-          <div class="text-center">
-            <%= link_to 'Delete Team', team, method: :delete, 
-                        data: { confirm: 'Are you sure? This will remove all team assignments and work orders.' }, 
-                        class: 'w-full bg-red-500 hover:bg-red-700 text-white text-center py-2 px-3 rounded text-sm' %>
-          </div>
-        </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-8">
+        <p class="text-gray-500">No teams found.</p>
       </div>
     <% end %>
   </div>
-
-  <% if @volunteers_teams.empty? %>
-    <div class="text-center py-8">
-      <p class="text-gray-500">No teams found.</p>
-    </div>
-  <% end %>
 </div>
