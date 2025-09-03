@@ -28,7 +28,7 @@ Rails.application.routes.draw do
   # Admin namespace to avoid colliding with Devise's registrations (POST /users)
   # Maps /admin/users routes to the top-level UsersController so admin flows post to /admin/users
   namespace :admin do
-    resources :users, only: [:index, :show, :new, :create, :edit, :update, :destroy], controller: '/users'
+    resources :users, only: [ :index, :show, :new, :create, :edit, :update, :destroy ], controller: "/users"
   end
 
   resources :expenses

@@ -19,7 +19,7 @@
       </div>
 
       <div class="p-6">
-        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, multipart: true }) do |f| %>
           <%= render "devise/shared/error_messages", resource: resource %>
 
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -150,8 +150,22 @@
             <!-- Right: account actions / info -->
             <div class="space-y-4">
               <div class="border border-dashed border-forange/20 rounded-md p-4 flex flex-col items-center text-center bg-forange/5">
-                <p class="text-sm font-medium text-foundationprimarygreen">Account</p>
-                <p class="text-xs text-forange mt-1">Manage account settings and cancellation</p>
+                <p class="text-sm font-medium text-foundationprimarygreen">Profile photo</p>
+                <p class="text-xs text-forange mt-1">Optional - upload or change your profile image</p>
+                <div class="mt-3 w-full">
+                  <%= f.file_field :avatar, accept: 'image/*', class: "block w-full text-sm text-gray-600 file:border-0 file:bg-forange/10 file:text-forange file:px-3 file:py-2 rounded-md" %>
+                  <% if resource.respond_to?(:avatar) && resource.avatar.attached? && resource.avatar.blob.persisted? %>
+                    <div class="mt-3 flex items-center gap-3 w-full">
+                      <div class="w-24 h-24 bg-gray-100 rounded overflow-hidden flex items-center justify-center">
+                        <%= image_tag url_for(resource.avatar), class: "object-cover w-full h-full" %>
+                      </div>
+                      <div class="text-left text-sm">
+                        <div class="font-medium text-gray-900">Current avatar</div>
+                        <div class="text-gray-500">Uploaded <%= time_ago_in_words(resource.avatar.blob.created_at) %> ago</div>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
               </div>
 
               <% unless flash[:notice]&.include?("donation") %>
