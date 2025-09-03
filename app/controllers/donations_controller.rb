@@ -5,7 +5,33 @@ class DonationsController < ApplicationController
   skip_before_action :authenticate_user!, only: [ :new, :create ]
 
   def index
-    @donations = Donation.includes(:user, :project).all
+    # Preload projects for the filter UI (used by the index view)
+    begin
+      @projects = Project.active.order(:name)
+    rescue => _e
+      @projects = Project.order(:name).limit(10) rescue []
+    end
+
+    donations = Donation.includes(:user, :project)
+
+    # Filter by project if provided
+    if params[:project_id].present?
+      donations = donations.where(project_id: params[:project_id])
+    end
+
+    # Search across donor name/email, project name, and amount (text cast)
+    if params[:search].present?
+      q = "%#{params[:search].to_s.strip}%"
+      donations = donations.left_joins(:user, :project)
+                           .where("users.first_name ILIKE :q OR users.last_name ILIKE :q OR users.email ILIKE :q OR projects.name ILIKE :q OR CAST(donations.amount AS TEXT) ILIKE :q", q: q)
+    end
+
+    @donations = donations.order(created_at: :desc).page(params[:page])
+  # Totals: overall (all donations), filtered (current result set), and per-project sums
+  @overall_donations_total = Donation.sum(:amount) || 0
+  @filtered_donations_total = donations.sum(:amount) || 0
+  # per-project totals (hash: project_id => sum)
+  @project_sums = Donation.group(:project_id).sum(:amount)
   end
 
   def show

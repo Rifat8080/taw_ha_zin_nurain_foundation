@@ -1,52 +1,20 @@
-<div class="container mx-auto px-4 py-8">
+<% content_for :title, "Edit Donation" %>
+
+<div class="container mx-auto px-8 py-10">
   <div class="max-w-md mx-auto">
     <div class="bg-white shadow-lg rounded-lg overflow-hidden">
       <div class="px-6 py-4 bg-gray-50 border-b">
         <h1 class="text-2xl font-bold text-gray-900">Edit Donation</h1>
       </div>
-      
+
       <div class="px-6 py-4">
         <div class="bg-blue-50 border border-blue-200 rounded-md p-3 mb-4">
           <p class="text-sm text-blue-700">
-            <strong>Current Donor:</strong> <%= @donation.user.full_name %> (<%= @donation.user.email %>)
+            <strong>Current Donor:</strong> <%= @donation.user&.full_name %> (<%= @donation.user&.email %>)
           </p>
         </div>
-        
-        <%= form_with model: @donation, local: true, class: "space-y-4" do |form| %>
-          <% if @donation.errors.any? %>
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-              <h3 class="font-bold">Error! Please fix the following issues:</h3>
-              <ul class="list-disc list-inside">
-                <% @donation.errors.full_messages.each do |message| %>
-                  <li><%= message %></li>
-                <% end %>
-              </ul>
-            </div>
-          <% end %>
 
-          <div>
-            <%= form.label :amount, class: "block text-sm font-medium text-gray-700 mb-2" %>
-            <%= form.number_field :amount, 
-                step: 0.01,
-                class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500", 
-                placeholder: "Enter donation amount" %>
-          </div>
-
-          <div>
-            <%= form.label :project_id, "Project", class: "block text-sm font-medium text-gray-700 mb-2" %>
-            <%= form.select :project_id, 
-                options_from_collection_for_select(@projects, :id, :name, @donation.project_id), 
-                { prompt: "Select a project" }, 
-                { class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" } %>
-          </div>
-
-          <div class="flex justify-between pt-4">
-            <%= form.submit "Update Donation", 
-                class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition duration-200" %>
-            <%= link_to "Cancel", @donation, 
-                class: "bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded transition duration-200" %>
-          </div>
-        <% end %>
+        <%= render 'donation_form', donation: @donation, projects: @projects, submit_text: 'Update Donation', show_cancel: true %>
       </div>
     </div>
   </div>
