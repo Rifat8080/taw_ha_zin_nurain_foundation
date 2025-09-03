@@ -29,3 +29,4 @@ pin "modules/bulk_ticket_modal_fallback", to: "modules/bulk_ticket_modal_fallbac
 pin "modules/carousel", to: "modules/carousel.js"
 pin "modules/stats", to: "modules/stats.js"
 pin "modules/gallery_tabs", to: "modules/gallery_tabs.js"
+pin "modules/user_card_dropdown", to: "modules/user_card_dropdown.js"

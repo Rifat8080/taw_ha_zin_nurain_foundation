@@ -23,6 +23,9 @@ class User < ApplicationRecord
   # Zakat Calculator associations
   has_many :zakat_calculations, dependent: :destroy
 
+  # Profile photo via ActiveStorage
+  has_one_attached :avatar
+
   validates :first_name, presence: true, unless: :created_by_guest_donation
   validates :last_name, presence: true, unless: :created_by_guest_donation
   validates :phone_number, presence: true, uniqueness: true, unless: :created_by_guest_donation

@@ -24,3 +24,4 @@ import "modules/gallery_tabs";
 import "modules/healthcare_manual_user_search";
 import "modules/volunteer_user_search";
 import "modules/volunteer_form_toggle";
+import "modules/user_card_dropdown";

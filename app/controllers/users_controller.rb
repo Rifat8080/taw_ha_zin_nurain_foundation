@@ -3,7 +3,14 @@ class UsersController < ApplicationController
 
   def index
     # Exclude users with volunteer role as they are shown in volunteers#index
-    @users = User.where.not(role: 'volunteer').order(:created_at)
+    users = User.where.not(role: 'volunteer')
+
+    if params[:q].present?
+      q = params[:q].strip
+      users = users.where("(first_name ILIKE :q) OR (last_name ILIKE :q) OR (email ILIKE :q) OR (role ILIKE :q)", q: "%#{q}%")
+    end
+
+    @users = users.order(created_at: :desc).page(params[:page])
   end
   
   def admin_index
@@ -36,6 +43,6 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:first_name, :last_name, :phone_number, :role, :address)
+  params.require(:user).permit(:first_name, :last_name, :phone_number, :role, :address, :avatar)
   end
 end
