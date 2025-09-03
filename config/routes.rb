@@ -19,10 +19,16 @@ Rails.application.routes.draw do
   resources :nisab_rates
 
   # Admin-only user management routes
-  resources :users, only: [ :index, :show, :edit, :update, :destroy ] do
+  resources :users, only: [ :index, :show, :new, :create, :edit, :update, :destroy ] do
     collection do
       get :admin_index
     end
+  end
+
+  # Admin namespace to avoid colliding with Devise's registrations (POST /users)
+  # Maps /admin/users routes to the top-level UsersController so admin flows post to /admin/users
+  namespace :admin do
+    resources :users, only: [:index, :show, :new, :create, :edit, :update, :destroy], controller: '/users'
   end
 
   resources :expenses
