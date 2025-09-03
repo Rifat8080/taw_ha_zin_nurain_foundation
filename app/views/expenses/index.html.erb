@@ -1,41 +1,145 @@
-<div class="container mx-auto px-4 py-8">
-  <div class="flex justify-between items-center mb-6">
-    <h1 class="text-3xl font-bold text-gray-900">Expenses</h1>
-    <%= link_to "New Expense", new_expense_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+<% content_for :title, "Expenses" %>
+
+<div class="container mx-auto px-8 py-10">
+  <% if notice.present? %>
+    <div class="mb-6 p-4 bg-forange/10 border-l-4 border-forange rounded-r-lg shadow-sm flex items-center" id="notice">
+      <svg class="h-5 w-5 text-forange mr-2" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+      </svg>
+      <span class="text-forange font-medium"><%= notice %></span>
+    </div>
+  <% end %>
+  <div class="flex flex-col md:flex-row justify-between items-center text-center mb-8 gap-4">
+    <div class="w-full">
+      <h1 class="text-4xl md:text-5xl font-bold text-foundationprimarygreen tracking-tight">Our <span class="text-forange">Expenses</span></h1>
+      <p class="mt-2 text-lg text-gray-700">List of recorded expenses and spendings. Click an expense to view details.</p>
+      <%# Determine selected project early so header can show contextual total %>
+      <% selected_project = if params[:project_id].present?
+                             (@projects || []).detect { |pp| pp.id.to_s == params[:project_id].to_s } || Project.find_by(id: params[:project_id]) rescue nil
+                           end %>
+
+      <div class="mt-3">
+        <% if selected_project.present? %>
+          <% proj_total = @project_sums[selected_project.id] || 0 %>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-50 text-green-700 border border-green-200">
+            Total for <span class="ml-2 font-semibold text-gray-900"><%= selected_project.name %></span>
+            <span class="ml-3 font-semibold">৳<%= number_with_delimiter(proj_total) %></span>
+          </span>
+        <% elsif params[:search].present? %>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-50 text-green-700 border border-green-200">
+            Search results total: <span class="ml-2 font-semibold">৳<%= number_with_delimiter(@filtered_expenses_total || 0) %></span>
+          </span>
+        <% else %>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-50 text-green-700 border border-green-200">
+            Total expenses: <span class="ml-2 font-semibold">৳<%= number_with_delimiter(@overall_expenses_total || 0) %></span>
+          </span>
+        <% end %>
+      </div>
+    </div>
+
   </div>
 
-  <div class="bg-white shadow-md rounded-lg overflow-hidden">
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead class="bg-gray-50">
-        <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-        </tr>
-      </thead>
-      <tbody class="bg-white divide-y divide-gray-200">
-        <% @expenses.each do |expense| %>
-          <tr>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><%= expense.title %></td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">$<%= expense.amount %></td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= expense.project.name %></td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= expense.expense_date.strftime("%B %d, %Y") %></td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-              <%= link_to "View", expense_path(expense), class: "text-indigo-600 hover:text-indigo-900 mr-2" %>
-              <%= link_to "Edit", edit_expense_path(expense), class: "text-yellow-600 hover:text-yellow-900 mr-2" %>
-              <%= link_to "Delete", expense_path(expense), method: :delete, 
-                          confirm: "Are you sure?", 
-                          class: "text-red-600 hover:text-red-900" %>
-            </td>
-          </tr>
+  <!-- Search & Filter -->
+  <div class="mb-8 bg-white rounded-lg shadow border border-foundationprimarygreen/20 p-6">
+    <%= form_with url: expenses_path, method: :get, local: true, class: "flex flex-col md:flex-row gap-4 items-center" do |form| %>
+      <div class="flex-1">
+        <%= form.text_field :search, value: params[:search], placeholder: "Search expenses by title, project or amount...", class: "w-full px-4 py-3 border border-foundationprimarygreen/30 rounded-lg focus:ring-2 focus:ring-forange focus:border-forange text-gray-900 placeholder-gray-500" %>
+      </div>
+
+      <div class="w-full md:w-64">
+        <% projects_for_filter = if defined?(@projects) && @projects.present?
+                                  @projects
+                                else
+                                  begin
+                                    Project.order(:name).limit(10)
+                                  rescue => _e
+                                    []
+                                  end
+                                end %>
+        <%= form.select :project_id, options_from_collection_for_select(projects_for_filter, :id, :name, params[:project_id]), { include_blank: "All projects" }, class: "w-full px-4 py-3 border border-foundationprimarygreen/30 rounded-lg" %>
+      </div>
+
+      <div class="flex gap-2">
+        <%= form.submit "Search", class: "px-6 py-3 btn-primary text-white font-semibold rounded-lg" %>
+        <% if params[:search].present? || params[:project_id].present? %>
+          <%= link_to "Clear", expenses_path, class: "px-6 py-3 bg-gray-200 hover:bg-forange hover:text-white text-gray-700 font-semibold rounded-lg" %>
         <% end %>
-      </tbody>
-    </table>
-    
-    <% if @expenses.empty? %>
-      <div class="text-center py-8">
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mb-8">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-semibold text-gray-900">Expenses</h2>
+      <%= link_to new_expense_path, class: "inline-flex items-center whitespace-nowrap px-6 py-3 bg-foundationprimarygreen hover:bg-forange text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200" do %>
+        <i class="fa-solid fa-plus mr-2" aria-hidden="true"></i>
+        New Expense
+      <% end %>
+    </div>
+
+    <% if @expenses.any? %>
+      <!-- Mobile: stacked cards -->
+      <div class="space-y-4 md:hidden">
+        <% @expenses.each do |expense| %>
+          <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-sm text-gray-500">Title</p>
+                <p class="font-medium text-gray-900"><%= expense.title %></p>
+              </div>
+              <div class="text-right">
+                <p class="text-sm text-gray-500">Amount</p>
+                <p class="font-semibold text-red-600">৳<%= number_with_delimiter(expense.amount) %></p>
+              </div>
+            </div>
+            <div class="mt-3 flex items-center justify-between text-sm text-gray-600">
+              <div>
+                <p><strong>Project:</strong> <%= expense.project&.name || '—' %></p>
+                <p class="text-xs text-gray-500"><%= expense.expense_date.strftime("%b %d, %Y") %></p>
+              </div>
+              <div class="flex items-center gap-2">
+                <%= link_to 'View', expense_path(expense), class: 'text-indigo-600 hover:text-indigo-900 text-sm whitespace-nowrap' %>
+                <%= link_to 'Edit', edit_expense_path(expense), class: 'text-yellow-600 hover:text-yellow-900 text-sm whitespace-nowrap' %>
+                <%= link_to 'Delete', expense_path(expense), method: :delete, data: { confirm: 'Are you sure?' }, class: 'text-red-600 hover:text-red-900 text-sm whitespace-nowrap' %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Desktop / tablet: table -->
+      <div class="hidden md:block bg-white rounded-lg shadow border border-foundationprimarygreen/20 p-6">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <% @expenses.each do |expense| %>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><%= expense.title %></td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">৳<%= number_with_delimiter(expense.amount) %></td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= expense.project&.name %></td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= expense.expense_date.strftime("%B %d, %Y") %></td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <%= link_to "View", expense_path(expense), class: "text-indigo-600 hover:text-indigo-900 mr-2" %>
+                    <%= link_to "Edit", edit_expense_path(expense), class: "text-yellow-600 hover:text-yellow-900 mr-2" %>
+                    <%= link_to "Delete", expense_path(expense), method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-600 hover:text-red-900" %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% else %>
+      <div class="text-center py-8 bg-white rounded-lg shadow border border-foundationprimarygreen/20 p-6">
         <p class="text-gray-500">No expenses found.</p>
         <%= link_to "Create the first expense", new_expense_path, class: "text-blue-500 hover:text-blue-700" %>
       </div>

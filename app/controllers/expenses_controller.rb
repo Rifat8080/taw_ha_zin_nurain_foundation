@@ -2,8 +2,33 @@ class ExpensesController < ApplicationController
   before_action :set_expense, only: [ :show, :edit, :update, :destroy ]
 
   def index
-  # order by the `expense_date` column (column was renamed from `date`)
-  @expenses = Expense.includes(:project).all.order(expense_date: :desc)
+    # Preload projects for the filter UI (used by the index view)
+    begin
+      @projects = Project.active.order(:name)
+    rescue => _e
+      @projects = Project.order(:name).limit(10) rescue []
+    end
+
+    expenses = Expense.includes(:project)
+
+    # Filter by project if provided
+    if params[:project_id].present?
+      expenses = expenses.where(project_id: params[:project_id])
+    end
+
+    # Search across title, project name, notes and amount (text cast)
+    if params[:search].present?
+      q = "%#{params[:search].to_s.strip}%"
+      expenses = expenses.left_joins(:project)
+                         .where("expenses.title ILIKE :q OR projects.name ILIKE :q OR CAST(expenses.amount AS TEXT) ILIKE :q OR expenses.notes ILIKE :q", q: q)
+    end
+
+    @expenses = expenses.order(expense_date: :desc).page(params[:page])
+
+    # Totals: overall (all expenses), filtered (current result set), and per-project sums
+    @overall_expenses_total = Expense.sum(:amount) || 0
+    @filtered_expenses_total = expenses.sum(:amount) || 0
+    @project_sums = Expense.group(:project_id).sum(:amount)
   end
 
   def show

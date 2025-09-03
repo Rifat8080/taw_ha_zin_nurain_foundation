@@ -1,0 +1,99 @@
+<%= form_with(model: expense, local: true, class: "space-y-6") do |form| %>
+
+  <% if expense.errors.any? %>
+    <div id="error_explanation" class="rounded-md bg-red-50 border border-red-100 p-4">
+      <div class="flex items-start gap-3">
+        <svg class="h-5 w-5 text-red-600 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M8.257 3.099c.366-.446.957-.596 1.5-.34l.094.05 6.5 3.75A1 1 0 0117 7.5v6a1 1 0 01-.553.894l-.094.05-6.5 3.75a1 1 0 01-1.5-.34L3 15.5V4.5a1 1 0 01.257-.701l.0-.0 5-.7z" clip-rule="evenodd"></path></svg>
+        <div>
+          <p class="text-sm font-semibold text-red-700"><%= pluralize(expense.errors.count, "error") %> prevented this expense from being saved</p>
+          <ul class="mt-2 text-sm text-red-600 list-disc ml-5">
+            <% expense.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="bg-white border border-foundationprimarygreen/10 rounded-lg shadow-lg p-6">
+    <div class="mb-4 text-center">
+      <h2 class="text-3xl font-bold">
+        <span class="text-foundationprimarygreen"><%= expense.persisted? ? "Edit" : "New" %></span>
+        <span class="text-forange"> Expense</span>
+      </h2>
+      <p class="mt-2 text-sm text-gray-500">Record an expense for a project.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 space-y-4">
+        <div>
+          <%= form.label :title, class: "block text-sm font-medium text-foundationprimarygreen" %>
+          <div class="mt-1">
+            <%= form.text_field :title, class: ["block w-full rounded-md sm:text-sm px-3 py-2 border", {"border-gray-300 focus:border-foundationprimarygreen focus:ring-foundationprimarygreen": expense.errors[:title].none?, "border-red-400 focus:ring-red-500": expense.errors[:title].any?}] %>
+          </div>
+          <% if expense.errors[:title].any? %>
+            <p class="mt-1 text-sm text-red-600"><%= expense.errors[:title].first %></p>
+          <% else %>
+            <p class="mt-1 text-sm text-gray-400">Give this expense a short descriptive title.</p>
+          <% end %>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <%= form.label :amount, class: "block text-sm font-medium text-foundationprimarygreen" %>
+            <div class="mt-1">
+              <div class="flex rounded-md shadow-sm">
+                <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-600">৳</span>
+                <%= form.number_field :amount, step: 0.01, min: 0, class: ["block w-full rounded-r-md sm:text-sm px-3 py-2 border", {"border-gray-300 focus:border-foundationprimarygreen focus:ring-foundationprimarygreen": expense.errors[:amount].none?, "border-red-400 focus:ring-red-500": expense.errors[:amount].any?}] %>
+              </div>
+            </div>
+            <% if expense.errors[:amount].any? %>
+              <p class="mt-1 text-sm text-red-600"><%= expense.errors[:amount].first %></p>
+            <% end %>
+          </div>
+
+          <div>
+            <%= form.label :expense_date, "Date", class: "block text-sm font-medium text-foundationprimarygreen" %>
+            <div class="mt-1">
+              <%= form.date_field :expense_date, class: ["block w-full rounded-md sm:text-sm px-3 py-2 border", {"border-gray-300 focus:border-foundationprimarygreen focus:ring-foundationprimarygreen": expense.errors[:expense_date].none?, "border-red-400 focus:ring-red-500": expense.errors[:expense_date].any?}] %>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <%= form.label :notes, class: "block text-sm font-medium text-foundationprimarygreen" %>
+          <div class="mt-1">
+            <%= form.text_area :notes, rows: 3, class: ["block w-full rounded-md sm:text-sm px-3 py-2 border", {"border-gray-300 focus:border-foundationprimarygreen focus:ring-foundationprimarygreen": expense.errors[:notes].none?, "border-red-400 focus:ring-red-500": expense.errors[:notes].any?}] %>
+          </div>
+          <p class="mt-1 text-sm text-gray-400">Optional: provide context for this expense.</p>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <%= form.label :project_id, "Project", class: "block text-sm font-medium text-foundationprimarygreen" %>
+          <div class="mt-1">
+            <%= form.select :project_id, options_from_collection_for_select(@projects || projects, :id, :name, expense.project_id), { include_blank: 'Select a project' }, class: ["block w-full rounded-md sm:text-sm px-3 py-2 border bg-white", {"border-gray-300 focus:border-foundationprimarygreen focus:ring-foundationprimarygreen": expense.errors[:project_id].none?, "border-red-400 focus:ring-red-500": expense.errors[:project_id].any?}] %>
+          </div>
+          <% if (@projects || projects).empty? %>
+            <p class="mt-2 text-sm text-red-600">No projects available.</p>
+          <% else %>
+            <p class="mt-2 text-sm text-gray-500">Select the project this expense applies to.</p>
+          <% end %>
+        </div>
+
+        <div class="border border-dashed border-forange/20 rounded-md p-4 text-sm bg-forange/5">
+          <p class="font-medium text-foundationprimarygreen">Expense policy</p>
+          <p class="mt-1 text-gray-600">Ensure you have receipts and approvals for expenses.</p>
+        </div>
+
+        <div class="mt-6 flex flex-col sm:flex-row items-center justify-end gap-3">
+          <%= link_to 'Cancel', expenses_path, class: "w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-forange/30 rounded-md bg-white text-sm text-foundationprimarygreen hover:bg-forange/10" %>
+          <%= form.submit expense.persisted? ? 'Update Expense' : 'Create Expense', class: "w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 rounded-md text-sm text-white font-medium shadow-md btn-primary" %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<% end %>

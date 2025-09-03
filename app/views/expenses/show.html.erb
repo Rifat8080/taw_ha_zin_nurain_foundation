@@ -1,40 +1,38 @@
-<div class="container mx-auto px-4 py-8">
-  <div class="max-w-2xl mx-auto">
-    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+<div class="container mx-auto px-8 py-10">
+  <div class="max-w-4xl mx-auto">
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden border border-foundationprimarygreen/10">
       <div class="px-6 py-4 bg-gray-50 border-b">
         <h1 class="text-2xl font-bold text-gray-900">Expense Details</h1>
       </div>
-      
-      <div class="px-6 py-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+      <div class="px-6 py-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label class="block text-sm font-medium text-gray-700">Title</label>
             <p class="mt-1 text-lg font-semibold text-gray-900"><%= @expense.title %></p>
           </div>
-          
+
           <div>
             <label class="block text-sm font-medium text-gray-700">Amount</label>
-            <p class="mt-1 text-lg font-semibold text-red-600">$<%= @expense.amount %></p>
+            <p class="mt-1 text-lg font-semibold text-red-600">৳<%= number_with_delimiter(@expense.amount) %></p>
           </div>
-          
+
           <div>
             <label class="block text-sm font-medium text-gray-700">Date</label>
             <p class="mt-1 text-sm text-gray-900"><%= @expense.expense_date.strftime("%B %d, %Y") %></p>
           </div>
-          
+
           <div>
             <label class="block text-sm font-medium text-gray-700">Project</label>
             <p class="mt-1 text-sm text-gray-900"><%= @expense.project.name %></p>
           </div>
         </div>
       </div>
-      
+
       <div class="px-6 py-4 bg-gray-50 border-t flex justify-between">
         <div>
           <%= link_to "Edit", edit_expense_path(@expense), class: "bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mr-2" %>
-          <%= link_to "Delete", expense_path(@expense), method: :delete, 
-                      confirm: "Are you sure?", 
-                      class: "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" %>
+          <%= link_to "Delete", expense_path(@expense), method: :delete, data: { confirm: "Are you sure?" }, class: "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" %>
         </div>
         <%= link_to "Back to Expenses", expenses_path, class: "bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" %>
       </div>
