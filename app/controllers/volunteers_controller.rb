@@ -105,7 +105,7 @@ class VolunteersController < ApplicationController
                   .limit(20)
     end
 
-    render json: users.select(:id, :first_name, :last_name, :email, :phone_number).map { |u| { id: u.id, name: [u.first_name, u.last_name].compact.join(' '), email: u.email, phone: u.phone_number } }
+    render json: users.select(:id, :first_name, :last_name, :email, :phone_number).map { |u| { id: u.id, name: [ u.first_name, u.last_name ].compact.join(" "), email: u.email, phone: u.phone_number } }
   end
 
   private
@@ -130,9 +130,9 @@ class VolunteersController < ApplicationController
       return existing if existing.present?
     end
 
-    # Build new user and set role to volunteer
+  # Build new user and set role to volunteer
   user = User.new(user_attrs)
-  user.role = 'volunteer'
+  user.role = "volunteer"
   # Ensure validations that depend on guest flag are satisfied
   user.created_by_guest_donation = false
   # Devise requires a password - generate a random one for inline-created users
