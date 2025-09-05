@@ -1,7 +1,7 @@
-require 'ostruct'
+require "ostruct"
 
 class ProjectsController < ApplicationController
-  require 'ostruct'
+  require "ostruct"
   before_action :set_project, only: %i[ show edit update destroy ]
 
   # GET /projects or /projects.json
@@ -49,8 +49,8 @@ class ProjectsController < ApplicationController
       # If still empty, supply a few static items
       if @impact_items.empty?
         @impact_items = [
-          OpenStruct.new(title: 'Community meals delivered', summary: 'Provided hot meals to 200 families.', created_at: 1.day.ago),
-          OpenStruct.new(title: 'Medical camp', summary: 'Organized a medical camp for 150 patients.', created_at: 7.days.ago)
+          OpenStruct.new(title: "Community meals delivered", summary: "Provided hot meals to 200 families.", created_at: 1.day.ago),
+          OpenStruct.new(title: "Medical camp", summary: "Organized a medical camp for 150 patients.", created_at: 7.days.ago)
         ]
       end
     end

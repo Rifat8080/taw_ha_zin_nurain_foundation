@@ -68,11 +68,11 @@ class DonationsController < ApplicationController
 
     main_attrs = donation_params.except(:email).to_h
     # Remove temporary keys we use only for the request payload so they aren't mass-assigned
-    main_attrs.delete('primary_amount') if main_attrs.key?('primary_amount')
-    main_attrs.delete('extras_json') if main_attrs.key?('extras_json')
+    main_attrs.delete("primary_amount") if main_attrs.key?("primary_amount")
+    main_attrs.delete("extras_json") if main_attrs.key?("extras_json")
     # If primary_amount provided, use it as the main donation amount; otherwise fall back to donation[:amount]
     if primary_amount.present?
-      main_attrs['amount'] = BigDecimal(primary_amount.to_s)
+      main_attrs["amount"] = BigDecimal(primary_amount.to_s)
     end
 
     @donation = Donation.new(main_attrs)
@@ -114,8 +114,8 @@ class DonationsController < ApplicationController
         begin
           extras = JSON.parse(extras_json) rescue []
           extras.each do |ex|
-            next unless ex['amount'].present? && ex['project_id'].present?
-            d = Donation.new(amount: ex['amount'], project_id: ex['project_id'])
+            next unless ex["amount"].present? && ex["project_id"].present?
+            d = Donation.new(amount: ex["amount"], project_id: ex["project_id"])
             d.user = @donation.user
             if d.save
               extras_created << d
