@@ -1,10 +1,15 @@
 // app/assets/javascripts/home_index.js
 // Swiper initialization for donationSwiper
 
-document.addEventListener('turbo:load', function() {
-  if (typeof Swiper === 'undefined') return;
+// Ensure Swiper-based carousels initialize reliably even when Swiper is loaded via a deferred CDN script.
+function initDonationSwipers() {
+  if (typeof Swiper === 'undefined') return false;
 
   document.querySelectorAll('.donationSwiper').forEach(function(swiperEl) {
+    // avoid double-init
+    if (swiperEl.__donation_swiper_inited) return;
+    swiperEl.__donation_swiper_inited = true;
+
     var swiper = new Swiper(swiperEl, {
       slidesPerView: 1,
       spaceBetween: 24,
@@ -14,9 +19,9 @@ document.addEventListener('turbo:load', function() {
         1024: { slidesPerView: 3 },
       },
       pagination: { el: swiperEl.querySelector('.swiper-pagination'), clickable: true },
-      navigation: { 
-        nextEl: swiperEl.querySelector('.swiper-button-next'), 
-        prevEl: swiperEl.querySelector('.swiper-button-prev') 
+      navigation: {
+        nextEl: swiperEl.querySelector('.swiper-button-next'),
+        prevEl: swiperEl.querySelector('.swiper-button-prev')
       },
       loop: false,
       on: {
@@ -51,4 +56,18 @@ document.addEventListener('turbo:load', function() {
       }
     });
   });
-});
+
+  return true;
+}
+
+// Try to initialize on turbo:load and DOMContentLoaded. If Swiper isn't available yet (deferred CDN), retry a few times.
+function ensureInitWithRetry(attemptsLeft) {
+  attemptsLeft = typeof attemptsLeft === 'number' ? attemptsLeft : 10;
+  if (initDonationSwipers()) return;
+  if (attemptsLeft <= 0) return;
+  setTimeout(function() { ensureInitWithRetry(attemptsLeft - 1); }, 200);
+}
+
+document.addEventListener('turbo:load', function() { ensureInitWithRetry(15); });
+document.addEventListener('DOMContentLoaded', function() { ensureInitWithRetry(15); });
+

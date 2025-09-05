@@ -160,34 +160,111 @@
     </aside>
   </div>
 
-  <!-- Tabs and More ways to help -->
+  <!-- Tabs and More ways to help (carousel) -->
   <div class="mt-12">
-    <div class="flex items-center gap-4 justify-center">
-      <button class="px-4 py-2 rounded-full bg-blue-800 text-white text-sm">LEVEL OF GIVING</button>
-      <button class="px-4 py-2 rounded-full border text-sm">DONORS</button>
-      <button class="px-4 py-2 rounded-full border text-sm">IMPACT</button>
+    <div class="flex items-center gap-4 justify-center" role="tablist">
+      <button data-tab-target="#tab-level" class="tab-button px-4 py-2 rounded-full bg-blue-800 text-white text-sm" role="tab" aria-controls="tab-level">LEVEL OF GIVING</button>
+      <button data-tab-target="#tab-donors" class="tab-button px-4 py-2 rounded-full border text-sm" role="tab" aria-controls="tab-donors">DONORS</button>
+      <button data-tab-target="#tab-impact" class="tab-button px-4 py-2 rounded-full border text-sm" role="tab" aria-controls="tab-impact">IMPACT</button>
     </div>
 
     <h3 class="mt-10 text-center text-xl font-semibold text-gray-800">More ways to help</h3>
 
-    <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      <% 4.times do |i| %>
-        <div class="bg-white rounded-lg shadow p-4">
-          <div class="flex items-start justify-between">
-            <div>
-              <p class="text-sm text-gray-500">$<%= [100,150,500,500][i] %> USD</p>
-              <h4 class="mt-2 font-semibold text-gray-800">Feed <%= [10,3,40,50][i] %> Orphans</h4>
-            </div>
-            <div class="text-sm text-gray-400"> <%= [1,1,0,28][i] %> Claimed</div>
+    <div class="mt-6">
+      <!-- Tab panels -->
+      <div id="tab-level" class="tab-panel">
+        <!-- Swiper carousel for small project cards -->
+        <div class="donationSwiper swiper">
+          <div class="swiper-wrapper">
+            <% if @more_projects.present? %>
+              <% @more_projects.each do |mp| %>
+                <div class="swiper-slide">
+                  <div class="bg-white rounded-lg shadow p-4">
+                    <div class="flex items-start justify-between">
+                      <div>
+                        <% suggested = if mp.respond_to?(:goal_amount) && mp.goal_amount.present? && mp.goal_amount.to_f > 0
+                          [(mp.goal_amount.to_f / 10).round, 50].max
+                        else
+                          100
+                        end %>
+                        <p class="text-sm text-gray-500">$<%= suggested %> USD</p>
+                        <h4 class="mt-2 font-semibold text-gray-800"><%= truncate(mp.name, length: 40) %></h4>
+                      </div>
+                      <div class="text-sm text-gray-400"> <%= mp.donations.count %> Claimed</div>
+                    </div>
+                    <p class="mt-3 text-sm text-gray-600"><%= truncate(strip_tags(mp.description.to_s), length: 100) %></p>
+                    <div class="mt-4">
+                      <button type="button" class="w-full add-to-giving btn-primary text-white rounded-md px-3 py-2 font-semibold" data-amount="<%= suggested %>">ADD TO GIVING</button>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            <% else %>
+              <% 4.times do |i| %>
+                <div class="swiper-slide">
+                  <div class="bg-white rounded-lg shadow p-4">
+                    <div class="flex items-start justify-between">
+                      <div>
+                        <p class="text-sm text-gray-500">$<%= [100,150,500,500][i] %> USD</p>
+                        <h4 class="mt-2 font-semibold text-gray-800">Feed <%= [10,3,40,50][i] %> Orphans</h4>
+                      </div>
+                      <div class="text-sm text-gray-400"> <%= [1,1,0,28][i] %> Claimed</div>
+                    </div>
+                    <p class="mt-3 text-sm text-gray-600">Heartwarming meals prepared with care, including rice, beans, meat, and fresh vegetables.</p>
+                    <div class="mt-4">
+                      <button type="button" class="w-full add-to-giving bg-forange hover:brightness-90 text-white rounded-md px-3 py-2 font-semibold" data-amount="<%= [100,150,500,500][i] %>">ADD TO GIVING</button>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            <% end %>
           </div>
-          <p class="mt-3 text-sm text-gray-600">Heartwarming meals prepared with care, including rice, beans, meat, and fresh vegetables.</p>
-          <div class="mt-4">
-            <button class="w-full bg-pink-500 hover:bg-pink-600 text-white rounded-md px-3 py-2 font-semibold">ADD TO GIVING</button>
-          </div>
+          <div class="swiper-pagination !bottom-0"></div>
+          <button class="swiper-button-prev custom-swiper-btn !left-0" aria-label="Previous">
+            <i class="fas fa-chevron-left text-xl" aria-hidden="true"></i>
+          </button>
+          <button class="swiper-button-next custom-swiper-btn !right-0" aria-label="Next">
+            <i class="fas fa-chevron-right text-xl" aria-hidden="true"></i>
+          </button>
         </div>
-      <% end %>
+      </div>
+
+      <div id="tab-donors" class="tab-panel hidden">
+        <div class="max-w-3xl mx-auto">
+          <% if @recent_donors.present? %>
+            <ul class="space-y-4">
+              <% @recent_donors.each do |d| %>
+                <li class="flex items-center justify-between bg-white rounded-md p-3 shadow-sm">
+                  <div>
+                    <div class="text-sm font-medium text-gray-800"><%= d.user.present? ? ([d.user.first_name, d.user.last_name].compact.join(' ')) : (d.email || 'Anonymous') %></div>
+                    <div class="text-xs text-gray-500"><%= number_to_currency(d.amount, unit: '$') %> — <%= time_ago_in_words(d.created_at) %> ago</div>
+                  </div>
+                  <div class="text-sm text-forange font-semibold">Thank you</div>
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            <p class="text-center text-gray-600">No recent donors yet.</p>
+          <% end %>
+        </div>
+      </div>
+
+      <div id="tab-impact" class="tab-panel hidden">
+        <div class="max-w-3xl mx-auto space-y-4">
+          <% @impact_items.each do |it| %>
+            <div class="bg-white rounded-md p-4 shadow-sm">
+              <div class="flex items-start justify-between">
+                <div>
+                  <h4 class="text-forange font-semibold"><%= it.title %></h4>
+                  <p class="text-sm text-gray-600 mt-1"><%= it.summary %></p>
+                </div>
+                <div class="text-xs text-gray-400"><%= it.created_at.to_date.to_s %></div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- JavaScript for donation card moved to app/javascript/modules/project_donation.js and loaded via importmap -->

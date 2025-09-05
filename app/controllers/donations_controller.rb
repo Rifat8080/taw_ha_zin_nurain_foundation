@@ -39,7 +39,7 @@ class DonationsController < ApplicationController
 
   def new
     @donation = Donation.new
-    
+
     if params[:project_id].present?
       project = Project.find_by(id: params[:project_id])
       if project && project.active?
@@ -52,12 +52,12 @@ class DonationsController < ApplicationController
         return
       end
     end
-    
+
     @projects = Project.active.order(:name)
-    
+
     if @projects.empty?
       redirect_to projects_path, alert: "No projects are currently accepting donations."
-      return
+      nil
     end
   end
 
@@ -71,7 +71,7 @@ class DonationsController < ApplicationController
       unless email.present? && email.match?(URI::MailTo::EMAIL_REGEXP)
         @donation.errors.add(:email, "is invalid or missing for a guest donation")
         prepare_homepage_data
-        render 'home/index', status: :unprocessable_entity
+        render "home/index", status: :unprocessable_entity
         return
       end
 
@@ -87,7 +87,7 @@ class DonationsController < ApplicationController
       else
         @donation.errors.add(:base, "Unable to create donor account: #{user.errors.full_messages.join(', ')}")
         prepare_homepage_data
-        render 'home/index', status: :unprocessable_entity
+        render "home/index", status: :unprocessable_entity
         return
       end
     end
@@ -95,13 +95,13 @@ class DonationsController < ApplicationController
     if @donation.save
       # Notify admins about new donation and the donor themselves
       begin
-        admins = User.where(role: 'admin')
+        admins = User.where(role: "admin")
         admins.find_each do |admin|
           NotificationService.notify(
             recipient: admin,
             actor: @donation.user,
             notifiable: @donation,
-            action: 'donation_created',
+            action: "donation_created",
             title: "New donation received",
             body: "#{@donation.user.full_name} donated $#{@donation.amount} to #{@donation.project&.name || 'the foundation'}"
           )
@@ -117,7 +117,7 @@ class DonationsController < ApplicationController
           recipient: @donation.user,
           actor: @donation.user,
           notifiable: @donation,
-          action: 'donation_received',
+          action: "donation_received",
           title: "Thank you for your donation",
           body: "We received your donation of $#{@donation.amount}."
         )
@@ -134,7 +134,7 @@ class DonationsController < ApplicationController
       end
     else
       prepare_homepage_data
-      render 'home/index', status: :unprocessable_entity
+      render "home/index", status: :unprocessable_entity
     end
   end
 
@@ -171,8 +171,8 @@ class DonationsController < ApplicationController
     return existing_user if existing_user
 
     temp_password = SecureRandom.hex(8)
-    first_name = email.split('@').first.humanize
-    
+    first_name = email.split("@").first.humanize
+
     user = User.new(
       first_name: first_name,
       last_name: "User",

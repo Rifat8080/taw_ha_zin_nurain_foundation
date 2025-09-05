@@ -88,6 +88,42 @@ function initDonationCard() {
         }
       });
     }
+
+    // Add-to-giving buttons in the carousel: add their amount to current donation amount
+    var addButtons = Array.prototype.slice.call(document.querySelectorAll('.add-to-giving'));
+    addButtons.forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        var amt = parseFloat(this.getAttribute('data-amount')) || 0;
+        if(!amountField) {
+          amountField = document.getElementById('donation_amount');
+        }
+        if(amountField) {
+          var current = parseFloat((amountField.value || '').toString().replace(/[^0-9.-]+/g, '')) || 0;
+          amountField.value = (current + amt).toString();
+          // trigger input event to update presets
+          var ev = new Event('input', { bubbles: true });
+          amountField.dispatchEvent(ev);
+          // scroll to donation form for clarity
+          var formEl = amountField.closest('form');
+          if(formEl) formEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
+    });
+
+    // simple tab switching for More ways to help
+    var tabButtons = Array.prototype.slice.call(document.querySelectorAll('.tab-button'));
+    tabButtons.forEach(function(tb){
+      tb.addEventListener('click', function(e){
+        var target = this.getAttribute('data-tab-target');
+        if(!target) return;
+        document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.add('hidden'); });
+        document.querySelectorAll('.tab-button').forEach(function(b){ b.classList.remove('bg-blue-800', 'text-white'); b.classList.add('border'); });
+        var panel = document.querySelector(target);
+        if(panel) panel.classList.remove('hidden');
+        this.classList.add('bg-blue-800', 'text-white');
+        this.classList.remove('border');
+      });
+    });
   } catch (e) {
     // avoid breaking other pages
     console.error('project_donation init error', e);
