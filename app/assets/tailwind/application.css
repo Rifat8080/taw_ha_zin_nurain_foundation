@@ -124,8 +124,9 @@
 }
 .preset-amount:hover { background: #f8fafc; }
 .preset-amount.active {
-  background: #eef2ff;
-  border-color: #6366f1;
+  background-color: rgb(var(--color-forange));
+  border-color: rgb(var(--color-forange));
+  color: #ffffff;
 }
 
 .btn-donate:hover,
