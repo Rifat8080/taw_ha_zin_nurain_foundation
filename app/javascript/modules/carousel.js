@@ -63,6 +63,12 @@ function initDonationSwipers() {
 // Try to initialize on turbo:load and DOMContentLoaded. If Swiper isn't available yet (deferred CDN), retry a few times.
 function ensureInitWithRetry(attemptsLeft) {
   attemptsLeft = typeof attemptsLeft === 'number' ? attemptsLeft : 10;
+  // Diagnostic: report Swiper presence and target elements when retrying
+  try {
+    console.debug('[carousel] Swiper present?', typeof Swiper !== 'undefined', 'donationSwipers:', document.querySelectorAll('.donationSwiper').length);
+    document.querySelectorAll('.donationSwiper').forEach(function(el, i){ console.debug('[carousel] donationSwiper['+i+'] inited?', !!el.__donation_swiper_inited); });
+  } catch (e) { /* ignore in environments without DOM */ }
+
   if (initDonationSwipers()) return;
   if (attemptsLeft <= 0) return;
   setTimeout(function() { ensureInitWithRetry(attemptsLeft - 1); }, 200);

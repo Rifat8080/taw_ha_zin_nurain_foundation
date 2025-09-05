@@ -84,3 +84,79 @@
     margin-right: 4px;
   }
 }
+
+/* Tab styling overrides for project page */
+.tab-button {
+  transition: background-color 150ms, color 150ms, border-color 150ms;
+}
+.tab-button[aria-selected="true"], .tab-button.active {
+  background-color: var(--forange, #F7B731) !important;
+  color: white !important;
+  border-color: transparent !important;
+}
+.tab-button[aria-selected="false"] {
+  background: transparent !important;
+}
+
+/* Donors horizontal row */
+.donors-row {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.donor-card { display: inline-block; }
+
+/* Marquee / infinite scroll helpers */
+.donors-marquee {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  padding: 8px 0; /* allow space for hover */
+}
+/* strong reset to prevent Tailwind utilities from forcing layout we don't want */
+.donors-row.donors-marquee {
+  display: block !important;
+  overflow: hidden !important;
+  padding: 8px 0 !important;
+}
+.donors-marquee .donors-track-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap; /* do not wrap tracks */
+  gap: 0;
+  align-items: center;
+  will-change: transform;
+  --marquee-duration: 20s; /* overwritten by JS */
+  /* wrapper contains two track copies side-by-side; animate full width */
+  animation: marquee-left linear infinite;
+  animation-duration: var(--marquee-duration);
+}
+.donors-marquee.paused .donors-track-wrapper {
+  animation-play-state: paused !important;
+}
+
+/* animate the wrapper from 0 to -100% to scroll a full track width (two tracks make loop seamless) */
+@keyframes marquee-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Ensure donor cards are responsive */
+.donor-card { min-width: 220px; max-width: 320px; flex: 0 0 auto; display: inline-flex; }
+
+/* Ensure each donors-track is a single horizontal row of cards and doesn't create columns */
+.donors-track {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap; /* keep cards on one line */
+  gap: 16px;
+  align-items: center;
+}
+.donors-track > .donor-card { flex: 0 0 auto; }
+.donor-card .text-sm { font-size: 0.9rem; }
+
+/* Tab responsiveness */
+@media (max-width: 640px) {
+  .tab-button { padding: 6px 10px; font-size: 0.8rem; }
+  .donor-card { min-width: 180px; }
+}
+

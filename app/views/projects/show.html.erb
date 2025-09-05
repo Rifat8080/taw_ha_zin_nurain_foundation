@@ -163,9 +163,9 @@
   <!-- Tabs and More ways to help (carousel) -->
   <div class="mt-12">
     <div class="flex items-center gap-4 justify-center" role="tablist">
-      <button data-tab-target="#tab-level" class="tab-button px-4 py-2 rounded-full bg-blue-800 text-white text-sm" role="tab" aria-controls="tab-level">LEVEL OF GIVING</button>
-      <button data-tab-target="#tab-donors" class="tab-button px-4 py-2 rounded-full border text-sm" role="tab" aria-controls="tab-donors">DONORS</button>
-      <button data-tab-target="#tab-impact" class="tab-button px-4 py-2 rounded-full border text-sm" role="tab" aria-controls="tab-impact">IMPACT</button>
+      <button data-tab-target="#tab-level" class="tab-button px-4 py-2 rounded-full bg-forange text-white text-sm" role="tab" aria-controls="tab-level" aria-selected="true">LEVEL OF GIVING</button>
+      <button data-tab-target="#tab-donors" class="tab-button px-4 py-2 rounded-full border border-foundationprimarygreen text-foundationprimarygreen text-sm" role="tab" aria-controls="tab-donors">DONORS</button>
+      <button data-tab-target="#tab-impact" class="tab-button px-4 py-2 rounded-full border border-foundationprimarygreen text-foundationprimarygreen text-sm" role="tab" aria-controls="tab-impact">IMPACT</button>
     </div>
 
     <h3 class="mt-10 text-center text-xl font-semibold text-gray-800">More ways to help</h3>
@@ -230,19 +230,22 @@
       </div>
 
       <div id="tab-donors" class="tab-panel hidden">
-        <div class="max-w-3xl mx-auto">
+        <div class="max-w-6xl mx-auto">
           <% if @recent_donors.present? %>
-            <ul class="space-y-4">
+            <div class="donors-row mt-4 flex gap-4 overflow-x-auto py-2 px-2 -mx-2">
               <% @recent_donors.each do |d| %>
-                <li class="flex items-center justify-between bg-white rounded-md p-3 shadow-sm">
-                  <div>
-                    <div class="text-sm font-medium text-gray-800"><%= d.user.present? ? ([d.user.first_name, d.user.last_name].compact.join(' ')) : (d.email || 'Anonymous') %></div>
-                    <div class="text-xs text-gray-500"><%= number_to_currency(d.amount, unit: '$') %> — <%= time_ago_in_words(d.created_at) %> ago</div>
+                <div class="donor-card bg-white rounded-md p-4 shadow-sm flex-shrink-0 min-w-[220px]">
+                  <div class="flex items-start justify-between">
+                    <div>
+                      <div class="text-sm font-medium text-gray-800"><%= d.user.present? ? ([d.user.first_name, d.user.last_name].compact.join(' ')) : (d.email || 'Anonymous') %></div>
+                      <div class="text-xs text-gray-500 mt-1"><%= number_to_currency(d.amount, unit: '$') %></div>
+                      <div class="text-xs text-gray-400"><%= time_ago_in_words(d.created_at) %> ago</div>
+                    </div>
+                    <div class="text-sm text-forange font-semibold">Thank you</div>
                   </div>
-                  <div class="text-sm text-forange font-semibold">Thank you</div>
-                </li>
+                </div>
               <% end %>
-            </ul>
+            </div>
           <% else %>
             <p class="text-center text-gray-600">No recent donors yet.</p>
           <% end %>

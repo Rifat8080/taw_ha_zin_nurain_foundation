@@ -26,3 +26,4 @@ import "modules/volunteer_user_search";
 import "modules/volunteer_form_toggle";
 import "modules/user_card_dropdown";
 import "modules/project_donation";
+import "modules/tabs_and_donors";

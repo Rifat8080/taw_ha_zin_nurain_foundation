@@ -32,6 +32,9 @@
    <noscript><link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" /></noscript>
    <!-- Font Awesome -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+   <!-- Swiper CSS for donation carousel (non-blocking) -->
+   <link rel="preload" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+   <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" /></noscript>
   </head>
 
    <body class="bg-white font-sans" style="font-family: var(--font-body);">
@@ -548,5 +551,7 @@
 
     <!-- Flowbite JavaScript (deferred) -->
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js" defer></script>
+   <!-- Swiper JS for donation carousel (deferred to avoid blocking) -->
+   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
   </body>
 </html>
