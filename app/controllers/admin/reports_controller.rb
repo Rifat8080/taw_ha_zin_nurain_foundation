@@ -7,7 +7,7 @@ class Admin::ReportsController < ApplicationController
     @end_date = params[:end_date].presence && Date.parse(params[:end_date]) rescue nil
     @project_id = params[:project_id].presence
 
-    donations = Donation.includes(:user, :project).order(created_at: :desc)
+  donations = Donation.includes(:user, :project).order('donations.created_at DESC')
     expenses = Expense.includes(:project).order(expense_date: :desc)
 
     if @project_id.present?
@@ -16,13 +16,13 @@ class Admin::ReportsController < ApplicationController
     end
 
     if @start_date.present?
-      donations = donations.where('created_at >= ?', @start_date.beginning_of_day)
-      expenses = expenses.where('expense_date >= ?', @start_date)
+      donations = donations.where("donations.created_at >= ?", @start_date.beginning_of_day)
+      expenses = expenses.where("expense_date >= ?", @start_date)
     end
 
     if @end_date.present?
-      donations = donations.where('created_at <= ?', @end_date.end_of_day)
-      expenses = expenses.where('expense_date <= ?', @end_date)
+      donations = donations.where("donations.created_at <= ?", @end_date.end_of_day)
+      expenses = expenses.where("expense_date <= ?", @end_date)
     end
 
     @donations = donations.page(params[:page]).per(50)
@@ -36,7 +36,7 @@ class Admin::ReportsController < ApplicationController
       format.html
       format.csv do
         csv_data = Reports::CsvExporter.generate(donations: donations, expenses: expenses)
-        send_data csv_data, filename: "financial_report_#{Time.now.to_date}.csv", type: 'text/csv'
+        send_data csv_data, filename: "financial_report_#{Time.now.to_date}.csv", type: "text/csv"
       end
     end
   end
