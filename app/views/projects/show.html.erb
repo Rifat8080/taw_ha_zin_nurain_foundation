@@ -1,174 +1,199 @@
-<% content_for :title, "Showing project" %>
+<% content_for :title, @project.name.presence || "Showing project" %>
 
-<div class="md:w-2/3 w-full px-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
   <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-600 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
   <% end %>
 
-  <h1 class="font-bold text-4xl">Showing project</h1>
+  <!-- Page title (half foundationprimarygreen, half forange) -->
+  <div class="mb-6 text-center">
+    <% name = @project.name.to_s %>
+    <% chars = name.each_char.to_a %>
+    <% mid = (chars.length / 2.0).ceil %>
+    <% left = chars[0, mid].join %>
+    <% right = chars[mid, chars.length].join %>
+    <h1 class="text-4xl md:text-5xl font-bold tracking-tight">
+      <span class="text-foundationprimarygreen"><%= left %></span><span class="text-forange"><%= right %></span>
+    </h1>
+    <%# Subtitle: prefer explicit subtitle, then tagline, then a short truncated description %>
+    <% subtitle = (@project.respond_to?(:subtitle) && @project.subtitle.present? && @project.subtitle) ||
+                  (@project.respond_to?(:tagline) && @project.tagline.present? && @project.tagline) ||
+                  truncate(strip_tags(@project.description.to_s), length: 140) %>
+    <% if subtitle.present? %>
+      <p class="mt-3 text-lg text-gray-600"><%= subtitle.html_safe %></p>
+    <% end %>
+  </div>
 
-  <div id="<%= dom_id @project %>" class="w-full sm:w-auto my-5 space-y-5">
-  <% if @project.image.attached? %>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+    <!-- Left: media + long description -->
     <div>
-      <strong class="block font-medium mb-1">Image:</strong>
-      <%= image_tag @project.image, class: "w-full h-64 object-cover rounded-lg shadow-md" %>
-    </div>
-  <% end %>
-  <div>
-    <strong class="block font-medium mb-1">Name:</strong>
-    <%= @project.name %>
-  </div>
-  <div>
-    <strong class="block font-medium mb-1">Categories:</strong>
-    <%= @project.categories %>
-  </div>
-  <div>
-    <strong class="block font-medium mb-1">Description:</strong>
-    <%= @project.description %>
-  </div>
-  <div>
-    <strong class="block font-medium mb-1">Status:</strong>
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= @project.active? ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
-      <%= @project.status_text %>
-    </span>
-  </div>
-</div>
-
-
-  <!-- Project Status and Donation Action -->
-  <div class="mt-6 p-4 rounded-lg <%= @project.active? ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200' %>">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center">
-        <div class="w-3 h-3 <%= @project.active? ? 'bg-green-400' : 'bg-red-400' %> rounded-full mr-2"></div>
-        <span class="font-medium <%= @project.active? ? 'text-green-800' : 'text-red-800' %>">
-          <%= @project.status_text %> Project
-        </span>
-      </div>
-      <% if @project.active? %>
-        <%= link_to new_donation_path(project_id: @project.id), 
-            class: "inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200" do %>
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-          </svg>
-          Donate Now
+      <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <% if @project.respond_to?(:video_url) && @project.video_url.present? %>
+          <div class="aspect-video">
+            <iframe class="w-full h-full" src="<%= @project.video_url %>" frameborder="0" allowfullscreen></iframe>
+          </div>
+        <% elsif @project.image.attached? %>
+          <div class="w-full h-96 overflow-hidden">
+            <%# Build a safe src: try variant when available, fall back to blob URL on error or when variants unsupported %>
+              <% src = safe_image_src(@project.image) rescue nil %>
+              <% blob = (url_for(@project.image) rescue nil) %>
+              <% if src.present? %>
+                <%= tag.img src: src, alt: (@project.name || 'Project image'), loading: 'lazy', class: 'w-full h-full object-cover', onerror: (blob ? "this.onerror=null;this.src='#{blob}';" : nil) %>
+              <% elsif blob.present? %>
+                <%= tag.img src: blob, alt: (@project.name || 'Project image'), loading: 'lazy', class: 'w-full h-full object-cover' %>
+              <% else %>
+                <div class="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">No media available</div>
+              <% end %>
+          </div>
+        <% else %>
+          <div class="w-full h-96 bg-gray-100 flex items-center justify-center text-gray-400">No media available</div>
         <% end %>
-      <% else %>
-        <span class="text-red-600 font-medium">Not accepting donations</span>
+      </div>
+
+      <div class="mt-6">
+        <h2 class="text-2xl font-bold text-gray-900"><%= @project.name %></h2>
+        <p class="mt-3 text-gray-700"><%= simple_format(@project.description) %></p>
+      </div>
+    </div>
+
+    <!-- Right: donation card -->
+    <aside class="lg:col-start-2">
+      <div id="donation_card" class="bg-white rounded-lg shadow-lg p-6 lg:sticky lg:top-24">
+        <h3 class="text-xl font-semibold text-gray-900"><%= @project.name %></h3>
+        <p class="text-sm text-gray-600 mt-2"><%= truncate(strip_tags(@project.description.to_s), length: 160) %></p>
+
+        <div class="mt-4">
+          <p class="text-lg font-bold text-gray-900">$<%= @total_donations %> <span class="text-sm font-medium text-gray-500">Raised</span></p>
+        
+        </div>
+
+        <%= form_with model: Donation.new, url: donations_path, local: true, class: "mt-6 space-y-4" do |f| %>
+          <%= f.hidden_field :project_id, value: @project.id %>
+
+          <div>
+            <div class="grid grid-cols-3 gap-3">
+              <% [50, 150, 250, 500].each do |amt| %>
+                <button type="button" data-amount="<%= amt %>" role="button" tabindex="0" aria-pressed="false" class="preset-amount border rounded-md py-3 text-sm font-medium text-gray-700 hover:bg-blue-50">
+                  $<%= amt %>
+                </button>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="flex gap-2">
+            <%= f.number_field :amount, id: "donation_amount", min: 1, placeholder: "Other amount", class: "flex-1 rounded-md border px-3 py-2" %>
+        
+          </div>
+
+          <div>
+            <% if user_signed_in? %>
+              <div class="py-2 px-3 bg-gray-50 rounded-md text-sm text-gray-700">
+                <div class="font-medium"><%= current_user.first_name %> <%= current_user.last_name %></div>
+                <div class="text-xs text-gray-500"><%= current_user.email %></div>
+              </div>
+            <% else %>
+              <%= f.email_field :email, id: "donation_email", placeholder: "Email (required if not signed in)", class: "w-full rounded-md border px-3 py-2" %>
+            <% end %>
+          </div>
+
+          <div>
+            <%= f.submit "DONATE NOW", class: "w-full btn-donate px-4 py-3 font-semibold rounded-md text-white" %>
+          </div>
+        <% end %>
+
+        <p class="mt-3 text-xs text-gray-500">Your donation will help deliver food, shelter and medicine where it’s most needed.</p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Tabs and More ways to help -->
+  <div class="mt-12">
+    <div class="flex items-center gap-4 justify-center">
+      <button class="px-4 py-2 rounded-full bg-blue-800 text-white text-sm">LEVEL OF GIVING</button>
+      <button class="px-4 py-2 rounded-full border text-sm">DONORS</button>
+      <button class="px-4 py-2 rounded-full border text-sm">IMPACT</button>
+    </div>
+
+    <h3 class="mt-10 text-center text-xl font-semibold text-gray-800">More ways to help</h3>
+
+    <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <% 4.times do |i| %>
+        <div class="bg-white rounded-lg shadow p-4">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="text-sm text-gray-500">$<%= [100,150,500,500][i] %> USD</p>
+              <h4 class="mt-2 font-semibold text-gray-800">Feed <%= [10,3,40,50][i] %> Orphans</h4>
+            </div>
+            <div class="text-sm text-gray-400"> <%= [1,1,0,28][i] %> Claimed</div>
+          </div>
+          <p class="mt-3 text-sm text-gray-600">Heartwarming meals prepared with care, including rice, beans, meat, and fresh vegetables.</p>
+          <div class="mt-4">
+            <button class="w-full bg-pink-500 hover:bg-pink-600 text-white rounded-md px-3 py-2 font-semibold">ADD TO GIVING</button>
+          </div>
+        </div>
       <% end %>
     </div>
   </div>
-
-  <!-- Donations Section -->
-  <div class="mt-8 bg-white shadow-lg rounded-lg overflow-hidden">
-    <div class="px-6 py-4 bg-gray-50 border-b">
-      <h2 class="text-2xl font-bold text-gray-900">Donations</h2>
-      <div class="mt-2">
-        <p class="text-lg font-semibold text-green-600">Total Raised: $<%= @total_donations %></p>
-        <p class="text-sm text-gray-600"><%= @donations.count %> donation(s)</p>
-      </div>
-    </div>
-    
-    <% if @donations.any? %>
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Donor</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <% @donations.order(created_at: :desc).each do |donation| %>
-              <tr>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">$<%= donation.amount %></td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><%= donation.user.first_name %> <%= donation.user.last_name %></td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= donation.created_at.strftime("%B %d, %Y") %></td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    <% else %>
-      <div class="px-6 py-8 text-center">
-        <p class="text-gray-500">No donations yet for this project.</p>
-        <% if @project.active? %>
-          <%= link_to "Make the first donation", new_donation_path(project_id: @project.id), class: "mt-2 text-blue-500 hover:text-blue-700 font-medium" %>
-        <% else %>
-          <p class="mt-2 text-red-500 font-medium">This project is not currently accepting donations.</p>
-        <% end %>
-      </div>
-    <% end %>
-  </div>
-
-  <!-- Expenses Section -->
-  <div class="mt-8 bg-white shadow-lg rounded-lg overflow-hidden">
-    <div class="px-6 py-4 bg-gray-50 border-b">
-      <h2 class="text-2xl font-bold text-gray-900">Expenses</h2>
-      <div class="mt-2">
-        <p class="text-lg font-semibold text-red-600">Total Spent: $<%= @total_expenses %></p>
-        <p class="text-sm text-gray-600"><%= @expenses.count %> expense(s)</p>
-      </div>
-    </div>
-    
-    <% if @expenses.any? %>
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <% @expenses.order(expense_date: :desc).each do |expense| %>
-              <tr>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><%= expense.title %></td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">$<%= expense.amount %></td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= expense.expense_date.strftime("%B %d, %Y") %></td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    <% else %>
-      <div class="px-6 py-8 text-center">
-        <p class="text-gray-500">No expenses yet for this project.</p>
-        <%= link_to "Add the first expense", new_expense_path(project_id: @project.id), class: "mt-2 text-blue-500 hover:text-blue-700 font-medium" %>
-      </div>
-    <% end %>
-  </div>
-
-  <!-- Financial Summary -->
-  <div class="mt-8 bg-white shadow-lg rounded-lg overflow-hidden">
-    <div class="px-6 py-4 bg-gray-50 border-b">
-      <h2 class="text-2xl font-bold text-gray-900">Financial Summary</h2>
-    </div>
-    <div class="px-6 py-4">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="text-center">
-          <p class="text-sm text-gray-600">Total Donations</p>
-          <p class="text-2xl font-bold text-green-600">$<%= @total_donations %></p>
-        </div>
-        <div class="text-center">
-          <p class="text-sm text-gray-600">Total Expenses</p>
-          <p class="text-2xl font-bold text-red-600">$<%= @total_expenses %></p>
-        </div>
-        <div class="text-center">
-          <p class="text-sm text-gray-600">Net Balance</p>
-          <% net_balance = @total_donations - @total_expenses %>
-          <p class="text-2xl font-bold <%= net_balance >= 0 ? 'text-green-600' : 'text-red-600' %>">
-            $<%= net_balance %>
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="mt-6">
-    <%= link_to "Edit this project", edit_project_path(@project), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-    <%= link_to "Back to projects", projects_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-    <%= button_to "Destroy this project", @project, method: :delete, form_class: "sm:inline-block mt-2 sm:mt-0 sm:ml-2", class: "w-full rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure?" } %>
-  </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var presets = Array.prototype.slice.call(document.querySelectorAll('.preset-amount'));
+    var amountField = document.getElementById('donation_amount');
+    var form = amountField ? amountField.closest('form') : null;
+
+    function clearActive() {
+      presets.forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+    }
+
+    function setActiveButtonForValue(val) {
+      var matched = null;
+      presets.forEach(function(b){
+        var a = parseFloat(b.getAttribute('data-amount'));
+        if(!isNaN(a) && parseFloat(val) === a) matched = b;
+      });
+      clearActive();
+      if(matched) { matched.classList.add('active'); matched.setAttribute('aria-pressed', 'true'); }
+    }
+
+    presets.forEach(function(btn){
+      // click handler
+      btn.addEventListener('click', function(e){
+        var a = this.getAttribute('data-amount');
+        if(amountField) amountField.value = a;
+        clearActive();
+        this.classList.add('active');
+        this.setAttribute('aria-pressed', 'true');
+        // focus input for accessibility
+        if(amountField) amountField.focus();
+      });
+
+      // keyboard support (Enter / Space)
+      btn.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.click();
+        }
+      });
+    });
+
+    if(amountField) {
+      // when user types custom amount, remove active state unless it matches a preset
+      amountField.addEventListener('input', function(e){
+        var v = this.value ? this.value.toString().trim() : '';
+        if(v === '') { clearActive(); return; }
+        setActiveButtonForValue(v);
+      });
+
+      // initialize state on load
+      if(amountField.value) setActiveButtonForValue(amountField.value);
+    }
+
+    // if form is reset elsewhere, clear active states
+    if(form) {
+      form.addEventListener('reset', function(){
+        clearActive();
+      });
+    }
+  });
+</script>

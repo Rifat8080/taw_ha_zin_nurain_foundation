@@ -107,6 +107,27 @@
   align-items: center;
   justify-content: center;
 }
+
+/* Small helpers for the project show donation card */
+.btn-donate {
+  background: linear-gradient(90deg, #10b981 0%, #06b6d4 100%);
+  color: #fff !important;
+  font-weight: 700;
+  border: none;
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.12);
+}
+
+.preset-amount {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+.preset-amount:hover { background: #f8fafc; }
+.preset-amount.active {
+  background: #eef2ff;
+  border-color: #6366f1;
+}
+
 .btn-donate:hover,
 .btn-donate:focus {
   background-color: rgb(var(--color-forange) / 0.9);
