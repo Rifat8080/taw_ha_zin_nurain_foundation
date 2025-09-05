@@ -67,10 +67,10 @@ class DonationsController < ApplicationController
     extras_json = params.dig(:donation, :extras_json)
 
     main_attrs = donation_params.except(:email).to_h
-  # Remove temporary keys we use only for the request payload so they aren't mass-assigned
-  main_attrs.delete('primary_amount') if main_attrs.key?('primary_amount')
-  main_attrs.delete('extras_json') if main_attrs.key?('extras_json')
-  # If primary_amount provided, use it as the main donation amount; otherwise fall back to donation[:amount]
+    # Remove temporary keys we use only for the request payload so they aren't mass-assigned
+    main_attrs.delete('primary_amount') if main_attrs.key?('primary_amount')
+    main_attrs.delete('extras_json') if main_attrs.key?('extras_json')
+    # If primary_amount provided, use it as the main donation amount; otherwise fall back to donation[:amount]
     if primary_amount.present?
       main_attrs['amount'] = BigDecimal(primary_amount.to_s)
     end
@@ -106,6 +106,7 @@ class DonationsController < ApplicationController
     end
 
     saved = false
+    extras_created = []
     Donation.transaction do
       saved = @donation.save
       # create extras if provided
@@ -116,7 +117,11 @@ class DonationsController < ApplicationController
             next unless ex['amount'].present? && ex['project_id'].present?
             d = Donation.new(amount: ex['amount'], project_id: ex['project_id'])
             d.user = @donation.user
-            d.save
+            if d.save
+              extras_created << d
+            else
+              Rails.logger.warn("Failed to save extra donation for project #{ex['project_id']}: #{d.errors.full_messages.join(', ')}")
+            end
           end
         rescue => e
           Rails.logger.warn("Failed to create extra donations: #{e.message}")
@@ -124,7 +129,7 @@ class DonationsController < ApplicationController
       end
     end
 
-  if saved
+    if saved
       # Notify admins about new donation and the donor themselves
       begin
         admins = User.where(role: "admin")
@@ -155,6 +160,42 @@ class DonationsController < ApplicationController
         )
       rescue => e
         Rails.logger.error("Notification error (donor): #{e.message}")
+      end
+
+      # Notify for any extras created via Add to Giving (admins + donor per extra)
+      if extras_created.any?
+        begin
+          admins = User.where(role: "admin")
+          extras_created.each do |extra_d|
+            admins.find_each do |admin|
+              NotificationService.notify(
+                recipient: admin,
+                actor: extra_d.user,
+                notifiable: extra_d,
+                action: "donation_created",
+                title: "New donation received",
+                body: "#{extra_d.user.full_name} donated $#{extra_d.amount} to #{extra_d.project&.name || 'the foundation'}"
+              )
+            end
+          end
+        rescue => e
+          Rails.logger.error("Notification error (extras admin): #{e.message}")
+        end
+
+        begin
+          extras_created.each do |extra_d|
+            NotificationService.notify(
+              recipient: extra_d.user,
+              actor: extra_d.user,
+              notifiable: extra_d,
+              action: "donation_received",
+              title: "Thank you for your donation",
+              body: "We received your donation of $#{extra_d.amount} to #{extra_d.project&.name || 'the foundation'}."
+            )
+          end
+        rescue => e
+          Rails.logger.error("Notification error (extras donor): #{e.message}")
+        end
       end
 
       if current_user && !@donation.user.created_by_guest_donation
