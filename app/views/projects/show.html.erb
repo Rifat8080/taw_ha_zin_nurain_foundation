@@ -101,14 +101,12 @@
               </div>
             </div>
 
-            <%= form_with model: Donation.new, url: donations_path, local: true, class: "mt-5 space-y-4" do |f| %>
+            <%= form_with model: Donation.new, url: donations_path, local: true, html: { id: 'donation_form' }, class: "mt-5 space-y-4" do |f| %>
               <%= f.hidden_field :project_id, value: @project.id %>
 
-              <div class="flex gap-2">
-                <%= f.number_field :amount, id: "donation_amount", min: 1, placeholder: "Other amount", class: "flex-1 rounded-md border px-3 py-2" %>
-                <% unless user_signed_in? %>
-                  <%= f.select :currency, [['USD', 'USD']], {}, class: "w-28 rounded-md border px-2 py-2" %>
-                <% end %>
+              <div>
+                <!-- Other amount input (user-entered) -->
+                <%= f.number_field :amount, id: 'donation_amount', placeholder: 'Other amount', min: 1, step: 1, class: 'w-full rounded-md border px-3 py-2' %>
               </div>
 
               <div>
@@ -121,7 +119,35 @@
                   <%= f.email_field :email, id: "donation_email", placeholder: "Email (required if not signed in)", class: "w-full rounded-md border px-3 py-2" %>
                 <% end %>
               </div>
+ 
+              <!-- Payment method selection -->
+              <div>
+                <p class="text-sm font-medium text-gray-700">Payment method</p>
+                <div class="mt-2 flex gap-3">
+                  <label class="inline-flex items-center gap-2">
+                    <%= f.radio_button :payment_method, 'online', checked: true, class: 'payment-method-radio accent-forange' %>
+                    <span class="text-sm text-forange">Online payment</span>
+                  </label>
 
+                  <label class="inline-flex items-center gap-2">
+                    <%= f.radio_button :payment_method, 'manual_transaction', class: 'payment-method-radio accent-forange' %>
+                    <span class="text-sm text-forange">Manual (transaction id)</span>
+                  </label>
+
+                  <% if user_signed_in? && current_user.role == 'admin' %>
+                    <label class="inline-flex items-center gap-2">
+                      <%= f.radio_button :payment_method, 'manual_cash', class: 'payment-method-radio accent-forange' %>
+                      <span class="text-sm text-forange">Cash (manual - admin)</span>
+                    </label>
+                  <% end %>
+                </div>
+
+                <div id="transaction_wrap" class="hidden mt-2">
+                  <%= f.text_field :transaction_id, id: 'donation_transaction_id', placeholder: 'Transaction ID (if applicable)', class: 'w-full rounded-md border px-3 py-2' %>
+                </div>
+
+                <%= f.hidden_field :manual, value: false, id: 'donation_manual_flag' %>
+              </div>
               <div>
                 <%= f.submit "DONATE NOW", class: "w-full btn-donate px-4 py-3 font-semibold rounded-md text-white" %>
               </div>
@@ -164,64 +190,4 @@
   </div>
 </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var presets = Array.prototype.slice.call(document.querySelectorAll('.preset-amount'));
-    var amountField = document.getElementById('donation_amount');
-    var form = amountField ? amountField.closest('form') : null;
-
-    function clearActive() {
-      presets.forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
-    }
-
-    function setActiveButtonForValue(val) {
-      var matched = null;
-      presets.forEach(function(b){
-        var a = parseFloat(b.getAttribute('data-amount'));
-        if(!isNaN(a) && parseFloat(val) === a) matched = b;
-      });
-      clearActive();
-      if(matched) { matched.classList.add('active'); matched.setAttribute('aria-pressed', 'true'); }
-    }
-
-    presets.forEach(function(btn){
-      // click handler
-      btn.addEventListener('click', function(e){
-        var a = this.getAttribute('data-amount');
-        if(amountField) amountField.value = a;
-        clearActive();
-        this.classList.add('active');
-        this.setAttribute('aria-pressed', 'true');
-        // focus input for accessibility
-        if(amountField) amountField.focus();
-      });
-
-      // keyboard support (Enter / Space)
-      btn.addEventListener('keydown', function(e){
-        if(e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          this.click();
-        }
-      });
-    });
-
-    if(amountField) {
-      // when user types custom amount, remove active state unless it matches a preset
-      amountField.addEventListener('input', function(e){
-        var v = this.value ? this.value.toString().trim() : '';
-        if(v === '') { clearActive(); return; }
-        setActiveButtonForValue(v);
-      });
-
-      // initialize state on load
-      if(amountField.value) setActiveButtonForValue(amountField.value);
-    }
-
-    // if form is reset elsewhere, clear active states
-    if(form) {
-      form.addEventListener('reset', function(){
-        clearActive();
-      });
-    }
-  });
-</script>
+<!-- JavaScript for donation card moved to app/javascript/modules/project_donation.js and loaded via importmap -->
