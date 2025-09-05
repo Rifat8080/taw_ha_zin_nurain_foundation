@@ -62,7 +62,20 @@ class DonationsController < ApplicationController
   end
 
   def create
-    @donation = Donation.new(donation_params.except(:email))
+    # We accept primary_amount (for the current show page project) and extras_json (array of {project_id, amount})
+    primary_amount = params.dig(:donation, :primary_amount)
+    extras_json = params.dig(:donation, :extras_json)
+
+    main_attrs = donation_params.except(:email).to_h
+  # Remove temporary keys we use only for the request payload so they aren't mass-assigned
+  main_attrs.delete('primary_amount') if main_attrs.key?('primary_amount')
+  main_attrs.delete('extras_json') if main_attrs.key?('extras_json')
+  # If primary_amount provided, use it as the main donation amount; otherwise fall back to donation[:amount]
+    if primary_amount.present?
+      main_attrs['amount'] = BigDecimal(primary_amount.to_s)
+    end
+
+    @donation = Donation.new(main_attrs)
 
     if current_user
       @donation.user = current_user
@@ -92,7 +105,26 @@ class DonationsController < ApplicationController
       end
     end
 
-    if @donation.save
+    saved = false
+    Donation.transaction do
+      saved = @donation.save
+      # create extras if provided
+      if saved && extras_json.present?
+        begin
+          extras = JSON.parse(extras_json) rescue []
+          extras.each do |ex|
+            next unless ex['amount'].present? && ex['project_id'].present?
+            d = Donation.new(amount: ex['amount'], project_id: ex['project_id'])
+            d.user = @donation.user
+            d.save
+          end
+        rescue => e
+          Rails.logger.warn("Failed to create extra donations: #{e.message}")
+        end
+      end
+    end
+
+  if saved
       # Notify admins about new donation and the donor themselves
       begin
         admins = User.where(role: "admin")
@@ -163,7 +195,7 @@ class DonationsController < ApplicationController
   end
 
   def donation_params
-    params.require(:donation).permit(:amount, :project_id, :email)
+    params.require(:donation).permit(:amount, :project_id, :email, :primary_amount, :extras_json)
   end
 
   def find_or_create_donor(email)

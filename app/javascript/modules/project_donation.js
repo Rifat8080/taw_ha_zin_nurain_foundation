@@ -89,24 +89,84 @@ function initDonationCard() {
       });
     }
 
-    // Add-to-giving buttons in the carousel: add their amount to current donation amount
+    // Add-to-giving logic: track primary amount (for this show page's project) and extras for other projects
     var addButtons = Array.prototype.slice.call(document.querySelectorAll('.add-to-giving'));
+    // initial hidden fields
+    var primaryHidden = document.getElementById('donation_primary_amount');
+    var extrasHidden = document.getElementById('donation_extras_json');
+    var totalDisplay = document.getElementById('donation_total_value');
+
+    function parseNumber(v){ return parseFloat((v||'').toString().replace(/[^0-9.-]+/g,'')) || 0; }
+
+    // read primary project id from existing hidden field (form renders project_id by default)
+    var formEl = document.getElementById('donation_form');
+    var primaryProjectInput = formEl ? formEl.querySelector('input[name="donation[project_id]"]') : null;
+    var primaryProjectId = primaryProjectInput ? primaryProjectInput.value : null;
+
+    // helpers to update totals and hidden payloads
+    function readPrimaryAmountFromUI(){
+      // the amount input represents the primary donation amount by default
+      return parseNumber(amountField ? amountField.value : (primaryHidden ? primaryHidden.value : 0));
+    }
+
+    function getExtras(){
+      try { return extrasHidden && extrasHidden.value ? JSON.parse(extrasHidden.value) : []; } catch(e){ return []; }
+    }
+
+    function setExtras(arr){ if(extrasHidden) extrasHidden.value = JSON.stringify(arr); }
+
+    function updatePrimaryHidden(){ if(primaryHidden) primaryHidden.value = readPrimaryAmountFromUI(); }
+
+    function updateTotalDisplay(){
+      var primary = readPrimaryAmountFromUI();
+      var extras = getExtras().reduce(function(sum, it){ return sum + (parseNumber(it.amount) || 0); }, 0);
+      var total = Math.round((primary + extras) * 100) / 100;
+      if(totalDisplay) totalDisplay.textContent = total.toString();
+    }
+
+    // keep hidden fields in sync when user types/selects amount
+    if(amountField) {
+      amountField.addEventListener('input', function(){ updatePrimaryHidden(); updateTotalDisplay(); });
+      // initialize
+      updatePrimaryHidden();
+    }
+
     addButtons.forEach(function(btn){
       btn.addEventListener('click', function(e){
-        var amt = parseFloat(this.getAttribute('data-amount')) || 0;
-        if(!amountField) {
-          amountField = document.getElementById('donation_amount');
+        var amt = parseNumber(this.getAttribute('data-amount')) || 0;
+        var btnPid = this.getAttribute('data-project-id') || '';
+
+        // If this add-to-giving targets the same project as the primary project, add it to the primary amount
+        if(primaryProjectId && btnPid && btnPid === primaryProjectId.toString()){
+          // treat as primary: increment amountField
+          if(!amountField) amountField = document.getElementById('donation_amount');
+          if(amountField){
+            var current = parseNumber(amountField.value);
+            amountField.value = (current + amt).toString();
+            amountField.dispatchEvent(new Event('input', { bubbles: true }));
+          }
+        } else {
+          // add as an extra for another project
+          var extras = getExtras();
+          // try to find existing extras entry for this project id (empty string allowed for placeholders)
+          var found = null;
+          if(btnPid !== ''){
+            found = extras.find(function(x){ return x.project_id && x.project_id.toString() === btnPid.toString(); });
+          }
+          if(found){ found.amount = (parseNumber(found.amount) + amt); }
+          else { extras.push({ project_id: btnPid || null, amount: amt }); }
+          setExtras(extras);
+
+          // Also increment visible total but do not change primary amount input
+          // (we show total in donation_total_value)
         }
-        if(amountField) {
-          var current = parseFloat((amountField.value || '').toString().replace(/[^0-9.-]+/g, '')) || 0;
-          amountField.value = (current + amt).toString();
-          // trigger input event to update presets
-          var ev = new Event('input', { bubbles: true });
-          amountField.dispatchEvent(ev);
-          // scroll to donation form for clarity
-          var formEl = amountField.closest('form');
-          if(formEl) formEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
+
+        // scroll to donation form and refresh displays
+        if(!amountField) amountField = document.getElementById('donation_amount');
+        var formScroll = amountField ? amountField.closest('form') : null;
+        if(formScroll) formScroll.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        updatePrimaryHidden();
+        updateTotalDisplay();
       });
     });
 
