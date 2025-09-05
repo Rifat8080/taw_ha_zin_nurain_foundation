@@ -25,6 +25,9 @@
   <!-- Project Content -->
   <div class="flex-1 flex flex-col p-6 gap-2">
     <h3 class="text-2xl font-bold text-gray-900 mb-1 group-hover:text-foundationprimarygreen transition-colors"><%= project.name %></h3>
+    <% if project.donation_title.present? %>
+      <p class="text-foundationprimarygreen font-medium mb-1"><%= project.donation_title %></p>
+    <% end %>
     <p class="text-gray-600 mb-2 line-clamp-3 text-base"><%= project.description %></p>
 
     <%# Project metrics: Total Donations, Total Expenses, Balance, Donors %>

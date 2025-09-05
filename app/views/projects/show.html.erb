@@ -59,8 +59,8 @@
     <!-- Right: donation card -->
     <aside class="lg:col-start-2">
       <div id="donation_card" class="bg-white rounded-lg shadow-lg p-6 lg:sticky lg:top-24">
-        <h3 class="text-xl font-semibold text-gray-900"><%= @project.name %></h3>
-        <p class="text-sm text-gray-600 mt-2"><%= truncate(strip_tags(@project.description.to_s), length: 160) %></p>
+  <h3 class="text-xl font-semibold text-gray-900"><%= @project.donation_title.presence || @project.name %></h3>
+  <p class="text-sm text-gray-600 mt-2"><%= @project.donation_subtitle.presence || truncate(strip_tags(@project.description.to_s), length: 160) %></p>
 
         <div class="mt-4">
           <p class="text-lg font-bold text-gray-900">$<%= @total_donations %> <span class="text-sm font-medium text-gray-500">Raised</span></p>

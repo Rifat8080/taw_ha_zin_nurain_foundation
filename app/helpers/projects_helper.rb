@@ -2,11 +2,11 @@ module ProjectsHelper
   # Returns a safe image URL for an ActiveStorage attachment.
   # Tries to generate a variant URL when supported; falls back to the blob URL.
   # Caches the result briefly to avoid repeated variant generation.
-  def safe_image_src(attachment, variant: { resize_to_limit: [1200, 720] })
+  def safe_image_src(attachment, variant: { resize_to_limit: [ 1200, 720 ] })
     return nil unless attachment&.attached?
 
     blob = attachment.blob
-    cache_key = ["safe_image_src", blob.signed_id, variant].join("/") rescue nil
+    cache_key = [ "safe_image_src", blob.signed_id, variant ].join("/") rescue nil
 
     if cache_key && defined?(Rails) && Rails.respond_to?(:cache)
       Rails.cache.fetch(cache_key, expires_in: 5.minutes) { compute_safe_image_src(attachment, variant) }

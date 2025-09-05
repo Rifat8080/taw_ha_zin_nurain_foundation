@@ -288,6 +288,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_090000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "icon"
+    t.string "donation_title"
+    t.text "donation_subtitle"
     t.index ["created_at"], name: "index_active_projects_on_created_at", where: "(is_active = true)"
     t.index ["created_at"], name: "index_projects_on_created_at"
     t.index ["is_active", "created_at"], name: "index_projects_on_active_and_created_at"
