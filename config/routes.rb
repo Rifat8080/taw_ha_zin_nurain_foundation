@@ -29,6 +29,8 @@ Rails.application.routes.draw do
   # Maps /admin/users routes to the top-level UsersController so admin flows post to /admin/users
   namespace :admin do
     resources :users, only: [ :index, :show, :new, :create, :edit, :update, :destroy ], controller: "/users"
+  # Admin financial reports: donations & expenses tracking, filtering and CSV export
+  get 'reports', to: 'reports#index', as: 'reports'
   end
 
   resources :expenses

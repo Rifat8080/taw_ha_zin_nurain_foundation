@@ -260,6 +260,14 @@
                    <span class="flex-1 ms-3 whitespace-nowrap">Expenses</span>
                 <% end %>
              </li>
+             <% if current_user&.role == 'admin' %>
+               <li>
+                  <%= link_to admin_reports_path, class: "sidebar-link ".dup.concat(current_page?(admin_reports_path) ? ' sidebar-link-active' : '') do %>
+                     <i class="fa-solid fa-file-invoice-dollar sidebar-icon" aria-hidden="true"></i>
+                     <span class="flex-1 ms-3 whitespace-nowrap">Reports</span>
+                  <% end %>
+               </li>
+             <% end %>
 
                       <div class="w-full py-2">
                          <h6 class="text-xs tracking-wide font-semibold uppercase text-white/90">Preference</h6>

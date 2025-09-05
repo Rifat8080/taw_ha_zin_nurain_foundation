@@ -90,6 +90,38 @@
               </div>
             <% end %>
 
+            <% if current_user&.role == 'admin' %>
+              <!-- Project accounting summary (donations, expenses, net) -->
+              <div class="mt-4 bg-gray-50 border border-gray-100 rounded-md p-3 sm:p-4">
+                <% donations_total = (@project.donations.sum(:amount) || 0) %>
+                <% expenses_total = (@project.respond_to?(:expenses) ? @project.expenses.sum(:amount) : 0) || 0 %>
+                <% net_balance = donations_total - expenses_total %>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
+                  <div class="flex flex-col">
+                    <span class="text-xs text-gray-500">Donations</span>
+                    <span class="text-lg font-semibold text-foundationprimarygreen"><%= number_to_currency(donations_total || 0) %></span>
+                  </div>
+
+                  <div class="flex flex-col">
+                    <span class="text-xs text-gray-500">Expenses</span>
+                    <span class="text-lg font-semibold text-red-600"><%= number_to_currency(expenses_total || 0) %></span>
+                  </div>
+
+                  <div class="flex flex-col text-right">
+                    <span class="text-xs text-gray-500">Net balance</span>
+                    <span class="text-lg font-semibold <%= net_balance >= 0 ? 'text-foundationprimarygreen' : 'text-red-600' %>"><%= number_to_currency(net_balance || 0) %></span>
+                  </div>
+                </div>
+
+                <div class="mt-3 text-xs text-gray-500">
+                  <span>Last updated: <%= (@project.updated_at || Time.current).to_date %></span>
+                  <span class="mx-2">•</span>
+                  <%= link_to 'View full accounting', admin_reports_path(project_id: @project.id), class: 'text-sm text-forange hover:underline' %>
+                </div>
+              </div>
+            <% end %>
+
             <!-- Preset amounts -->
             <div class="mt-5">
               <div class="grid grid-cols-3 gap-2 sm:gap-3">
