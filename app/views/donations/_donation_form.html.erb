@@ -1,5 +1,4 @@
-<%= form_with(model: donation, local: true, class: "space-y-6") do |form| %>
-
+<%= form_with(model: donation, local: true, html: { class: 'donation-form space-y-6', id: 'donation_form', data: (local_assigns[:primary] ? { primary: true } : {}) }) do |form| %>
   <% if donation.errors.any? %>
     <div id="error_explanation" class="rounded-md bg-red-50 border border-red-100 p-4">
       <div class="flex items-start gap-3">
@@ -15,106 +14,148 @@
       </div>
     </div>
   <% end %>
+  <div class="w-full">
+        <h1 class="text-4xl md:text-5xl font-bold text-foundationprimarygreen tracking-tight text-center">
+          Live <span class="text-forange">QR</span> Scanner
+        </h1>
+        <p class="mt-2 text-lg text-gray-700 text-center">Fast check-ins, meals, breaks, and re-entry — streamlined for the team.</p>
+      </div>
 
-  <div class="bg-white border border-foundationprimarygreen/10 rounded-lg shadow-lg p-6">
-    <div class="mb-4 text-center">
-      <h2 class="text-3xl font-bold">
-        <span class="text-foundationprimarygreen"><%= donation.persisted? ? "Edit" : "New" %></span>
-        <span class="text-forange"> Donation</span>
-      </h2>
-      <p class="mt-2 text-sm text-gray-500">Create or update a donation. Provide donor information and select a project to support.</p>
+  <div class="rounded-lg overflow-hidden shadow-lg">
+    <div class="p-4 bg-foundationprimarygreen">
+      <% form_title_val = local_assigns[:form_title] || donation.project&.name.presence || (donation.persisted? ? 'Edit Donation' : 'Donate') %>
+      <% form_subtitle_val = local_assigns[:form_subtitle] || donation.project&.donation_subtitle.presence || '' %>
+      <h3 class="text-3xl md:text-4xl font-bold text-white"><%= form_title_val %></h3>
+      <% if form_subtitle_val.present? %>
+        <p class="mt-1 text-lg text-white/90"><%= form_subtitle_val %></p>
+      <% end %>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Left: main inputs -->
-      <div class="lg:col-span-2 space-y-4">
+    <div class="p-6 bg-white">
+      <div class="flex items-baseline justify-between">
         <div>
-          <%= form.label :amount, class: "block text-sm font-medium text-foundationprimarygreen" %>
-          <div class="mt-1">
-            <div class="flex rounded-md shadow-sm">
-              <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-600">৳</span>
-              <%= form.number_field :amount, step: 0.01, min: 0, class: ["block w-full rounded-r-md sm:text-sm px-3 py-2 border", {"border-gray-300 focus:border-foundationprimarygreen focus:ring-foundationprimarygreen": donation.errors[:amount].none?, "border-red-400 focus:ring-red-500": donation.errors[:amount].any?}] %>
+          <p class="text-sm text-gray-500">Raised so far</p>
+          <% raised = donation.project ? donation.project.donations.sum(:amount) : (defined?(@total_donations) ? @total_donations : 0) %>
+          <p class="text-2xl font-extrabold text-gray-900"><%= number_to_currency(raised || 0) %></p>
+        </div>
+      </div>
+
+      <% if donation.project %>
+        <% donations_total = donation.project.donations.sum(:amount) rescue 0 %>
+        <% expenses_total = donation.project.respond_to?(:expenses) ? donation.project.expenses.sum(:amount) : 0 rescue 0 %>
+        <% net_balance = donations_total - expenses_total %>
+        <div class="mt-4 bg-gray-50 border border-gray-100 rounded-md p-3 sm:p-4">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
+            <div>
+              <span class="text-xs text-gray-500">Donations</span>
+              <div class="text-lg font-semibold text-foundationprimarygreen"><%= number_to_currency(donations_total || 0) %></div>
+            </div>
+            <div>
+              <span class="text-xs text-gray-500">Expenses</span>
+              <div class="text-lg font-semibold text-red-600"><%= number_to_currency(expenses_total || 0) %></div>
+            </div>
+            <div class="text-right">
+              <span class="text-xs text-gray-500">Net balance</span>
+              <div class="text-lg font-semibold <%= net_balance >= 0 ? 'text-foundationprimarygreen' : 'text-red-600' %>"><%= number_to_currency(net_balance || 0) %></div>
             </div>
           </div>
-          <% if donation.errors[:amount].any? %>
-            <p class="mt-1 text-sm text-red-600"><%= donation.errors[:amount].first %></p>
-          <% else %>
-            <p class="mt-1 text-sm text-gray-400">Enter the donation amount in BDT.</p>
+          <div class="mt-3 text-xs text-gray-500">
+            <span>Last updated: <%= (donation.project&.updated_at || Time.current).to_date %></span>
+            <span class="mx-2">•</span>
+            <% if current_user&.role == 'admin' && donation.project %>
+              <%= link_to 'View full accounting', admin_reports_path(project_id: donation.project.id), class: 'text-sm text-forange hover:underline' %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Preset amounts -->
+      <div class="mt-5">
+        <div class="grid grid-cols-3 gap-2 sm:gap-3">
+          <% [50, 150, 250, 500].each do |amt| %>
+            <button type="button" data-amount="<%= amt %>" role="button" tabindex="0" aria-pressed="false" class="preset-amount border rounded-md py-2 sm:py-3 text-sm font-medium text-gray-700 hover:bg-forange/10 px-2 sm:px-3">$<span class="font-semibold"><%= amt %></span></button>
           <% end %>
         </div>
+      </div>
 
-        <% unless current_user %>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <%= form.label :first_name, class: "block text-sm font-medium text-foundationprimarygreen" %>
-              <div class="mt-1">
-                <%= form.text_field :first_name, class: ["block w-full rounded-md sm:text-sm px-3 py-2 border", {"border-gray-300 focus:border-foundationprimarygreen focus:ring-foundationprimarygreen": donation.errors[:first_name].none?, "border-red-400 focus:ring-red-500": donation.errors[:first_name].any?}] %>
+      <!-- Amount input and hidden payloads -->
+      <div class="mt-4">
+        <div class="space-y-3">
+          <% if donation.project.present? %>
+            <%= form.hidden_field :project_id, value: donation.project.id %>
+          <% else %>
+            <% if defined?(projects) && projects.present? %>
+              <div>
+                <%= form.label :project_id, "Project", class: 'block text-sm font-medium text-gray-700' %>
+                <div class="mt-1">
+                  <%= form.select :project_id, options_from_collection_for_select(projects, :id, :name, donation.project_id), { include_blank: 'Select a project to support' }, class: 'w-full rounded-md border px-3 py-2', required: true %>
+                </div>
               </div>
-            </div>
-
-            <div>
-              <%= form.label :last_name, class: "block text-sm font-medium text-foundationprimarygreen" %>
-              <div class="mt-1">
-                <%= form.text_field :last_name, class: ["block w-full rounded-md sm:text-sm px-3 py-2 border", {"border-gray-300 focus:border-foundationprimarygreen focus:ring-foundationprimarygreen": donation.errors[:last_name].none?, "border-red-400 focus:ring-red-500": donation.errors[:last_name].any?}] %>
-              </div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <%= form.label :email, class: "block text-sm font-medium text-foundationprimarygreen" %>
-              <div class="mt-1">
-                <%= form.email_field :email, class: ["block w-full rounded-md sm:text-sm px-3 py-2 border", {"border-gray-300 focus:border-foundationprimarygreen focus:ring-foundationprimarygreen": donation.errors[:email].none?, "border-red-400 focus:ring-red-500": donation.errors[:email].any?}] %>
-              </div>
-            </div>
-
-            <div>
-              <%= form.label :phone_number, class: "block text-sm font-medium text-foundationprimarygreen" %>
-              <div class="mt-1">
-                <%= form.telephone_field :phone_number, class: ["block w-full rounded-md sm:text-sm px-3 py-2 border", {"border-gray-300 focus:border-foundationprimarygreen focus:ring-foundationprimarygreen": donation.errors[:phone_number].none?, "border-red-400 focus:ring-red-500": donation.errors[:phone_number].any?}] %>
-              </div>
-            </div>
-          </div>
+            <% else %>
+              <%= form.hidden_field :project_id, value: nil %>
+            <% end %>
+          <% end %>
 
           <div>
-            <%= form.label :address, class: "block text-sm font-medium text-foundationprimarygreen" %>
-            <div class="mt-1">
-              <%= form.text_area :address, rows: 3, class: ["block w-full rounded-md sm:text-sm px-3 py-2 border", {"border-gray-300 focus:border-foundationprimarygreen focus:ring-foundationprimarygreen": donation.errors[:address].none?, "border-red-400 focus:ring-red-500": donation.errors[:address].any?}] %>
+            <label for="donation_amount" class="sr-only">Amount</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-600">$</span>
+              <%= form.number_field :amount, id: 'donation_amount', name: 'donation[amount]', placeholder: 'Other amount', min: 1, step: 1, required: true, value: (donation.amount.presence || ''), class: 'w-full rounded-md border px-3 py-2 pl-8' %>
             </div>
-            <p class="mt-1 text-sm text-gray-400">Optional: donor address for receipt purposes.</p>
+          </div>
+
+          <%= hidden_field_tag 'donation[primary_amount]', nil, id: 'donation_primary_amount' %>
+          <%= hidden_field_tag 'donation[extras_json]', nil, id: 'donation_extras_json' %>
+          <div class="text-sm text-gray-600">Total: $<span id="donation_total_value"><%= number_with_precision(0, precision: 0) %></span></div>
+        </div>
+      </div>
+
+      <!-- Donor / email -->
+      <div class="mt-4">
+        <% if user_signed_in? %>
+          <div class="py-2 px-3 bg-gray-50 rounded-md text-sm text-gray-700">
+            <div class="font-medium"><%= current_user.first_name %> <%= current_user.last_name %></div>
+            <div class="text-xs text-gray-500"><%= current_user.email %></div>
           </div>
         <% else %>
-          <div class="bg-green-50 border border-green-200 rounded-md p-3">
-            <p class="text-sm text-green-800"><strong>Donating as:</strong> <%= current_user.full_name %></p>
-            <p class="text-xs text-gray-600"><%= current_user.email %></p>
+          <div>
+            <%= form.email_field :email, id: 'donation_email', placeholder: 'Email (required if not signed in)', class: 'w-full rounded-md border px-3 py-2' %>
           </div>
         <% end %>
       </div>
 
-      <!-- Right: project select & auxiliary -->
-      <div class="space-y-4">
-        <div>
-          <%= form.label :project_id, "Project", class: "block text-sm font-medium text-foundationprimarygreen" %>
-          <div class="mt-1">
-            <%= form.select :project_id, options_from_collection_for_select(projects, :id, :name, donation.project_id), { include_blank: 'Select a project to support' }, class: ["block w-full rounded-md sm:text-sm px-3 py-2 border bg-white", {"border-gray-300 focus:border-foundationprimarygreen focus:ring-foundationprimarygreen": donation.errors[:project_id].none?, "border-red-400 focus:ring-red-500": donation.errors[:project_id].any?}] %>
-          </div>
-          <% if projects.empty? %>
-            <p class="mt-2 text-sm text-red-600">No projects are currently accepting donations.</p>
-          <% else %>
-            <p class="mt-2 text-sm text-gray-500">Only active projects accepting donations are shown.</p>
+      <!-- Payment method -->
+      <div class="mt-4">
+        <p class="text-sm font-medium text-gray-700">Payment method</p>
+        <div class="mt-2 flex gap-3 items-center">
+          <label class="inline-flex items-center gap-2">
+            <%= form.radio_button :payment_method, 'online', checked: true, class: 'payment-method-radio accent-forange' %>
+            <span class="text-sm text-forange">Online payment</span>
+          </label>
+          <label class="inline-flex items-center gap-2">
+            <%= form.radio_button :payment_method, 'manual_transaction', class: 'payment-method-radio accent-forange' %>
+            <span class="text-sm text-forange">Manual (transaction id)</span>
+          </label>
+          <% if user_signed_in? && current_user.role == 'admin' %>
+            <label class="inline-flex items-center gap-2">
+              <%= form.radio_button :payment_method, 'manual_cash', class: 'payment-method-radio accent-forange' %>
+              <span class="text-sm text-forange">Cash (manual - admin)</span>
+            </label>
           <% end %>
         </div>
 
-        <div class="border border-dashed border-forange/20 rounded-md p-4 text-sm bg-forange/5">
-          <p class="font-medium text-foundationprimarygreen">Donation receipt</p>
-          <p class="mt-1 text-gray-600">We will send a receipt to the provided email address.</p>
+        <div id="transaction_wrap" class="hidden mt-2">
+          <%= form.text_field :transaction_id, id: 'donation_transaction_id', placeholder: 'Transaction ID (if applicable)', class: 'w-full rounded-md border px-3 py-2' %>
         </div>
 
-        <div class="mt-6 flex flex-col sm:flex-row items-center justify-end gap-3">
-          <%= link_to 'Cancel', donations_path, class: "w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-forange/30 rounded-md bg-white text-sm text-foundationprimarygreen hover:bg-forange/10" if defined?(show_cancel) && show_cancel %>
-          <%= form.submit submit_text || (donation.persisted? ? 'Update Donation' : 'Create Donation'), class: "w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 rounded-md text-sm text-white font-medium shadow-md btn-primary" %>
-        </div>
+        <%= form.hidden_field :manual, value: false, id: 'donation_manual_flag' %>
       </div>
+
+      <div class="mt-4">
+        <%= form.submit (donation.persisted? ? 'Update Donation' : 'DONATE NOW'), class: 'w-full btn-donate px-4 py-3 font-semibold rounded-md text-white' %>
+      </div>
+
+      <p class="mt-3 text-xs text-gray-500">Your donation will help deliver food, shelter and medicine where it’s most needed.</p>
     </div>
   </div>
 

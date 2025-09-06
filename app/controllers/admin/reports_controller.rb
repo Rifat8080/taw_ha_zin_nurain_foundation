@@ -7,7 +7,7 @@ class Admin::ReportsController < ApplicationController
     @end_date = params[:end_date].presence && Date.parse(params[:end_date]) rescue nil
     @project_id = params[:project_id].presence
 
-  donations = Donation.includes(:user, :project).order('donations.created_at DESC')
+  donations = Donation.includes(:user, :project).order("donations.created_at DESC")
     expenses = Expense.includes(:project).order(expense_date: :desc)
 
     if @project_id.present?

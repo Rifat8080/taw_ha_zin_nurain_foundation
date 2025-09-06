@@ -24,7 +24,11 @@ function initDonationCard() {
     presets.forEach(function(btn){
       btn.addEventListener('click', function(e){
         var a = this.getAttribute('data-amount');
-        if(amountField) amountField.value = a;
+        if(amountField) {
+          amountField.value = a;
+          // ensure input handlers run (update hidden primary amount and totals)
+          amountField.dispatchEvent(new Event('input', { bubbles: true }));
+        }
         clearActive();
         this.classList.add('active');
         this.setAttribute('aria-pressed', 'true');

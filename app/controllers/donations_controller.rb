@@ -216,7 +216,23 @@ class DonationsController < ApplicationController
   end
 
   def update
-    if @donation.update(donation_params)
+    # Prevent JS-only temporary keys from being mass-assigned (primary_amount, extras_json)
+    primary_amount = params.dig(:donation, :primary_amount)
+    extras_json = params.dig(:donation, :extras_json)
+
+    main_attrs = donation_params.to_h
+    main_attrs.delete("primary_amount") if main_attrs.key?("primary_amount")
+    main_attrs.delete("extras_json") if main_attrs.key?("extras_json")
+    # If primary_amount provided, use it as the canonical donation amount
+    if primary_amount.present?
+      begin
+        main_attrs["amount"] = BigDecimal(primary_amount.to_s)
+      rescue => _e
+        main_attrs["amount"] = primary_amount
+      end
+    end
+
+    if @donation.update(main_attrs)
       redirect_to @donation, notice: "Donation was successfully updated."
     else
       @projects = Project.active.order(:name)
