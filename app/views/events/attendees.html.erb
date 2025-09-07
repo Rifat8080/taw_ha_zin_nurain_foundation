@@ -3,32 +3,60 @@
 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
   <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
     <div class="p-6">
-      <div class="flex justify-between items-center mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900"><%= @event.name %> - Attendees</h1>
-          <p class="text-gray-600 mt-1">Event Date: <%= @event.start_date.strftime("%B %d, %Y at %I:%M %p") %></p>
+          <h1 class="text-2xl md:text-3xl font-extrabold text-foundationprimarygreen"><%= @event.name %> <span class="text-base font-medium text-gray-500">— Attendees</span></h1>
+          <p class="text-sm text-gray-600 mt-1">Event Date: <%= @event.start_date.strftime("%B %d, %Y at %I:%M %p") %></p>
         </div>
-        <%= link_to "Back to Event", @event, 
-            class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
+        <div class="flex items-center gap-3">
+          <%= link_to "Back to Event", @event, class: "inline-flex items-center gap-2 px-4 py-2 rounded-md border border-[rgba(var(--color-foundationprimarygreen),0.12)] text-sm font-medium text-foundationprimarygreen bg-white hover:bg-foundationprimarygreen/5" %>
+        </div>
       </div>
 
       <!-- Statistics -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div class="bg-blue-50 p-4 rounded-lg">
-          <div class="text-2xl font-bold text-blue-600"><%= @event.tickets.count %></div>
-          <div class="text-sm text-blue-800">Total Tickets</div>
+        <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex items-center gap-3">
+          <div class="p-2 rounded-md bg-foundationprimarygreen/10 text-foundationprimarygreen">
+            <!-- ticket icon -->
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 14l2-2 4 4"/></svg>
+          </div>
+          <div>
+            <div class="text-xl font-bold text-gray-900"><%= @event.tickets.count %></div>
+            <div class="text-sm text-gray-500">Total Tickets</div>
+          </div>
         </div>
-        <div class="bg-green-50 p-4 rounded-lg">
-          <div class="text-2xl font-bold text-green-600"><%= @event.tickets.where(status: 'active').count %></div>
-          <div class="text-sm text-green-800">Active Tickets</div>
+
+        <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex items-center gap-3">
+          <div class="p-2 rounded-md bg-foundationprimarygreen/10 text-foundationprimarygreen">
+            <!-- active icon -->
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <div>
+            <div class="text-xl font-bold text-gray-900"><%= @event.tickets.where(status: 'active').count %></div>
+            <div class="text-sm text-gray-500">Active Tickets</div>
+          </div>
         </div>
-        <div class="bg-yellow-50 p-4 rounded-lg">
-          <div class="text-2xl font-bold text-yellow-600"><%= @event.tickets.where(status: 'used').count %></div>
-          <div class="text-sm text-yellow-800">Used Tickets</div>
+
+        <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex items-center gap-3">
+          <div class="p-2 rounded-md bg-forange/10 text-forange">
+            <!-- used icon -->
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3"/></svg>
+          </div>
+          <div>
+            <div class="text-xl font-bold text-gray-900"><%= @event.tickets.where(status: 'used').count %></div>
+            <div class="text-sm text-gray-500">Used Tickets</div>
+          </div>
         </div>
-        <div class="bg-gray-50 p-4 rounded-lg">
-          <div class="text-2xl font-bold text-gray-600"><%= @event.available_seats %></div>
-          <div class="text-sm text-gray-800">Available Seats</div>
+
+        <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex items-center gap-3">
+          <div class="p-2 rounded-md bg-gray-100 text-gray-600">
+            <!-- seats icon -->
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7h18M5 7v10a1 1 0 001 1h12a1 1 0 001-1V7"/></svg>
+          </div>
+          <div>
+            <div class="text-xl font-bold text-gray-900"><%= @event.available_seats %></div>
+            <div class="text-sm text-gray-500">Available Seats</div>
+          </div>
         </div>
       </div>
 
@@ -40,41 +68,30 @@
         </div>
         
         <% if @event.tickets.any? %>
-          <ul class="divide-y divide-gray-200">
+          <ul class="divide-y divide-gray-100">
             <% @event.tickets.includes(:user).order(:created_at).each do |ticket| %>
               <li class="px-4 py-4 sm:px-6">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                      <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                        <span class="text-sm font-medium text-gray-700">
-                          <%= ticket.user.full_name.split(' ').map(&:first).join.upcase %>
-                        </span>
-                      </div>
+                <div class="flex items-center justify-between gap-4">
+                  <div class="flex items-center gap-3">
+                    <div class="h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center text-foundationprimarygreen font-semibold text-sm">
+                      <%= ticket.user.full_name.split(' ').map(&:first).join.upcase %>
                     </div>
-                    <div class="ml-4">
+                    <div>
                       <div class="text-sm font-medium text-gray-900"><%= ticket.user.full_name %></div>
                       <div class="text-sm text-gray-500"><%= ticket.user.email %></div>
-                      <div class="text-xs text-gray-400">
-                        Purchased: <%= ticket.created_at.strftime("%B %d, %Y at %I:%M %p") %>
-                      </div>
+                      <div class="text-xs text-gray-400">Purchased: <%= ticket.created_at.strftime("%b %d, %Y %I:%M %p") %></div>
                     </div>
                   </div>
-                  <div class="flex items-center space-x-4">
+                  <div class="flex items-center gap-3">
                     <% if ticket.seat_number.present? %>
-                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-foundationprimarygreen/10 text-foundationprimarygreen">
                         Seat <%= ticket.seat_number %>
                       </span>
                     <% end %>
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                <%= ticket.status == 'active' ? 'bg-green-100 text-green-800' : 
-                                    ticket.status == 'used' ? 'bg-yellow-100 text-yellow-800' : 
-                                    'bg-gray-100 text-gray-800' %>">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium <%= ticket.status == 'active' ? 'bg-foundationprimarygreen/10 text-foundationprimarygreen' : ticket.status == 'used' ? 'bg-forange/10 text-forange' : 'bg-gray-100 text-gray-800' %>">
                       <%= ticket.status.humanize %>
                     </span>
-                    <span class="text-xs text-gray-500">
-                      #<%= ticket.id.split('-').first %>
-                    </span>
+                    <span class="text-xs text-gray-500">#<%= ticket.id.split('-').first %></span>
                   </div>
                 </div>
               </li>
