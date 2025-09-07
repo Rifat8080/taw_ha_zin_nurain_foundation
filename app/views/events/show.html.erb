@@ -15,65 +15,104 @@
 
     <!-- Event Details -->
     <div class="mt-8 lg:mt-0 lg:col-span-7">
-      <div class="flex items-center justify-between">
-        <h1 class="text-3xl font-bold text-gray-900"><%= @event.name %></h1>
-        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium 
-          <%= @event.event_status == 'upcoming' ? 'bg-green-100 text-green-800' : 
-              @event.event_status == 'active' ? 'bg-blue-100 text-blue-800' : 
-              'bg-gray-100 text-gray-800' %>">
-          <%= @event.event_status.capitalize %>
-        </span>
+      <div class="flex items-start justify-between gap-6">
+        <div class="flex-1">
+          <h1 class="text-3xl md:text-4xl font-extrabold text-foundationprimarygreen leading-tight"><%= @event.name %></h1>
+          <% if @event.respond_to?(:subtitle) && @event.subtitle.present? %>
+            <p class="mt-2 text-sm text-gray-600"><%= @event.subtitle %></p>
+          <% end %>
+        </div>
+        <div>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold shadow-sm
+            <%= @event.event_status == 'upcoming' ? 'bg-foundationprimarygreen/10 text-foundationprimarygreen' : 
+                @event.event_status == 'active' ? 'bg-forange/10 text-forange' : 
+                'bg-gray-100 text-gray-800' %>">
+            <%= @event.event_status.capitalize %>
+          </span>
+        </div>
       </div>
 
-      <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
+    <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
-          <h3 class="text-sm font-medium text-gray-900">Event Details</h3>
+      <h3 class="text-sm font-medium text-foundationprimarygreen">Event Details</h3>
           <dl class="mt-2 space-y-1">
-            <div>
-              <dt class="text-sm text-gray-500">Date:</dt>
-              <dd class="text-sm text-gray-900">
-                <%= @event.start_date.strftime("%B %d, %Y") %>
-                <% if @event.start_date != @event.end_date %>
-                  - <%= @event.end_date.strftime("%B %d, %Y") %>
-                <% end %>
-              </dd>
+            <div class="flex items-start gap-3">
+              <div class="mt-1 text-foundationprimarygreen">
+                <!-- calendar icon -->
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              </div>
+              <div>
+                <dt class="text-sm text-gray-500">Date</dt>
+                <dd class="text-sm text-gray-900">
+                  <%= @event.start_date.strftime("%B %d, %Y") %>
+                  <% if @event.start_date != @event.end_date %>
+                    - <%= @event.end_date.strftime("%B %d, %Y") %>
+                  <% end %>
+                </dd>
+              </div>
             </div>
-            <div>
-              <dt class="text-sm text-gray-500">Time:</dt>
-              <dd class="text-sm text-gray-900">
-                <%= @event.start_time.strftime("%I:%M %p") %> - <%= @event.end_time.strftime("%I:%M %p") %>
-              </dd>
+            <div class="flex items-start gap-3">
+              <div class="mt-1 text-forange">
+                <!-- clock icon -->
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <div>
+                <dt class="text-sm text-gray-500">Time</dt>
+                <dd class="text-sm text-gray-900">
+                  <%= @event.start_time.strftime("%I:%M %p") %> - <%= @event.end_time.strftime("%I:%M %p") %>
+                </dd>
+              </div>
             </div>
-            <div>
-              <dt class="text-sm text-gray-500">Venue:</dt>
-              <dd class="text-sm text-gray-900"><%= @event.venue %></dd>
+            <div class="flex items-start gap-3">
+              <div class="mt-1 text-gray-500">
+                <!-- map pin icon -->
+                <svg class="h-5 w-5 text-foundationprimarygreen" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.657 0 3-1.567 3-3.5S13.657 4 12 4 9 5.567 9 7.5 10.343 11 12 11z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21s8-4.5 8-10.5S16.418 2 12 2 4 6.5 4 10.5 12 21 12 21z"/></svg>
+              </div>
+              <div>
+                <dt class="text-sm text-gray-500">Venue</dt>
+                <dd class="text-sm text-gray-900"><%= @event.venue %></dd>
+              </div>
             </div>
-            <div>
-              <dt class="text-sm text-gray-500">Category:</dt>
-              <dd class="text-sm text-gray-900"><%= @event.ticket_category.capitalize %></dd>
+            <div class="flex items-start gap-3">
+              <div class="mt-1 text-gray-400">
+                <!-- tag/category icon -->
+                <svg class="h-5 w-5 text-forange" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M3 7a4 4 0 014-4h4l6 6v4a4 4 0 01-4 4H7a4 4 0 01-4-4V7z"/></svg>
+              </div>
+              <div>
+                <dt class="text-sm text-gray-500">Category</dt>
+                <dd class="text-sm text-gray-900"><%= @event.ticket_category.capitalize %></dd>
+              </div>
             </div>
           </dl>
         </div>
 
         <div>
-          <h3 class="text-sm font-medium text-gray-900">Ticket Types</h3>
+          <h3 class="text-sm font-medium text-foundationprimarygreen">Ticket Types</h3>
           <% if @event.ticket_types.any? %>
             <div class="mt-3 space-y-3">
               <% @event.available_ticket_types.each do |ticket_type| %>
-                <div class="border border-gray-200 rounded-lg p-3 <%= ticket_type['sold_out'] ? 'bg-gray-50' : 'bg-white' %>">
-                  <div class="flex justify-between items-start">
+                <div class="rounded-xl p-4 bg-white shadow-md hover:shadow-lg transition transform-gpu hover:-translate-y-1">
+                  <div class="flex justify-between items-start gap-4">
                     <div class="flex-1">
-                      <h4 class="text-sm font-medium text-gray-900"><%= ticket_type['name'] %></h4>
+                      <h4 class="text-sm font-semibold text-gray-900"><%= ticket_type['name'] %></h4>
                       <p class="text-xs text-gray-500 uppercase tracking-wide"><%= ticket_type['category'] %></p>
                       <% if ticket_type['description'].present? %>
                         <p class="text-xs text-gray-600 mt-1"><%= ticket_type['description'] %></p>
                       <% end %>
                     </div>
-                    <div class="text-right ml-4">
-                      <div class="text-lg font-bold text-gray-900">$<%= ticket_type['price'] %></div>
-                      <div class="text-xs <%= ticket_type['sold_out'] ? 'text-red-600' : 'text-green-600' %>">
+                    <div class="text-right ml-4 flex flex-col items-end gap-2">
+                      <div class="text-2xl font-extrabold text-forange">$<%= ticket_type['price'] %></div>
+                      <div class="text-xs <%= ticket_type['sold_out'] ? 'text-red-600' : 'text-foundationprimarygreen' %>">
                         <%= ticket_type['seats_remaining'] %> / <%= ticket_type['seats_available'] %> available
                       </div>
+                      <% unless ticket_type['sold_out'] %>
+                        <%= form_with model: [@event, @event.tickets.build], local: true, class: "inline-block mt-1" do |form| %>
+                          <%= form.hidden_field :ticket_type, value: ticket_type['category'] %>
+                          <%= form.submit "Buy 1", class: "px-3 py-2 rounded-md btn-primary bg-forange text-white text-sm font-semibold shadow-sm hover:brightness-95" %>
+                        <% end %>
+                      <% else %>
+                        <span class="text-xs text-red-600 font-medium">Sold out</span>
+                      <% end %>
                     </div>
                   </div>
                 </div>
@@ -131,12 +170,12 @@
                 <% end %>
                 
                 <div class="text-center">
-                  <h4 class="font-medium text-gray-900"><%= guest.name %></h4>
+                  <h4 class="font-medium text-forange"><%= guest.name %></h4>
                   <% if guest.title.present? %>
-                    <p class="text-sm text-blue-600 mt-1"><%= guest.title %></p>
+                    <p class="text-sm text-foundationprimarygreen font-bold mt-1"><%= guest.title %></p>
                   <% end %>
                   <% if guest.description.present? %>
-                    <p class="text-sm text-gray-500 mt-2 line-clamp-3"><%= guest.description %></p>
+                    <p class="text-sm mt-2 line-clamp-3"><%= guest.description %></p>
                   <% end %>
                 </div>
               </div>
@@ -184,7 +223,7 @@
             <!-- New Bulk Purchase Button -->
             <button type="button" 
                     onclick="openTicketModal()"
-                    class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    class="w-full flex justify-center items-center btn-primary py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
               <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
               </svg>
