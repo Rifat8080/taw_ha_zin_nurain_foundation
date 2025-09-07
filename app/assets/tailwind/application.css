@@ -129,6 +129,25 @@
   color: #ffffff;
 }
 
+/* Quick amount button active state
+   Use attribute selector and a utility-compatible class so both JS strategies work:
+   - JS toggles aria-pressed or adds .active
+   Provide high-specificity rules and !important to ensure visibility when competing
+   Tailwind utilities are present or in purged builds. */
+.amount-btn[aria-pressed="true"],
+.amount-btn.active {
+  background-color: rgb(var(--color-forange)) !important;
+  border-color: rgb(var(--color-forange)) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 24px rgb(var(--color-forange) / 0.12);
+}
+
+.amount-btn[aria-pressed="true"]:focus,
+.amount-btn.active:focus {
+  outline: none;
+  box-shadow: 0 0 0 6px rgb(var(--color-forange) / 0.12), 0 10px 24px rgb(var(--color-forange) / 0.12);
+}
+
 .btn-donate:hover,
 .btn-donate:focus {
   background-color: rgb(var(--color-forange) / 0.9);
