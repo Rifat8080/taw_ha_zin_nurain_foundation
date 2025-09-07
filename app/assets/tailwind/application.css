@@ -195,6 +195,12 @@ button.btn-notif:hover {
 .focus\:ring-forange\/50:focus { --tw-ring-color: rgb(var(--color-forange) / 0.5); }
 
 /* Additional opacity helpers used in templates */
+.bg-foundationprimarygreen\/10 { background-color: rgb(var(--color-foundationprimarygreen) / 0.1); }
+.bg-foundationprimarygreen\/20 { background-color: rgb(var(--color-foundationprimarygreen) / 0.2); }
+.bg-foundationprimarygreen\/30 { background-color: rgb(var(--color-foundationprimarygreen) / 0.3); }
+.bg-foundationprimarygreen\/40 { background-color: rgb(var(--color-foundationprimarygreen) / 0.4); }
+
+
 .bg-forange\/10 { background-color: rgb(var(--color-forange) / 0.1); }
 .bg-forange\/20 { background-color: rgb(var(--color-forange) / 0.2); }
 .bg-forange\/30 { background-color: rgb(var(--color-forange) / 0.3); }
