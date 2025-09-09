@@ -1,26 +1,26 @@
-<div class="px-12 py-12">
+<div class="px-4 sm:px-6 lg:px-12 py-6 sm:py-12">
   <!-- Page title and subtitle -->
   <div class="mb-6">
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-3xl font-extrabold text-forange">Volunteer — <span class="text-foundationprimarygreen"><%= @volunteer.full_name %></span></h1>
-        <p class="mt-1 text-sm text-gray-600">
+        <h1 class="text-xl sm:text-2xl md:text-3xl font-extrabold">Volunteer — <span class="bg-clip-text text-transparent bg-gradient-foundationprimarygreen"><%= @volunteer.full_name %></span></h1>
+        <p class="mt-1 text-xs sm:text-sm text-gray-600">
           <span class="text-forange"><%= @volunteer.role.to_s.humanize %></span>
           <% if @volunteer.joining_date.present? %>
             &middot; Joined <%= @volunteer.joining_date.strftime('%B %d, %Y') %>
           <% end %>
         </p>
       </div>
-      <div class="text-sm">
-        <%= link_to 'Back to volunteers', volunteers_path, class: 'inline-flex items-center px-3 py-2 rounded-md bg-white border border-gray-200 text-gray-700 hover:bg-forange/10 text-sm' %>
+      <div class="text-sm w-full sm:w-auto mt-3 sm:mt-0">
+        <%= link_to 'Back to volunteers', volunteers_path, class: 'inline-flex items-center px-3 py-2 rounded-md bg-white border border-gray-200 text-gray-700 hover:bg-forange/10 text-sm w-full sm:w-auto justify-center' %>
       </div>
     </div>
   </div>
   <div class="flex flex-col md:flex-row md:items-start md:space-x-8">
     <!-- Left column: profile card -->
     <div class="w-full md:w-1/3 mb-6 md:mb-0">
-  <div class="bg-gradient-to-b from-foundationprimarygreen to-forange rounded-lg overflow-hidden shadow-xl">
-        <div class="p-6 flex items-center space-x-4">
+      <div class="bg-gradient-to-b from-foundationprimarygreen to-forange rounded-lg overflow-hidden shadow-xl">
+        <div class="p-4 sm:p-6 flex items-center space-x-4">
           <div class="flex-shrink-0">
             <%# compute initials safely without assuming the Volunteer responds to :initials %>
             <% initials = if @volunteer.respond_to?(:initials) && @volunteer.initials.present?
@@ -36,12 +36,12 @@
                               parts.map { |p| p[0] }.join.upcase[0,2]
                             end
                           end %>
-            <div class="h-24 w-24 rounded-full bg-white flex items-center justify-center text-foundationprimarygreen text-3xl font-bold shadow-md ring-4 ring-white">
+            <div class="h-20 w-20 md:h-24 md:w-24 rounded-full bg-white flex items-center justify-center text-foundationprimarygreen text-2xl md:text-3xl font-bold shadow-md ring-4 ring-white">
               <%= initials.presence || '--' %>
             </div>
           </div>
           <div class="flex-1">
-            <h1 class="text-2xl font-extrabold text-white"><%= @volunteer.full_name %></h1>
+            <h1 class="text-lg sm:text-xl md:text-2xl font-extrabold text-white"><%= @volunteer.full_name %></h1>
             <div class="mt-2 flex items-center gap-2">
               <%= volunteer_role_badge(@volunteer.role) %>
               <%= volunteer_status_badge(@volunteer) %>
@@ -104,18 +104,18 @@
             <% end %>
           </div>
 
-          <div class="mt-6 flex items-center gap-3">
-            <%= link_to edit_volunteer_path(@volunteer), class: 'inline-flex items-center gap-2 px-5 py-2 rounded-md bg-white text-foundationprimarygreen font-semibold shadow-sm hover:shadow-md' do %>
+          <div class="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <%= link_to edit_volunteer_path(@volunteer), class: 'inline-flex items-center gap-2 px-5 py-2 rounded-md bg-foundationprimarygreen/10 text-foundationprimarygreen font-semibold shadow-sm hover:shadow-md w-full sm:w-auto justify-center' do %>
               <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h6M5 7v6m0 0l6 6"/></svg>
               Edit
             <% end %>
 
-            <%= link_to new_team_assignment_path(volunteer_id: @volunteer.id), class: 'inline-flex items-center gap-2 px-4 py-2 rounded-md bg-foundationprimarygreen hover:bg-foundationprimarygreen text-white font-semibold' do %>
+            <%= link_to new_team_assignment_path(volunteer_id: @volunteer.id), class: 'btn-primary inline-flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-foundationprimarygreen text-white font-semibold w-full sm:w-auto justify-center' do %>
               <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
               Assign
             <% end %>
 
-            <%= link_to volunteers_path, class: 'inline-flex items-center gap-2 px-3 py-2 rounded-md bg-white border border-forange text-forange hover:bg-forange/10' do %>
+            <%= link_to volunteers_path, class: 'inline-flex items-center gap-2 px-3 py-2 rounded-md bg-white border border-forange text-forange hover:bg-forange/10 w-full sm:w-auto justify-center' do %>
               Back
             <% end %>
           </div>
@@ -125,7 +125,7 @@
 
     <!-- Right column: details and assignments -->
     <div class="w-full md:w-2/3">
-      <div class="bg-white shadow rounded-lg overflow-hidden mb-6">
+  <div class="bg-white shadow rounded-lg overflow-hidden mb-6">
         <div class="px-6 py-5 border-b">
           <h2 class="text-lg font-medium text-gray-900">Volunteer Details</h2>
           <p class="mt-1 text-sm text-gray-500">Personal and role-specific information.</p>
@@ -165,22 +165,22 @@
       <div class="mb-6">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-medium text-gray-900">Team Assignments</h2>
-          <%= link_to 'Assign to New Team', new_team_assignment_path(volunteer_id: @volunteer.id), class: 'inline-flex items-center px-3 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold' %>
+          <%= link_to 'Assign to New Team', new_team_assignment_path(volunteer_id: @volunteer.id), class: 'inline-flex items-center px-3 py-2 rounded-md bg-gradient-to-r from-foundationprimarygreen to-forange text-white text-sm font-semibold w-full sm:w-auto justify-center' %>
         </div>
 
         <% if @team_assignments.present? && @team_assignments.any? %>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <% @team_assignments.each do |assignment| %>
-              <div class="bg-white shadow rounded-lg p-4 flex flex-col justify-between">
+                <div class="bg-white shadow rounded-lg p-4 flex flex-col justify-between">
                 <div>
-                  <p class="text-sm font-semibold text-indigo-600 truncate"><%= link_to assignment.volunteers_team.name, assignment.volunteers_team, class: 'hover:text-indigo-900' %></p>
+                    <p class="text-sm font-semibold text-foundationprimarygreen truncate"><%= link_to assignment.volunteers_team.name, assignment.volunteers_team, class: 'hover:underline' %></p>
                   <p class="mt-2 text-sm text-gray-500">Assigned on <%= assignment.created_at.strftime('%B %d, %Y') %></p>
                 </div>
                 <div class="mt-4 flex items-center justify-between">
                   <span class="inline-flex items-center text-xs font-semibold rounded-full bg-green-100 text-green-800 px-2 py-1"><%= assignment.volunteers_team.district %></span>
                   <div class="flex items-center gap-2">
-                    <%= link_to 'View Team', assignment.volunteers_team, class: 'inline-flex items-center px-3 py-1 rounded-md bg-indigo-500 hover:bg-indigo-700 text-white text-xs' %>
-                    <%= link_to 'Remove', assignment, method: :delete, data: { confirm: 'Are you sure you want to remove this team assignment?' }, class: 'inline-flex items-center px-3 py-1 rounded-md bg-red-500 hover:bg-red-700 text-white text-xs' %>
+                      <%= link_to 'View Team', assignment.volunteers_team, class: 'inline-flex items-center px-3 py-1 rounded-md btn-primary text-white text-xs' %>
+                      <%= link_to 'Remove', assignment, method: :delete, data: { confirm: 'Are you sure you want to remove this team assignment?' }, class: 'inline-flex items-center px-3 py-1 rounded-md bg-red-500 hover:bg-red-700 text-white text-xs' %>
                   </div>
                 </div>
               </div>

@@ -1,9 +1,9 @@
 <% content_for :title, "Volunteers" %>
-<div class="container mx-auto px-8 py-8">
-  <div class="flex flex-col md:flex-row justify-between items-center text-center mb-8 gap-4">
+<div class="max-w-6xl mx-auto px-4 sm:px-8 py-6">
+  <div class="flex flex-col md:flex-row justify-between items-center text-center mb-6 gap-4">
     <div class="w-full">
-      <h1 class="text-4xl md:text-5xl font-bold text-foundationprimarygreen tracking-tight text-center">Our <span class="text-forange">Volunteers</span></h1>
-      <p class="mt-2 text-lg text-gray-700 text-center">Manage volunteers, their roles and team assignments</p>
+      <h1 class="text-2xl sm:text-3xl md:text-5xl font-bold text-foundationprimarygreen tracking-tight text-center">Our <span class="text-forange">Volunteers</span></h1>
+      <p class="mt-2 text-base sm:text-lg text-gray-700 text-center">Manage volunteers, their roles and team assignments</p>
     </div>
   </div>
 
@@ -13,11 +13,11 @@
       <div class="flex-1">
         <%= form.text_field :search, placeholder: "Search volunteers by name, email or phone...", value: params[:search], class: "w-full px-4 py-3 border border-foundationprimarygreen/30 rounded-lg focus:ring-2 focus:ring-forange focus:border-forange text-gray-900 placeholder-gray-500" %>
       </div>
-      <div class="flex items-center gap-2">
-        <%= form.select :role, options_for_select([['All Roles', '']] + volunteer_role_options, params[:role]), {}, class: "px-3 py-2 border border-foundationprimarygreen/30 rounded-lg" %>
-        <%= form.submit "Search", class: "px-6 py-3 btn-primary text-white font-semibold rounded-lg transition-all duration-200 transform will-change-transform hover:scale-105 hover:shadow-xl" %>
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+        <%= form.select :role, options_for_select([['All Roles', '']] + volunteer_role_options, params[:role]), {}, class: "w-full sm:w-auto px-3 py-2 border border-foundationprimarygreen/30 rounded-lg" %>
+        <%= form.submit "Search", class: "w-full sm:w-auto px-6 py-3 btn-primary text-white font-semibold rounded-lg transition-all duration-200 transform will-change-transform hover:scale-105 hover:shadow-xl" %>
         <% if params[:search].present? || params[:role].present? %>
-          <%= link_to "Clear", volunteers_path, class: "px-6 py-3 bg-gray-200 hover:bg-forange hover:text-white text-gray-700 font-semibold rounded-lg transition-colors" %>
+          <%= link_to "Clear", volunteers_path, class: "w-full sm:w-auto px-6 py-3 bg-gray-200 hover:bg-forange hover:text-white text-gray-700 font-semibold rounded-lg transition-colors text-center" %>
         <% end %>
       </div>
     <% end %>
@@ -35,12 +35,12 @@
   </div>
 
   <% if current_user&.role == "admin" %>
-    <div class="flex gap-3 mb-6 w-full md:w-auto">
-      <%= link_to new_volunteer_path, class: "w-full md:w-auto inline-flex items-center whitespace-nowrap px-6 py-3 btn-primary text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200" do %>
+    <div class="flex flex-col sm:flex-row gap-3 mb-6 w-full sm:w-auto">
+      <%= link_to new_volunteer_path, class: "w-full sm:w-auto inline-flex items-center justify-center whitespace-nowrap px-6 py-3 btn-primary text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200" do %>
         <i class="fa-solid fa-plus mr-2" aria-hidden="true"></i>
         New Volunteer
       <% end %>
-      <%= link_to team_assignments_path, class: "inline-flex items-center px-6 py-3 bg-white border border-foundationprimarygreen/20 text-foundationprimarygreen rounded-lg hover:bg-forange/10" do %>
+      <%= link_to team_assignments_path, class: "w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 bg-white border border-foundationprimarygreen/20 text-foundationprimarygreen rounded-lg hover:bg-forange/10" do %>
         Team Assignments
       <% end %>
     </div>
