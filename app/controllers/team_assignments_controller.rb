@@ -1,5 +1,5 @@
 class TeamAssignmentsController < ApplicationController
-  before_action :set_team_assignment, only: [ :show, :destroy ]
+  before_action :set_team_assignment, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @team_assignments = TeamAssignment.includes(:volunteer, :volunteers_team).all
@@ -8,6 +8,23 @@ class TeamAssignmentsController < ApplicationController
   end
 
   def show
+  end
+
+  def edit
+    # prepare collections used by the form partial
+    @volunteers = Volunteer.includes(:user).all
+    @teams = VolunteersTeam.all
+  end
+
+  def update
+    if @team_assignment.update(team_assignment_params)
+      redirect_to @team_assignment, notice: "Team assignment was successfully updated."
+    else
+      Rails.logger.error "TeamAssignment update failed: #{@team_assignment.errors.full_messages.join(', ')}"
+      @volunteers = Volunteer.includes(:user).all
+      @teams = VolunteersTeam.all
+      render :edit, status: :unprocessable_entity
+    end
   end
 
   def new

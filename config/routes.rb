@@ -44,7 +44,7 @@ Rails.application.routes.draw do
     end
   end
   resources :volunteers_teams
-  resources :team_assignments, except: [ :edit, :update ]
+  resources :team_assignments
   resources :work_orders
 
   # Healthcare Management System Routes

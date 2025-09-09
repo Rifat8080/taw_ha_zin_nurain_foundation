@@ -1,0 +1,45 @@
+<%# expects local: team_assignment (model) and optional header_title, header_subtitle %>
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+  <div>
+    <% action_word = team_assignment&.persisted? ? 'Edit' : 'Create' %>
+    <h1 class="text-xl sm:text-2xl font-extrabold"><span class="text-foundationprimarygreen"><%= action_word %></span> <span class="text-forange">Assignment</span></h1>
+    <p class="mt-1 text-sm text-foundationprimarygreen"><%= local_assigns[:header_subtitle] || (team_assignment&.persisted? ? 'Update this team assignment.' : 'Assign a volunteer to a team.') %></p>
+  </div>
+  <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+    <%= link_to 'All Assignments', team_assignments_path, class: 'inline-flex items-center px-3 py-2 rounded-md bg-white border border-gray-200 text-gray-700 hover:bg-forange/10 w-full sm:w-auto justify-center' %>
+    <%= link_to 'All Teams', volunteers_teams_path, class: 'inline-flex items-center px-3 py-2 rounded-md bg-white border border-gray-200 text-gray-700 hover:bg-forange/10 w-full sm:w-auto justify-center' %>
+  </div>
+</div>
+
+<div class="bg-white shadow rounded-lg p-4 sm:p-6">
+  <%= form_with(model: team_assignment, local: true) do |form| %>
+    <% if form.object.errors.any? %>
+      <div class="mb-4 rounded-md bg-forange/10 p-4 border border-forange/20">
+        <h4 class="text-sm font-semibold text-forange"><%= pluralize(form.object.errors.count, 'error') %> prevented this assignment from being saved</h4>
+        <ul class="mt-2 list-disc list-inside text-sm text-forange">
+          <% form.object.errors.full_messages.each do |m| %>
+            <li><%= m %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="grid grid-cols-1 gap-4">
+      <div>
+        <%= form.label :volunteer_id, 'Volunteer *', class: 'block text-sm font-medium text-gray-700' %>
+        <%= form.select :volunteer_id, options_from_collection_for_select(@volunteers, :id, :full_name, team_assignment.volunteer_id), { prompt: 'Select a volunteer' }, { class: 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-forange/30 focus:border-forange', required: true } %>
+      </div>
+
+      <div>
+        <%= form.label :team_id, 'Team *', class: 'block text-sm font-medium text-gray-700' %>
+        <%= form.select :team_id, options_from_collection_for_select(@teams, :id, :name, team_assignment.team_id), { prompt: 'Select a team' }, { class: 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-forange/30 focus:border-forange', required: true } %>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <% submit_label = form.object.persisted? ? 'Update Assignment' : 'Create Assignment' %>
+        <%= form.submit submit_label, class: 'btn-primary inline-flex items-center justify-center px-4 py-2 rounded-md bg-gradient-to-r from-foundationprimarygreen to-forange text-white font-semibold' %>
+        <%= link_to 'Cancel', team_assignments_path, class: 'inline-flex items-center justify-center px-4 py-2 rounded-md bg-white border border-gray-200 text-gray-700' %>
+      </div>
+    </div>
+  <% end %>
+</div>
