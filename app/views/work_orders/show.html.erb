@@ -5,11 +5,13 @@
       <p class="text-sm text-gray-500 mt-1"><%= @work_order.team_name %> • <%= @work_order.team_district %></p>
     </div>
 
-    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-3">
       <%= link_to 'View Team', @work_order.volunteers_team, class: 'inline-flex items-center px-4 py-2 rounded-md bg-purple-500 hover:bg-purple-600 text-white text-sm font-medium' %>
       <%= link_to 'Edit', edit_work_order_path(@work_order), class: 'inline-flex items-center px-4 py-2 rounded-md bg-foundationprimarygreen hover:opacity-95 text-white text-sm font-medium' %>
       <%= link_to 'Duplicate', new_work_order_path(team_id: @work_order.team_id), class: 'inline-flex items-center px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium' %>
-      <%= link_to 'Delete', @work_order, method: :delete, data: { confirm: 'Are you sure?' }, class: 'inline-flex items-center px-4 py-2 rounded-md bg-red-500 hover:bg-red-600 text-white text-sm font-medium' %>
+      <%= button_to @work_order, method: :delete, data: { confirm: 'Are you sure?' }, form: { class: 'inline-block' }, class: 'inline-flex items-center px-4 py-2 rounded-md bg-red-500 hover:bg-red-600 text-white text-sm font-medium' do %>
+        Delete
+      <% end %>
       <%= link_to 'Back', work_orders_path, class: 'inline-flex items-center px-3 py-2 rounded-md bg-white border text-sm text-gray-700 hover:bg-gray-50' %>
     </div>
   </div>

@@ -94,7 +94,9 @@
               </div>
 
               <div class="mt-4 text-center">
-                <%= link_to 'Delete', work_order, method: :delete, data: { confirm: 'Are you sure?' }, class: 'inline-flex items-center px-4 py-2 rounded-md bg-red-500 hover:bg-red-700 text-white text-sm' %>
+                <%= button_to work_order, method: :delete, data: { confirm: 'Are you sure?' }, form: { class: 'inline-block' }, class: 'inline-flex items-center px-4 py-2 rounded-md bg-red-500 hover:bg-red-700 text-white text-sm' do %>
+                  Delete
+                <% end %>
               </div>
             </div>
           </div>
