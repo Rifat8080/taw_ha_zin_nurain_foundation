@@ -44,7 +44,11 @@ class ProjectsController < ApplicationController
     else
       # Fallback: derive impacts from recent expenses
       @impact_items = @project.expenses.order(created_at: :desc).limit(10).map do |e|
-        OpenStruct.new(title: e.description || "Expense: $#{e.amount}", summary: "Spent $#{e.amount} on #{e.category || 'project activities'}", created_at: e.created_at)
+        # Expense model has `title` and `amount` (no `description`/`category`).
+        title = e.respond_to?(:title) ? e.title : "Expense: $#{e.amount}"
+        summary_parts = ["Spent $#{e.amount}"]
+        summary_parts << "on #{e.title}" if e.respond_to?(:title) && e.title.present?
+        OpenStruct.new(title: title, summary: summary_parts.join(' '), created_at: e.created_at)
       end
       # If still empty, supply a few static items
       if @impact_items.empty?
