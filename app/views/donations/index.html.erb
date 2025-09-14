@@ -43,7 +43,7 @@
   <div class="mb-6 bg-white rounded-lg shadow border border-foundationprimarygreen/20 p-4 sm:p-6">
     <%= form_with url: donations_path, method: :get, local: true, class: "flex flex-col sm:flex-row gap-3 items-start" do |form| %>
       <div class="flex-1 w-full">
-        <%= form.text_field :search, value: params[:search], placeholder: "Search donations by donor, project or amount...", class: "w-full px-3 py-2 sm:px-4 sm:py-3 border border-foundationprimarygreen/30 rounded-lg focus:ring-2 focus:ring-forange focus:border-forange text-gray-900 placeholder-gray-500 text-sm sm:text-base" %>
+        <%= form.text_field :search, value: params[:search], placeholder: "Search donations by donor, project or amount...", class: "w-full px-3 py-3 sm:px-4 sm:py-3 border border-foundationprimarygreen/30 rounded-lg focus:ring-2 focus:ring-forange focus:border-forange text-gray-900 placeholder-gray-500 text-sm sm:text-base" %>
       </div>
 
       <div class="w-full md:w-64">
