@@ -157,14 +157,17 @@
                    <span class="flex-1 ms-3 whitespace-nowrap">Healthcare Requests</span>
                 <% end %>
              </li>
+             <% if current_user&.is_volunteer? || current_user&.role == 'admin' %>
              <li>
                 <%= link_to healthcare_donations_path, class: "sidebar-link ".dup.concat(current_page?(healthcare_donations_path) ? ' sidebar-link-active' : '') do %>
                    <i class="fa-solid fa-credit-card sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Healthcare Donations</span>
                 <% end %>
              </li>
+             <% end %>
 
                    <!-- Volunteers (collapsible group) -->
+                   <% if current_user&.is_volunteer? || current_user&.role == 'admin' %>
                    <li>
                       <button type="button" data-collapse-toggle="volunteers-collapse-mobile" aria-expanded="false" aria-controls="volunteers-collapse-mobile" class="sidebar-link w-full flex items-center justify-between">
                          <span class="flex items-center">
@@ -194,7 +197,9 @@
                          </li>
                       </ul>
                    </li>
+                   <% end %>
                    <!-- Scanner group (QR Scanner + Spot Registration) -->
+                   <% if current_user&.is_volunteer? || current_user&.role == 'admin' %>
                    <li>
                             <button type="button" data-collapse-toggle="scanner-collapse-mobile" aria-expanded="false" aria-controls="scanner-collapse-mobile" class="sidebar-link w-full flex items-center justify-between">
                                <span class="flex items-center">
@@ -220,6 +225,7 @@
                          <% end %>
                       </ul>
                    </li>
+                   <% end %>
                    <!-- Zakat group (Zakat Calculator + Nisab Rates) -->
                    <li>
                       <button type="button" data-collapse-toggle="zakat-collapse-mobile" aria-expanded="false" aria-controls="zakat-collapse-mobile" class="sidebar-link w-full flex items-center justify-between">
@@ -248,6 +254,7 @@
                    </li>
 
                     <!-- Financial Section -->
+             <% if current_user&.is_volunteer? || current_user&.role == 'admin' %>
              <li>
                 <%= link_to donations_path, class: "sidebar-link ".dup.concat(current_page?(donations_path) ? ' sidebar-link-active' : '') do %>
                    <i class="fa-solid fa-hand-holding-dollar sidebar-icon" aria-hidden="true"></i>
@@ -260,6 +267,7 @@
                    <span class="flex-1 ms-3 whitespace-nowrap">Expenses</span>
                 <% end %>
              </li>
+             <% end %>
              <% if current_user&.role == 'admin' %>
                <li>
                   <%= link_to admin_reports_path, class: "sidebar-link ".dup.concat(current_page?(admin_reports_path) ? ' sidebar-link-active' : '') do %>
@@ -275,12 +283,14 @@
                
 
                    <!-- User Management (Admin Only) -->
-             <li>
-                <%= link_to users_path, class: "sidebar-link ".dup.concat(current_page?(users_path) ? ' sidebar-link-active' : '') do %>
-                      <i class="fa-solid fa-user sidebar-icon" aria-hidden="true"></i>
-                   <span class="flex-1 ms-3 whitespace-nowrap">User Management</span>
-                <% end %>
-               </li>
+                   <% if current_user&.role == 'admin' %>
+                   <li>
+                      <%= link_to users_path, class: "sidebar-link ".dup.concat(current_page?(users_path) ? ' sidebar-link-active' : '') do %>
+                            <i class="fa-solid fa-user sidebar-icon" aria-hidden="true"></i>
+                         <span class="flex-1 ms-3 whitespace-nowrap">User Management</span>
+                      <% end %>
+                     </li>
+                   <% end %>
                 <li>
                 <%= link_to tickets_path, class: "sidebar-link ".dup.concat(current_page?(tickets_path) ? ' sidebar-link-active' : '') do %>
                    <i class="fa-solid fa-ticket sidebar-icon" aria-hidden="true"></i>
@@ -348,14 +358,17 @@
                    <span class="flex-1 ms-3 whitespace-nowrap">Healthcare Requests</span>
                 <% end %>
              </li>
+             <% if current_user&.is_volunteer? || current_user&.role == 'admin' %>
              <li>
                 <%= link_to healthcare_donations_path, class: "sidebar-link ".dup.concat(current_page?(healthcare_donations_path) ? ' sidebar-link-active' : '') do %>
                    <i class="fa-solid fa-credit-card sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">Healthcare Donations</span>
                 <% end %>
              </li>
+             <% end %>
 
                    <!-- Volunteers (collapsible group) -->
+                   <% if current_user&.is_volunteer? || current_user&.role == 'admin' %>
                    <li>
                       <button type="button" data-collapse-toggle="volunteers-collapse-xl" aria-expanded="false" aria-controls="volunteers-collapse-xl" class="sidebar-link w-full flex items-center justify-between">
                          <span class="flex items-center">
@@ -385,7 +398,9 @@
                          </li>
                       </ul>
                    </li>
+                   <% end %>
                    <!-- Scanner group (QR Scanner + Spot Registration) -->
+                   <% if current_user&.is_volunteer? || current_user&.role == 'admin' %>
                    <li>
                             <button type="button" data-collapse-toggle="scanner-collapse-xl" aria-expanded="false" aria-controls="scanner-collapse-xl" class="sidebar-link w-full flex items-center justify-between">
                                <span class="flex items-center">
@@ -411,6 +426,7 @@
                          <% end %>
                       </ul>
                    </li>
+                   <% end %>
                    <!-- Zakat group (Zakat Calculator + Nisab Rates) -->
                    <li>
                       <button type="button" data-collapse-toggle="zakat-collapse-xl" aria-expanded="false" aria-controls="zakat-collapse-xl" class="sidebar-link w-full flex items-center justify-between">
@@ -439,6 +455,7 @@
                    </li>
 
                     <!-- Financial Section -->
+             <% if current_user&.is_volunteer? || current_user&.role == 'admin' %>
              <li>
                 <%= link_to donations_path, class: "sidebar-link ".dup.concat(current_page?(donations_path) ? ' sidebar-link-active' : '') do %>
                    <i class="fa-solid fa-hand-holding-dollar sidebar-icon" aria-hidden="true"></i>
@@ -451,6 +468,15 @@
                    <span class="flex-1 ms-3 whitespace-nowrap">Expenses</span>
                 <% end %>
              </li>
+             <% end %>
+              <% if current_user&.role == 'admin' %>
+               <li>
+                  <%= link_to admin_reports_path, class: "sidebar-link ".dup.concat(current_page?(admin_reports_path) ? ' sidebar-link-active' : '') do %>
+                     <i class="fa-solid fa-file-invoice-dollar sidebar-icon" aria-hidden="true"></i>
+                     <span class="flex-1 ms-3 whitespace-nowrap">Reports</span>
+                  <% end %>
+               </li>
+             <% end %>
 
                    <!-- Preference heading inserted into the middle of the list -->
               
@@ -460,12 +486,14 @@
               
 
              <!-- User Management (Admin Only) -->
+             <% if current_user&.role == 'admin' %>
              <li>
                 <%= link_to users_path, class: "sidebar-link ".dup.concat(current_page?(users_path) ? ' sidebar-link-active' : '') do %>
                       <i class="fa-solid fa-user sidebar-icon" aria-hidden="true"></i>
                    <span class="flex-1 ms-3 whitespace-nowrap">User Management</span>
                 <% end %>
                </li>
+             <% end %>
 
                <li>
                 <%= link_to tickets_path, class: "sidebar-link ".dup.concat(current_page?(tickets_path) ? ' sidebar-link-active' : '') do %>
