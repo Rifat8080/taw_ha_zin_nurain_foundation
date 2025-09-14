@@ -1,45 +1,85 @@
 <% content_for :title, "Donation" %>
 
-<div class="container mx-auto px-8 py-10">
-  <div class="max-w-2xl mx-auto">
-    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-      <div class="px-6 py-4 bg-gray-50 border-b">
-        <h1 class="text-2xl font-bold text-gray-900">Donation Details</h1>
-      </div>
-
-      <div class="px-6 py-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Amount</label>
-            <p class="mt-1 text-lg font-semibold text-green-600">৳<%= number_with_delimiter(@donation.amount) %></p>
+<div class="container mx-auto px-4 sm:px-6 py-8">
+  <div class="max-w-4xl mx-auto">
+    <div class="bg-white shadow-lg rounded-2xl overflow-hidden">
+      <!-- Header -->
+      <div class="px-6 py-6 bg-gradient-to-r from-[rgba(var(--color-foundationprimarygreen)/0.08)] via-transparent to-[rgba(var(--color-forange)/0.06)] border-b">
+        <div class="flex items-start gap-4 sm:items-center sm:justify-between flex-col sm:flex-row">
+          <div class="min-w-0">
+            <h1 class="text-xl sm:text-2xl md:text-3xl font-extrabold text-foundationprimarygreen leading-tight">Donation <span class="text-forange">Details</span></h1>
+            <p class="mt-1 text-sm text-gray-600">A quick view of donation metadata, donor and related project.</p>
           </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Donation Date</label>
-            <p class="mt-1 text-sm text-gray-900"><%= @donation.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Donor</label>
-            <p class="mt-1 text-sm text-gray-900"><%= @donation.user&.first_name %> <%= @donation.user&.last_name %></p>
-            <p class="text-sm text-gray-500"><%= @donation.user&.email %></p>
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Project</label>
-            <p class="mt-1 text-sm text-gray-900"><%= @donation.project&.name %></p>
+          <div class="mt-3 sm:mt-0 flex items-center gap-3 w-full sm:w-auto">
+            <%= link_to donations_path, class: "inline-flex items-center gap-2 px-3 py-2 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 text-sm" do %>
+              <i class="fa-solid fa-arrow-left"></i>
+              <span class="hidden sm:inline">Back</span>
+            <% end %>
+            <%= link_to edit_donation_path(@donation), class: "inline-flex items-center gap-2 px-3 py-2 rounded-md bg-yellow-500 text-white hover:bg-yellow-600 text-sm" do %>
+              <i class="fa-solid fa-pen-to-square"></i>
+              <span class="hidden sm:inline">Edit</span>
+            <% end %>
           </div>
         </div>
       </div>
 
-      <div class="px-6 py-4 bg-gray-50 border-t flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div class="flex items-center gap-2 w-full sm:w-auto">
-          <%= link_to "Edit", edit_donation_path(@donation), class: "bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto text-center" %>
-          <%= button_to donation_path(@donation), method: :delete, data: { confirm: "Are you sure?" }, form: { class: 'inline-block' }, class: "btn-delete px-4 py-2 rounded text-white font-bold w-full sm:w-auto text-center" do %>
-            Delete
-          <% end %>
+      <!-- Content -->
+      <div class="px-5 sm:px-8 py-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+          <!-- Main details -->
+          <div class="md:col-span-2 bg-white">
+            <div class="flex items-center gap-4">
+              <div class="w-14 h-14 rounded-full bg-foundationprimarygreen/10 flex items-center justify-center text-foundationprimarygreen text-xl font-bold">
+                <i class="fa-solid fa-user"></i>
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm text-gray-500">Donor</p>
+                <p class="text-lg sm:text-2xl font-semibold text-gray-900 truncate"><%= [@donation.user&.first_name, @donation.user&.last_name].compact.join(' ') %></p>
+                <p class="text-sm text-gray-500"><%= @donation.user&.email %></p>
+              </div>
+            </div>
+
+            <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="p-4 bg-gray-50 rounded-lg border">
+                <p class="text-xs text-gray-500 uppercase tracking-wide">Amount</p>
+                <p class="mt-2 text-2xl font-bold text-green-600">৳<%= number_with_delimiter(@donation.amount) %></p>
+              </div>
+
+              <div class="p-4 bg-gray-50 rounded-lg border">
+                <p class="text-xs text-gray-500 uppercase tracking-wide">Donation Date</p>
+                <p class="mt-2 text-sm text-gray-900"><%= @donation.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+              </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-white rounded-lg border">
+              <p class="text-xs text-gray-500 uppercase tracking-wide">Project</p>
+              <p class="mt-2 text-sm text-gray-900"><%= @donation.project&.name || '\u2014' %></p>
+            </div>
+          </div>
+
+          <!-- Actions aside -->
+          <aside class="md:col-span-1 sticky top-6 self-start">
+            <div class="p-4 bg-forange/5 border border-forange/20 rounded-lg">
+              <p class="text-xs text-forange font-semibold uppercase">Quick actions</p>
+              <div class="mt-3 flex flex-col gap-3">
+                <%= link_to donation_path(@donation), class: "inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md bg-gray-50 hover:bg-gray-100 text-sm text-indigo-600 font-medium" do %>
+                  <i class="fa-solid fa-eye"></i>
+                  View
+                <% end %>
+
+                <%= link_to edit_donation_path(@donation), class: "inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md bg-yellow-500 text-white hover:bg-yellow-600 text-sm font-medium" do %>
+                  <i class="fa-solid fa-pen-to-square"></i>
+                  Edit
+                <% end %>
+
+                <%= button_to donation_path(@donation), method: :delete, data: { confirm: 'Are you sure?' }, form: { class: 'inline-block' }, class: 'inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md bg-forange text-white text-sm font-medium hover:brightness-95' do %>
+                  <i class="fa-solid fa-trash"></i>
+                  Delete
+                <% end %>
+              </div>
+            </div>
+          </aside>
         </div>
-        <%= link_to "Back to Donations", donations_path, class: "bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto text-center" %>
       </div>
     </div>
   </div>
