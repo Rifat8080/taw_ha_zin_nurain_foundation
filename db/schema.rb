@@ -73,8 +73,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_090000) do
     t.uuid "project_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "payment_method", default: "bkash"
+    t.string "transaction_id"
+    t.boolean "manual", default: false, null: false
+    t.string "currency", default: "USD"
     t.index ["amount"], name: "index_donations_on_amount"
+    t.index ["payment_method"], name: "index_donations_on_payment_method"
     t.index ["project_id", "created_at"], name: "index_donations_on_project_id_and_created_at"
+    t.index ["transaction_id"], name: "index_donations_on_transaction_id"
     t.index ["user_id", "created_at"], name: "index_donations_on_user_id_and_created_at"
     t.index ["user_id", "project_id"], name: "index_donations_on_user_project"
   end
@@ -125,6 +131,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_090000) do
     t.uuid "project_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "notes"
     t.index ["amount"], name: "index_expenses_on_amount"
     t.index ["project_id", "created_at"], name: "index_expenses_on_project_id_and_created_at"
   end
