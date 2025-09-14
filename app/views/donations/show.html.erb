@@ -32,12 +32,14 @@
         </div>
       </div>
 
-      <div class="px-6 py-4 bg-gray-50 border-t flex justify-between">
-        <div>
-          <%= link_to "Edit", edit_donation_path(@donation), class: "bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mr-2" %>
-          <%= link_to "Delete", donation_path(@donation), method: :delete, data: { confirm: "Are you sure?" }, class: "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" %>
+      <div class="px-6 py-4 bg-gray-50 border-t flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <%= link_to "Edit", edit_donation_path(@donation), class: "bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto text-center" %>
+          <%= button_to donation_path(@donation), method: :delete, data: { confirm: "Are you sure?" }, form: { class: 'inline-block' }, class: "btn-delete px-4 py-2 rounded text-white font-bold w-full sm:w-auto text-center" do %>
+            Delete
+          <% end %>
         </div>
-        <%= link_to "Back to Donations", donations_path, class: "bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" %>
+        <%= link_to "Back to Donations", donations_path, class: "bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto text-center" %>
       </div>
     </div>
   </div>
