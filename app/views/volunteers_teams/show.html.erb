@@ -80,8 +80,9 @@
                 <%= volunteer_role_badge(volunteer.role) %>
               </div>
               <%= link_to 'View', volunteer, class: 'bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-semibold w-full sm:w-auto text-center' %>
-              <% if @team_assignments.find { |ta| ta.volunteer_id == volunteer.id } %>
-                <%= button_to @team_assignments.find { |ta| ta.volunteer_id == volunteer.id }, method: :delete, data: { confirm: 'Remove this volunteer from the team?' }, form: { class: 'inline-block' }, class: 'btn-delete text-white px-4 py-2 rounded-lg text-sm font-semibold w-full sm:w-auto text-center' do %>
+              <% ta = @team_assignments.find { |ta| ta.volunteer_id == volunteer.id } %>
+              <% if ta && can_manage_team?(current_user, @volunteers_team) %>
+                <%= button_to ta, method: :delete, data: { confirm: 'Remove this volunteer from the team?' }, form: { class: 'inline-block' }, class: 'btn-delete text-white px-4 py-2 rounded-lg text-sm font-semibold w-full sm:w-auto text-center' do %>
                   Remove
                 <% end %>
               <% end %>
@@ -128,9 +129,11 @@
               <%= days_until_badge(work_order) %>
               <div class="flex flex-wrap gap-2">
                 <%= link_to 'View', work_order, class: 'bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-semibold w-full sm:w-auto text-center' %>
-                <%= link_to 'Edit', edit_work_order_path(work_order), class: 'bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-lg text-sm font-semibold w-full sm:w-auto text-center' %>
-                <%= button_to work_order, method: :delete, data: { confirm: 'Are you sure?' }, form: { class: 'inline-block' }, class: 'btn-delete text-white px-4 py-2 rounded-lg text-sm font-semibold w-full sm:w-auto text-center' do %>
-                  Delete
+                <% if can_manage_team?(current_user, @volunteers_team) %>
+                  <%= link_to 'Edit', edit_work_order_path(work_order), class: 'bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-lg text-sm font-semibold w-full sm:w-auto text-center' %>
+                  <%= button_to work_order, method: :delete, data: { confirm: 'Are you sure?' }, form: { class: 'inline-block' }, class: 'btn-delete text-white px-4 py-2 rounded-lg text-sm font-semibold w-full sm:w-auto text-center' do %>
+                    Delete
+                  <% end %>
                 <% end %>
               </div>
             </div>
