@@ -14,6 +14,7 @@ import "modules/healthcare_donations";
 import "modules/mobile_navigation";
 import "modules/donor_info_modal";
 import "modules/tickets";
+import "modules/ticket_show";
 import "modules/event_ticket_types";
 import "modules/spot_registration_ticket_types";
 import "modules/bulk_ticket_modal";

@@ -1,104 +1,134 @@
-<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-    <!-- Ticket Header -->
-    <div class="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4">
-      <h1 class="text-2xl font-bold text-white">Event Ticket</h1>
-      <p class="text-blue-100">Ticket ID: #<%= @ticket.id.split('-').first %></p>
-    </div>
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+      <!-- Header -->
+      <div class="bg-foundation-gradient px-6 sm:px-8 py-6">
+        <div class="flex items-center justify-between">
+          <h1 class="text-xl sm:text-2xl font-extrabold text-foundationprimarygreen tracking-tight">Event Ticket</h1>
+          <div class="<%= status_badge_class(@ticket.status) %>">
+            <%= @ticket.status.capitalize %>
+          </div>
+        </div>
+      </div>
 
-    <!-- Ticket Content -->
-    <div class="p-6">
-      <!-- Event Information -->
-      <div class="border-b border-gray-200 pb-6">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4"><%= @ticket.event.name %></h2>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <h3 class="text-sm font-medium text-gray-500">DATE & TIME</h3>
-            <p class="mt-1 text-sm text-gray-900">
-              <%= @ticket.event.start_date.strftime("%B %d, %Y") %>
-              <% if @ticket.event.start_date != @ticket.event.end_date %>
-                - <%= @ticket.event.end_date.strftime("%B %d, %Y") %>
-              <% end %>
-            </p>
-            <p class="text-sm text-gray-900">
-              <%= @ticket.event.start_time.strftime("%I:%M %p") %> - <%= @ticket.event.end_time.strftime("%I:%M %p") %>
-            </p>
-          </div>
-          
-          <div>
-            <h3 class="text-sm font-medium text-gray-500">VENUE</h3>
-            <p class="mt-1 text-sm text-gray-900"><%= @ticket.event.venue %></p>
-          </div>
-          
-          <div>
-            <h3 class="text-sm font-medium text-gray-500">TICKET TYPE</h3>
-            <p class="mt-1 text-sm text-gray-900"><%= @ticket.ticket_type.capitalize %></p>
-          </div>
-          
-          <div>
-            <h3 class="text-sm font-medium text-gray-500">PRICE</h3>
-            <p class="mt-1 text-sm text-gray-900">$<%= @ticket.price %></p>
-          </div>
-          
-          <% if @ticket.seat_number.present? %>
-            <div>
-              <h3 class="text-sm font-medium text-gray-500">SEAT NUMBER</h3>
-              <p class="mt-1 text-sm text-gray-900"><%= @ticket.seat_number %></p>
-            </div>
-          <% end %>
-          
-          <div>
-            <h3 class="text-sm font-medium text-gray-500">STATUS</h3>
-            <p class="mt-1 text-sm">
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                <%= @ticket.status == 'active' ? 'bg-green-100 text-green-800' : 
-                    @ticket.status == 'used' ? 'bg-blue-100 text-blue-800' : 
-                    'bg-gray-100 text-gray-800' %>">
-                <%= @ticket.status.capitalize %>
+      <!-- Content -->
+      <div class="p-6 sm:p-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Left column: Event info -->
+          <div class="lg:col-span-2 space-y-6">
+            <h2 class="text-2xl font-extrabold text-gray-900">
+              <span class="text-forange">
+                <%= @ticket.event.name %>
               </span>
-            </p>
-          </div>
-        </div>
-      </div>
+            </h2>
 
-      <!-- QR Code Section -->
-      <div class="pt-6 text-center">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">QR Code</h3>
-        
-        <div class="flex justify-center mb-4">
-          <div class="p-4 bg-white border-2 border-gray-300 rounded-lg">
-            <%= @ticket.qr_code_svg.html_safe %>
-          </div>
-        </div>
-        
-        <p class="text-sm text-gray-500 mb-4">
-          Present this QR code at the event entrance for quick check-in
-        </p>
-        
-        <div class="text-xs text-gray-400 font-mono bg-gray-50 p-2 rounded">
-          QR Code: <%= @ticket.qr_code %>
-        </div>
-      </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="p-4 bg-white rounded-lg border border-gray-100 shadow-sm">
+                <h3 class="text-xs font-bold text-gray-500 uppercase">Date & Time</h3>
+                <p class="mt-2 text-sm text-gray-900 font-semibold">
+                  <%= @ticket.event.start_date.strftime("%B %d, %Y") %>
+                  <% if @ticket.event.start_date != @ticket.event.end_date %>
+                    - <%= @ticket.event.end_date.strftime("%B %d, %Y") %>
+                  <% end %>
+                </p>
+                <p class="text-sm text-gray-600 mt-1">
+                  <%= @ticket.event.start_time.strftime("%I:%M %p") %> - <%= @ticket.event.end_time.strftime("%I:%M %p") %>
+                </p>
+              </div>
 
-      <!-- Actions -->
-      <div class="pt-6 border-t border-gray-200 flex justify-between">
-        <%= link_to "← Back to Event", event_path(@ticket.event), 
-            class: "inline-flex items-center text-sm text-gray-500 hover:text-gray-700" %>
-            
-        <div class="flex gap-2">
-          <% if @ticket.can_be_cancelled? %>
-            <%= link_to "Cancel Ticket", ticket_path(@ticket), method: :delete,
-                data: { confirm: "Are you sure you want to cancel this ticket? This action cannot be undone." },
-                class: "inline-flex items-center px-3 py-2 border border-red-300 text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50" %>
-          <% end %>
-          
-          <button data-action="print-ticket" 
-                  class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-            Print Ticket
-          </button>
+              <div class="p-4 bg-white rounded-lg border border-gray-100 shadow-sm">
+                <h3 class="text-xs font-bold text-gray-500 uppercase">Venue</h3>
+                <p class="mt-2 text-sm text-gray-900 font-semibold"><%= @ticket.event.venue %></p>
+              </div>
+
+              <div class="p-4 bg-white rounded-lg border border-gray-100 shadow-sm">
+                <h3 class="text-xs font-bold text-gray-500 uppercase">Ticket Details</h3>
+                <div class="mt-2 grid grid-cols-2 gap-2">
+                  <div>
+                    <p class="text-xs text-gray-500">Type</p>
+                    <p class="text-sm font-semibold text-gray-900"><%= @ticket.ticket_type.capitalize %></p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500">Price</p>
+                    <p class="text-sm font-semibold text-gray-900">$<%= @ticket.price %></p>
+                  </div>
+                </div>
+              </div>
+
+              <% if @ticket.seat_number.present? %>
+                <div class="p-4 bg-white rounded-lg border border-gray-100 shadow-sm">
+                  <h3 class="text-xs font-bold text-gray-500 uppercase">Seat</h3>
+                  <p class="mt-2 text-sm font-semibold text-gray-900"><%= @ticket.seat_number %></p>
+                </div>
+              <% end %>
+            </div>
+
+            <!-- Actions -->
+            <div class="mt-6 border-t pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>
+                <%= link_to event_path(@ticket.event), class: "inline-flex items-center text-sm text-gray-600 hover:text-gray-800" do %>
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                  Back to Event
+                <% end %>
+              </div>
+
+              <div class="flex gap-3">
+                <% if @ticket.can_be_cancelled? %>
+                  <%= button_to ticket_path(@ticket), method: :delete, data: { turbo_confirm: "Are you sure you want to cancel this ticket?" }, class: "px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 text-sm font-semibold" do %>
+                    Cancel Ticket
+                  <% end %>
+                <% end %>
+
+                <button data-action="print-ticket" class="px-4 py-2 rounded-md border border-gray-200 bg-white text-sm hover:bg-gray-50">Print Ticket</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right column: QR + copy -->
+          <div class="lg:col-span-1">
+            <div class="p-4 bg-white rounded-lg border border-gray-100 shadow-sm">
+              <h3 class="text-xs font-bold text-gray-500 uppercase mb-4">Digital Entry Pass</h3>
+
+              <div class="flex items-center justify-center">
+                <div class="qr-wrapper bg-white p-3 rounded-lg shadow-inner">
+                  <div class="qr-inner max-w-[300px] w-full">
+                    <% if @ticket.qr_code_svg.present? %>
+                      <%= @ticket.qr_code_svg.html_safe %>
+                    <% else %>
+                      <% begin %>
+                        <% require 'rqrcode' unless defined?(RQRCode) %>
+                        <% qr = RQRCode::QRCode.new(@ticket.qr_code_data) %>
+                        <%= qr.as_svg(offset: 0, color: '000', shape_rendering: 'crispEdges', module_size: 4, standalone: false).html_safe %>
+                      <% rescue %>
+                        <div class="text-sm text-gray-500">QR unavailable</div>
+                      <% end %>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+
+              <p class="text-sm text-gray-600 text-center mt-4">Present this QR code at the entrance for quick check-in</p>
+
+              <div class="mt-4 flex items-center gap-2">
+                <div class="flex-1 text-xs font-mono text-gray-500 bg-gray-50 px-3 py-2 rounded-lg border border-gray-100 truncate">
+                  <%= @ticket.qr_code %>
+                </div>
+                <button data-action="copy-qr" data-qr-code="<%= @ticket.qr_code %>" class="p-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 focus:outline-none" title="Copy QR">
+                  <i class="fa-regular fa-copy text-gray-700 w-4 h-4" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
+
+  <style>
+    .qr-wrapper { overflow: hidden; }
+    .qr-inner svg { width: 100% !important; height: auto !important; display:block !important; }
+    @media (min-width: 1024px) { .qr-inner { max-width: 420px; } }
+  </style>
+
+  
 </div>
