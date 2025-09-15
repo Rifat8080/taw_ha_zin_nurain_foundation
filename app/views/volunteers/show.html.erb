@@ -105,14 +105,16 @@
           </div>
 
           <div class="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <%= link_to edit_volunteer_path(@volunteer), class: 'inline-flex items-center gap-2 px-5 py-2 rounded-md bg-foundationprimarygreen/10 text-foundationprimarygreen font-semibold shadow-sm hover:shadow-md w-full sm:w-auto justify-center' do %>
-              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h6M5 7v6m0 0l6 6"/></svg>
-              Edit
-            <% end %>
+            <% if current_user&.role == 'admin' %>
+              <%= link_to edit_volunteer_path(@volunteer), class: 'inline-flex items-center gap-2 px-5 py-2 rounded-md bg-foundationprimarygreen/10 text-foundationprimarygreen font-semibold shadow-sm hover:shadow-md w-full sm:w-auto justify-center' do %>
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h6M5 7v6m0 0l6 6"/></svg>
+                Edit
+              <% end %>
 
-            <%= link_to new_team_assignment_path(volunteer_id: @volunteer.id), class: 'btn-primary inline-flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-foundationprimarygreen text-white font-semibold w-full sm:w-auto justify-center' do %>
-              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-              Assign
+              <%= link_to new_team_assignment_path(volunteer_id: @volunteer.id), class: 'btn-primary inline-flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-foundationprimarygreen text-white font-semibold w-full sm:w-auto justify-center' do %>
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                Assign
+              <% end %>
             <% end %>
 
             <%= link_to volunteers_path, class: 'inline-flex items-center gap-2 px-3 py-2 rounded-md bg-white border border-forange text-forange hover:bg-forange/10 w-full sm:w-auto justify-center' do %>
@@ -163,9 +165,11 @@
       </div>
 
       <div class="mb-6">
-        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-medium text-gray-900">Team Assignments</h2>
-          <%= link_to 'Assign to New Team', new_team_assignment_path(volunteer_id: @volunteer.id), class: 'inline-flex items-center px-3 py-2 rounded-md bg-gradient-to-r from-foundationprimarygreen to-forange text-white text-sm font-semibold w-full sm:w-auto justify-center' %>
+          <% if current_user&.role == 'admin' %>
+            <%= link_to 'Assign to New Team', new_team_assignment_path(volunteer_id: @volunteer.id), class: 'inline-flex items-center px-3 py-2 rounded-md bg-gradient-to-r from-foundationprimarygreen to-forange text-white text-sm font-semibold w-full sm:w-auto justify-center' %>
+          <% end %>
         </div>
 
         <% if @team_assignments.present? && @team_assignments.any? %>
@@ -180,18 +184,22 @@
                   <span class="inline-flex items-center text-xs font-semibold rounded-full bg-green-100 text-green-800 px-2 py-1"><%= assignment.volunteers_team.district %></span>
                   <div class="flex items-center gap-2">
                       <%= link_to 'View Team', assignment.volunteers_team, class: 'inline-flex items-center px-3 py-1 rounded-md btn-primary text-white text-xs' %>
-                      <%= link_to 'Remove', assignment, method: :delete, data: { confirm: 'Are you sure you want to remove this team assignment?' }, class: 'inline-flex items-center px-3 py-1 rounded-md bg-red-500 hover:bg-red-700 text-white text-xs' %>
+                      <% if current_user&.role == 'admin' %>
+                        <%= link_to 'Remove', assignment, method: :delete, data: { confirm: 'Are you sure you want to remove this team assignment?' }, class: 'inline-flex items-center px-3 py-1 rounded-md bg-red-500 hover:bg-red-700 text-white text-xs' %>
+                      <% end %>
                   </div>
                 </div>
               </div>
             <% end %>
           </div>
-        <% else %>
-          <div class="bg-white shadow rounded-lg p-6 text-center">
-            <p class="text-gray-500 mb-4">No team assignments yet.</p>
-            <%= link_to 'Assign to First Team', new_team_assignment_path(volunteer_id: @volunteer.id), class: 'inline-flex items-center px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white font-semibold' %>
-          </div>
-        <% end %>
+          <% else %>
+            <div class="bg-white shadow rounded-lg p-6 text-center">
+              <p class="text-gray-500 mb-4">No team assignments yet.</p>
+              <% if current_user&.role == 'admin' %>
+                <%= link_to 'Assign to First Team', new_team_assignment_path(volunteer_id: @volunteer.id), class: 'inline-flex items-center px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white font-semibold' %>
+              <% end %>
+            </div>
+          <% end %>
       </div>
     </div>
   </div>
