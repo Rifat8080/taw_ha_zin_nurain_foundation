@@ -1,7 +1,7 @@
 class VolunteersTeamsController < ApplicationController
   before_action :set_volunteers_team, only: [ :show, :edit, :update, :destroy ]
-  before_action :authorize_admin!, only: [:new, :create, :destroy]
-  before_action :authorize_manage_team, only: [:edit, :update]
+  before_action :authorize_admin!, only: [ :new, :create, :destroy ]
+  before_action :authorize_manage_team, only: [ :edit, :update ]
 
   def index
   @volunteers_teams = VolunteersTeam.includes(:volunteers, :work_orders).all
@@ -49,17 +49,17 @@ class VolunteersTeamsController < ApplicationController
   private
 
   def authorize_manage_team
-    return if current_user && (current_user.role == 'admin')
+    return if current_user && (current_user.role == "admin")
 
     volunteer = current_user.respond_to?(:volunteer) ? current_user.volunteer : nil
-    unless volunteer && volunteer.role == 'leader' && @volunteers_team.volunteers.exists?(id: volunteer.id)
-      redirect_to @volunteers_team, alert: 'You are not authorized to perform that action.'
+    unless volunteer && volunteer.role == "leader" && @volunteers_team.volunteers.exists?(id: volunteer.id)
+      redirect_to @volunteers_team, alert: "You are not authorized to perform that action."
     end
   end
 
   def authorize_admin!
-    unless current_user&.role == 'admin'
-      redirect_to volunteers_teams_path, alert: 'You are not authorized to perform that action.'
+    unless current_user&.role == "admin"
+      redirect_to volunteers_teams_path, alert: "You are not authorized to perform that action."
     end
   end
 
