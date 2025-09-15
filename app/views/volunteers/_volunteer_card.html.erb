@@ -31,6 +31,9 @@
       <% if current_user&.role == 'admin' %>
         <%= link_to 'Edit', edit_volunteer_path(volunteer), class: 'inline-flex items-center px-3 py-1 btn-primary text-white rounded-md text-sm' %>
         <%= link_to 'Assign', new_team_assignment_path(volunteer_id: volunteer.id), class: 'inline-flex items-center px-3 py-1 border rounded-md text-sm bg-white text-gray-700 hover:bg-forange/10' %>
+        <%= button_to volunteer_path(volunteer), method: :delete, data: { confirm: 'Are you sure you want to delete this volunteer? This cannot be undone.' }, class: 'inline-flex items-center px-3 py-1 rounded-md bg-red-500 hover:bg-red-700 text-white text-sm' do %>
+          Delete
+        <% end %>
       <% end %>
     </div>
   </div>
