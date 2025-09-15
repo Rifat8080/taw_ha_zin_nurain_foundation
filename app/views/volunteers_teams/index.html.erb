@@ -80,7 +80,7 @@
 
               <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <%= link_to 'View Details', team, class: 'w-full px-3 py-2 rounded text-sm bg-foundationprimarygreen hover:bg-forange text-white text-center' %>
-                <% if current_user&.role == 'admin' %>
+                <% if can_manage_team?(current_user, team) %>
                   <%= link_to 'Edit Team', edit_volunteers_team_path(team), class: 'w-full px-3 py-2 rounded text-sm bg-white border border-foundationprimarygreen text-foundationprimarygreen text-center' %>
                   <%= link_to 'Add Member', new_team_assignment_path(team_id: team.id), class: 'w-full px-3 py-2 rounded text-sm bg-forange hover:bg-forange/90 text-white text-center' %>
                   <%= link_to 'New Work Order', new_work_order_path(team_id: team.id), class: 'w-full px-3 py-2 rounded text-sm bg-white border border-forange text-forange text-center' %>
