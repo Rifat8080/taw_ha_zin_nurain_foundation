@@ -19,15 +19,6 @@
       <p class="mt-2 text-lg text-gray-700 text-center">Manage your booked events and QR codes</p>
       <p class="mt-2 text-sm text-gray-500 text-center">Total tickets: <span class="font-semibold text-foundationprimarygreen"><%= @tickets.count %></span></p>
     </div>
-
-    <div class="mt-4 md:mt-0">
-  <%= link_to events_path, class: "inline-flex items-center whitespace-nowrap flex-shrink-0 px-4 py-2 bg-foundationprimarygreen hover:bg-forange text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200" do %>
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-        </svg>
-        Browse Events
-      <% end %>
-    </div>
   </div>
 
   <!-- Search and Filter Section -->
@@ -54,7 +45,14 @@
       <% end %>
     </div>
   </div>
-
+ <div class="mt-4 md:mt-0 mb-4">
+  <%= link_to events_path, class: "inline-flex items-center whitespace-nowrap flex-shrink-0 px-4 py-2 bg-foundationprimarygreen hover:bg-forange text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200" do %>
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+        Browse Events
+      <% end %>
+    </div>
   <!-- Tickets Grid -->
   <% if @tickets.any? %>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
