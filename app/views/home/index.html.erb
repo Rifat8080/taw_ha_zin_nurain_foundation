@@ -502,22 +502,15 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
       <!-- Ongoing Projects -->
   <div class="stat-card group relative text-center rounded-3xl shadow-2xl border border-foundationprimarygreen/30 p-10 bg-white/60 backdrop-blur-xl transition-transform hover:-translate-y-3 hover:shadow-[0_8px_40px_0_rgba(34,197,94,0.15)] hover:border-foundationprimarygreen/60 overflow-hidden fade-in flex flex-col">
-        <!-- Glowing background -->
-        <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-40 h-32 bg-foundationprimarygreen/20 blur-2xl opacity-60 z-0"></div>
         <!-- Floating Icon -->
         <div class="flex justify-center mb-2 relative z-10">
           <div class="h-20 w-20 flex items-center justify-center rounded-full bg-foundationprimarygreen/20 shadow-lg border-4 border-white/60 -mt-14 mb-2 group-hover:scale-110 transition-transform duration-300">
             <i class="fas fa-project-diagram text-foundationprimarygreen text-4xl drop-shadow"></i>
           </div>
         </div>
-        <!-- Glass reflection -->
-        <div class="absolute left-1/2 top-8 -translate-x-1/2 w-32 h-6 bg-white/40 rounded-full blur-md opacity-40 z-20"></div>
         <div class="text-5xl font-extrabold text-foundationprimarygreen mb-2 count-up font-sans tracking-tight" data-count="<%= (@projects || []).count %>" aria-label="Ongoing Projects"><%= (@projects || []).count %></div>
         <div class="text-foundationprimarygreen font-semibold text-lg tracking-wide"><%= t('.ongoing_projects') %></div>
         <div class="text-xs text-gray-500 mt-1"><%= t('.making_a_difference') %></div>
-        <div class="w-3/4 mx-auto mt-6 h-2 rounded-full bg-foundationprimarygreen/10 overflow-hidden">
-          <div class="h-2 rounded-full bg-gradient-to-r from-foundationprimarygreen via-forange to-foundationprimarygreen animate-progress" style="width: <%= [(@projects || []).count * 7, 100].min %>%"></div>
-        </div>
         <div class="flex-1"></div>
         <div class="flex justify-center mt-8 mb-2">
           <%= link_to t('.view_projects_button'), projects_path, class: "inline-block px-6 py-2 rounded-lg bg-foundationprimarygreen text-white font-semibold shadow hover:bg-green-700 transition-colors text-base" %>
@@ -542,7 +535,6 @@
       </div>
       <!-- Upcoming Events -->
   <div class="stat-card group relative text-center rounded-3xl shadow-2xl border border-foundationprimarygreen/30 p-10 bg-white/60 backdrop-blur-xl transition-transform hover:-translate-y-3 hover:shadow-[0_8px_40px_0_rgba(34,197,94,0.15)] hover:border-foundationprimarygreen/60 overflow-hidden fade-in flex flex-col">
-        <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-40 h-32 bg-foundationprimarygreen/20 blur-2xl opacity-60 z-0"></div>
         <div class="flex justify-center mb-2 relative z-10">
           <div class="h-20 w-20 flex items-center justify-center rounded-full bg-foundationprimarygreen/20 shadow-lg border-4 border-white/60 -mt-14 mb-2 group-hover:scale-110 transition-transform duration-300">
             <i class="fas fa-calendar-alt text-foundationprimarygreen text-4xl drop-shadow"></i>
@@ -552,9 +544,7 @@
         <div class="text-5xl font-extrabold text-foundationprimarygreen mb-2 count-up font-sans tracking-tight" data-count="<%= (@upcoming_events || []).count %>" aria-label="Upcoming Events"><%= (@upcoming_events || []).count %></div>
         <div class="text-foundationprimarygreen font-semibold text-lg tracking-wide"><%= t('.upcoming_events') %></div>
         <div class="text-xs text-gray-500 mt-1"><%= t('.join_and_participate') %></div>
-        <div class="w-3/4 mx-auto mt-6 h-2 rounded-full bg-foundationprimarygreen/10 overflow-hidden">
-          <div class="h-2 rounded-full bg-gradient-to-r from-foundationprimarygreen via-forange to-foundationprimarygreen animate-progress" style="width: <%= [(@upcoming_events || []).count * 7, 100].min %>%"></div>
-        </div>
+      
         <div class="flex-1"></div>
         <div class="flex justify-center mt-8 mb-2">
           <%= link_to t('.view_events_button'), events_path, class: "inline-block px-6 py-2 rounded-lg bg-foundationprimarygreen text-white font-semibold shadow hover:bg-green-700 transition-colors text-base" %>
