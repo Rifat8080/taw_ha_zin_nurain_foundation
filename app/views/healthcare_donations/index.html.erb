@@ -13,7 +13,7 @@
   <div class="flex flex-col md:flex-row justify-between items-center text-center mb-8 gap-4">
     <div class="w-full">
       <h1 class="text-4xl md:text-5xl font-bold text-foundationprimarygreen tracking-tight text-center">
-        Manual <span class="text-forange">Donations</span>
+        Healthcare <span class="text-forange">Donations</span>
       </h1>
       <p class="mt-2 text-lg text-gray-700 text-center">Manage manually-created healthcare donations for requests.</p>
     </div>
@@ -28,7 +28,7 @@
         </div>
         <div class="mt-3 md:mt-0 md:w-64">
           <%= form.label :request_id, 'Filter by Request', class: 'sr-only' %>
-          <%= form.select :request_id, options_from_collection_for_select(@requests, :id, :patient_name, params[:request_id]), { include_blank: 'All requests' }, class: 'w-full px-3 py-2 border rounded-md' %>
+          <%= form.select :request_id, options_from_collection_for_select(@requests, :id, :patient_name, params[:request_id]), { include_blank: 'All manual requests' }, class: 'w-full px-3 py-2 border rounded-md' %>
         </div>
       </div>
       <div class="flex gap-2">

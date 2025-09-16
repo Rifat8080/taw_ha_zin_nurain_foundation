@@ -4,13 +4,16 @@ class HealthcareDonationsController < ApplicationController
   before_action :set_healthcare_request, only: [ :new, :create ]
 
   def index
-  # Index should list manual donations only (admin view)
+  # Index should list manual donations only (admin view) unless filtering for a specific request
   authorize_admin!
   @requests = HealthcareRequest.all.order(created_at: :desc).limit(200)
-  donations = HealthcareDonation.manual.includes(:healthcare_request, :user).recent
 
   if params[:request_id].present?
-    donations = donations.where(request_id: params[:request_id])
+    # When admin filters by a specific request, show all donations for that request (manual + automated)
+    donations = HealthcareDonation.includes(:healthcare_request, :user).recent.where(request_id: params[:request_id])
+  else
+    # Default admin index shows only manual donations
+    donations = HealthcareDonation.manual.includes(:healthcare_request, :user).recent
   end
 
   if params[:search].present?
