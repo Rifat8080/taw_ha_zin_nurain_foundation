@@ -79,7 +79,15 @@
             <% @donations.each do |d| %>
               <tr>
                 <td class="px-2 py-3"><%= d.created_at.to_date %></td>
-                <td class="px-2 py-3"><%= d.project&.name %></td>
+                <td class="px-2 py-3">
+                  <%# Donations may be regular Donation (has project) or HealthcareDonation (linked via healthcare_request) %>
+                  <% project_name = if d.respond_to?(:project) && d.project.present?
+                                      d.project&.name
+                                    elsif d.respond_to?(:healthcare_request) && d.healthcare_request&.respond_to?(:project)
+                                      d.healthcare_request&.project&.name
+                                    end %>
+                  <%= project_name || '-' %>
+                </td>
                 <td class="px-2 py-3"><%= d.user&.email || d.email || 'Guest' %></td>
                 <td class="px-2 py-3 text-right font-medium"><%= number_to_currency(d.amount) %></td>
               </tr>
@@ -107,7 +115,15 @@
             <% @expenses.each do |e| %>
               <tr>
                 <td class="px-2 py-3"><%= e.expense_date %></td>
-                <td class="px-2 py-3"><%= e.project&.name %></td>
+                <td class="px-2 py-3">
+                  <%# Expenses may be regular Expense (has project) or HealthcareExpense (linked via healthcare_request) %>
+                  <% exp_project_name = if e.respond_to?(:project) && e.project.present?
+                                           e.project&.name
+                                         elsif e.respond_to?(:healthcare_request) && e.healthcare_request&.respond_to?(:project)
+                                           e.healthcare_request&.project&.name
+                                         end %>
+                  <%= exp_project_name || '-' %>
+                </td>
                 <td class="px-2 py-3"><%= e.title %></td>
                 <td class="px-2 py-3 text-right font-medium"><%= number_to_currency(e.amount) %></td>
               </tr>
