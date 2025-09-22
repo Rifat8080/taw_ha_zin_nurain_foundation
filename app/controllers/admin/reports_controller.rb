@@ -10,9 +10,9 @@ class Admin::ReportsController < ApplicationController
     @project_id = params[:project_id].presence
     @request_id = nil
     if @selected_entity&.start_with?("project:")
-      @project_id = @selected_entity.split(':', 2)[1]
+      @project_id = @selected_entity.split(":", 2)[1]
     elsif @selected_entity&.start_with?("request:")
-      @request_id = @selected_entity.split(':', 2)[1]
+      @request_id = @selected_entity.split(":", 2)[1]
     end
 
   # Project donations (regular) and healthcare donations
