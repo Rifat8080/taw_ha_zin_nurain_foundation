@@ -9,6 +9,10 @@ pin "flowbite", to: "https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowb
 pin "flowbite-datepicker", to: "https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/datepicker.turbo.min.js"
 pin "@rails/actioncable", to: "https://ga.jspm.io/npm:@rails/actioncable@7.1.1/app/assets/javascripts/action_cable.esm.js"
 
+# Pin ApexCharts to the local node_modules path so importmap can load it from the installed package
+# During development the server may serve /node_modules; this avoids using a CDN.
+pin "apexcharts", to: "vendors/apexcharts.esm.js"
+
 # Pin custom JavaScript modules with explicit mappings
 pin "modules/donor_modal", to: "modules/donor_modal.js"
 pin "modules/qr_scanner", to: "modules/qr_scanner.js"
@@ -33,3 +37,4 @@ pin "modules/gallery_tabs", to: "modules/gallery_tabs.js"
 pin "modules/user_card_dropdown", to: "modules/user_card_dropdown.js"
 pin "modules/project_donation", to: "modules/project_donation.js"
 pin "modules/tabs_and_donors", to: "modules/tabs_and_donors.js"
+pin "modules/reports_charts", to: "modules/reports_charts.js"

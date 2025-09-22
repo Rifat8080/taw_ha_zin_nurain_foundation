@@ -1,43 +1,82 @@
 <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-  <div class="flex items-center justify-between gap-4 mb-6">
+  <header class="flex items-start justify-between gap-6 mb-8">
     <div>
-      <h1 class="text-2xl sm:text-3xl font-bold">Financial Reports</h1>
-      <div class="text-sm text-gray-500">Detailed view of donations and expenses (including healthcare)</div>
+  <h1 class="text-3xl font-extrabold"><span class="text-foundationprimarygreen">Financial</span> <span class="text-forange">Reports</span></h1>
+      <p class="mt-1 text-sm text-gray-500">Overview of donations and expenses across projects and healthcare requests.</p>
     </div>
+
     <div class="flex items-center gap-3">
-      <a href="<%= admin_reports_path(format: :csv, start_date: params[:start_date], end_date: params[:end_date], entity: params[:entity]) %>" class="btn-secondary px-4 py-2">Download CSV</a>
+      <a href="<%= admin_reports_path(format: :csv, start_date: params[:start_date], end_date: params[:end_date], entity: params[:entity]) %>" class="inline-flex items-center gap-2 px-4 py-2 rounded-md border bg-white hover:shadow-sm text-sm text-gray-700">
+        <i class="fa-solid fa-download h-4 w-4 text-gray-600" aria-hidden="true"></i>
+        <span class="sr-only">Download CSV</span>
+        <span aria-hidden="true">Download CSV</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Top metrics -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+    <div class="p-5 rounded-2xl bg-gradient-to-tr from-green-50 to-white border border-green-100 shadow-lg transform transition hover:-translate-y-1">
+      <div class="text-xs text-gray-500">Donations</div>
+      <div class="mt-2 text-2xl font-extrabold text-foundationprimarygreen"><%= number_to_currency(@donations_total || 0) %></div>
+      <div class="mt-1 text-sm text-gray-400">Total received in the selected range</div>
+    </div>
+
+    <div class="p-5 rounded-2xl bg-gradient-to-tr from-red-50 to-white border border-red-100 shadow-lg transform transition hover:-translate-y-1">
+      <div class="text-xs text-gray-500">Expenses</div>
+      <div class="mt-2 text-2xl font-extrabold text-red-600"><%= number_to_currency(@expenses_total || 0) %></div>
+      <div class="mt-1 text-sm text-gray-400">Total expenses in the selected range</div>
+    </div>
+
+    <div class="p-5 rounded-2xl bg-gradient-to-tr from-gray-50 to-white border border-gray-100 shadow-lg transform transition hover:-translate-y-1">
+      <div class="text-xs text-gray-500">Net Balance</div>
+      <div class="mt-2 text-2xl font-extrabold <%= (@balance || 0) >= 0 ? 'text-foundationprimarygreen' : 'text-red-600' %>"><%= number_to_currency(@balance || 0) %></div>
+      <div class="mt-1 text-sm text-gray-400">Donations − Expenses</div>
     </div>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-    <div class="bg-white p-4 rounded-lg shadow">
-      <div class="text-xs text-gray-500">Donations total</div>
-      <div class="text-xl font-semibold text-foundationprimarygreen"><%= number_to_currency(@donations_total || 0) %></div>
+  <!-- Charts + Filters -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <div class="lg:col-span-2 p-4 rounded-2xl bg-white border border-gray-100 shadow-md">
+      <h3 class="text-sm font-semibold text-gray-700 mb-3">Donations vs Expenses</h3>
+      <div class="p-3 rounded-xl bg-gradient-to-b from-white to-gray-50">
+     <div id="trendChart" aria-label="Donations vs Expenses trend" role="img" style="height:280px;"
+       data-chart-labels='<%= raw((@chart_labels || []).to_json) %>'
+       data-donation-series='<%= raw((@donation_series || []).to_json) %>'
+       data-expense-series='<%= raw((@expense_series || []).to_json) %>'
+     ></div>
+      </div>
     </div>
-    <div class="bg-white p-4 rounded-lg shadow">
-      <div class="text-xs text-gray-500">Expenses total</div>
-      <div class="text-xl font-semibold text-red-600"><%= number_to_currency(@expenses_total || 0) %></div>
-    </div>
-    <div class="bg-white p-4 rounded-lg shadow">
-      <div class="text-xs text-gray-500">Net balance</div>
-      <div class="text-xl font-semibold <%= (@balance || 0) >= 0 ? 'text-foundationprimarygreen' : 'text-red-600' %>"><%= number_to_currency(@balance || 0) %></div>
-    </div>
+
+    <aside class="p-4 rounded-2xl bg-white border border-gray-100 shadow-md">
+      <h3 class="text-sm font-semibold text-gray-700 mb-3">Donation Source</h3>
+      <div class="p-3 rounded-xl bg-gradient-to-b from-white to-gray-50">
+     <div id="sourceChart" aria-label="Donation source breakdown" role="img" style="height:260px;"
+       data-breakdown='<%= raw((@donation_source_breakdown || {}).to_json) %>'
+     ></div>
+      </div>
+
+      <div class="mt-4 text-xs text-gray-500">
+        <div><span class="inline-block w-2 h-2 bg-green-500 rounded-full mr-2 align-middle"></span> Project</div>
+        <div class="mt-2"><span class="inline-block w-2 h-2 bg-blue-600 rounded-full mr-2 align-middle"></span> Healthcare</div>
+      </div>
+    </aside>
   </div>
 
   <!-- Filters -->
-  <div class="mb-6 bg-white p-4 rounded-lg shadow">
-  <form method="get" action="<%= admin_reports_path %>" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+  <div class="mb-8">
+    <form method="get" action="<%= admin_reports_path %>" class="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
       <div>
         <label class="text-sm text-gray-600">Start date</label>
-        <input type="date" name="start_date" value="<%= params[:start_date] %>" class="w-full rounded border px-3 py-2 text-sm" />
+        <input type="date" name="start_date" value="<%= params[:start_date] %>" class="mt-1 w-full rounded-md border px-3 py-2 text-sm" />
       </div>
       <div>
         <label class="text-sm text-gray-600">End date</label>
-        <input type="date" name="end_date" value="<%= params[:end_date] %>" class="w-full rounded border px-3 py-2 text-sm" />
+        <input type="date" name="end_date" value="<%= params[:end_date] %>" class="mt-1 w-full rounded-md border px-3 py-2 text-sm" />
       </div>
-      <div>
-        <label class="text-sm text-gray-600">Filter by Project or Healthcare Request</label>
-        <select name="entity" class="w-full rounded border px-3 py-2 text-sm">
+      <div class="md:col-span-2">
+        <label class="text-sm text-gray-600">Project or Healthcare Request</label>
+        <select name="entity" class="mt-1 w-full rounded-md border px-3 py-2 text-sm">
           <option value="" <%= params[:entity].blank? ? 'selected' : '' %>>All</option>
           <optgroup label="Projects">
             <% Project.order(:name).each do |p| %>
@@ -51,51 +90,51 @@
           </optgroup>
         </select>
       </div>
-      <div class="flex items-end gap-2">
-        <button class="btn-primary w-full sm:w-auto px-4 py-2">Filter</button>
-        <a href="<%= admin_reports_path %>" class="inline-block text-sm text-gray-600 border rounded px-4 py-2 hover:bg-gray-50">Clear</a>
+
+      <div class="md:col-span-4 flex items-center gap-2">
+        <button class="btn-primary px-4 py-2 rounded-md">Apply Filters</button>
+        <a href="<%= admin_reports_path %>" class="inline-flex items-center px-4 py-2 rounded-md border bg-white text-sm text-gray-700 hover:bg-gray-50">Clear</a>
       </div>
     </form>
   </div>
 
-  <!-- combined filter script removed -->
-
+  <!-- Data tables -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- Donations detailed list -->
-    <section class="bg-white p-4 rounded-lg shadow">
+    <!-- Donations -->
+    <section class="p-4 rounded-2xl bg-white/60 backdrop-blur border border-gray-100 shadow-md">
       <div class="flex items-center justify-between mb-3">
-        <h2 class="text-lg font-semibold">Donations (Projects + Healthcare)</h2>
-        <div class="text-sm text-gray-500">Showing <%= @donations.total_count if @donations.respond_to?(:total_count) %> items</div>
+        <h2 class="text-lg font-semibold">Donations</h2>
+        <div class="text-sm text-gray-500">Showing <%= @donations.total_count if @donations.respond_to?(:total_count) %></div>
       </div>
 
-      <div class="overflow-x-auto">
-        <table class="min-w-full w-full divide-y text-sm">
+      <div class="overflow-x-auto rounded-lg">
+        <table class="min-w-full divide-y text-sm">
           <thead>
             <tr class="text-left text-xs text-gray-500">
-              <th class="px-2 py-2">Source</th>
-              <th class="px-2 py-2">Project / Request</th>
-              <th class="px-2 py-2">Donor</th>
-              <th class="px-2 py-2">Method</th>
-              <th class="px-2 py-2 text-right">Amount</th>
+              <th class="px-3 py-2">Source</th>
+              <th class="px-3 py-2">Project / Request</th>
+              <th class="px-3 py-2">Donor</th>
+              <th class="px-3 py-2">Method</th>
+              <th class="px-3 py-2 text-right">Amount</th>
             </tr>
           </thead>
           <tbody class="divide-y">
             <% @donations.each do |d| %>
               <% if d.respond_to?(:project_id) && d.project_id.present? %>
                 <% source = 'project' %>
-                <% project_or_request = d.project&.name || '-' %>
-                <% method = d.respond_to?(:payment_method) ? d.payment_method : (d.respond_to?(:currency) ? d.currency : '') %>
+                <% identifier = d.project&.name || '-' %>
               <% else %>
                 <% source = 'healthcare' %>
-                <% project_or_request = d.respond_to?(:healthcare_request) ? (d.healthcare_request&.patient_name || 'Healthcare request') : 'Healthcare request' %>
-                <% method = d.respond_to?(:payment_method) ? d.payment_method : '' %>
+                <% identifier = d.respond_to?(:healthcare_request) ? (d.healthcare_request&.patient_name || 'Healthcare request') : 'Healthcare request' %>
               <% end %>
-              <tr class="hover:bg-gray-50">
-                <td class="px-2 py-3 text-xs text-gray-600"><%= source == 'project' ? 'Project' : 'Healthcare' %></td>
-                <td class="px-2 py-3"><%= project_or_request %></td>
-                <td class="px-2 py-3"><%= d.user&.email || (d.respond_to?(:email) ? d.email : 'Guest') %></td>
-                <td class="px-2 py-3 text-sm text-gray-600"><%= method.presence || '-' %></td>
-                <td class="px-2 py-3 text-right font-medium"><%= number_to_currency(d.amount) %></td>
+              <% method = d.respond_to?(:payment_method) ? d.payment_method : (d.respond_to?(:currency) ? d.currency : '') %>
+
+              <tr class="hover:shadow-sm hover:-translate-y-0.5 transform transition">
+                <td class="px-3 py-3 text-xs text-gray-600"><%= source == 'project' ? 'Project' : 'Healthcare' %></td>
+                <td class="px-3 py-3"><%= identifier %></td>
+                <td class="px-3 py-3"><%= d.user&.email || (d.respond_to?(:email) ? d.email : 'Guest') %></td>
+                <td class="px-3 py-3 text-sm text-gray-600"><%= method.presence || '-' %></td>
+                <td class="px-3 py-3 text-right font-medium"><%= number_to_currency(d.amount) %></td>
               </tr>
             <% end %>
           </tbody>
@@ -105,37 +144,38 @@
       <div class="mt-3"><%= paginate @donations %></div>
     </section>
 
-    <!-- Expenses detailed list -->
-    <section class="bg-white p-4 rounded-lg shadow">
+    <!-- Expenses -->
+    <section class="p-4 rounded-2xl bg-white/60 backdrop-blur border border-gray-100 shadow-md">
       <div class="flex items-center justify-between mb-3">
-        <h2 class="text-lg font-semibold">Expenses (Projects + Healthcare)</h2>
-        <div class="text-sm text-gray-500">Showing <%= @expenses.total_count if @expenses.respond_to?(:total_count) %> items</div>
+        <h2 class="text-lg font-semibold">Expenses</h2>
+        <div class="text-sm text-gray-500">Showing <%= @expenses.total_count if @expenses.respond_to?(:total_count) %></div>
       </div>
 
-      <div class="overflow-x-auto">
-        <table class="min-w-full w-full divide-y text-sm">
+      <div class="overflow-x-auto rounded-lg">
+        <table class="min-w-full divide-y text-sm">
           <thead>
             <tr class="text-left text-xs text-gray-500">
-              <th class="px-2 py-2">Source</th>
-              <th class="px-2 py-2">Project / Request</th>
-              <th class="px-2 py-2">Title</th>
-              <th class="px-2 py-2 text-right">Amount</th>
+              <th class="px-3 py-2">Source</th>
+              <th class="px-3 py-2">Project / Request</th>
+              <th class="px-3 py-2">Title</th>
+              <th class="px-3 py-2 text-right">Amount</th>
             </tr>
           </thead>
           <tbody class="divide-y">
             <% @expenses.each do |e| %>
               <% if e.respond_to?(:project_id) && e.project_id.present? %>
                 <% source = 'project' %>
-                <% project_or_request = e.project&.name || '-' %>
+                <% identifier = e.project&.name || '-' %>
               <% else %>
                 <% source = 'healthcare' %>
-                <% project_or_request = e.respond_to?(:healthcare_request) ? (e.healthcare_request&.patient_name || 'Healthcare request') : 'Healthcare request' %>
+                <% identifier = e.respond_to?(:healthcare_request) ? (e.healthcare_request&.patient_name || 'Healthcare request') : 'Healthcare request' %>
               <% end %>
-              <tr class="hover:bg-gray-50">
-                <td class="px-2 py-3 text-xs text-gray-600"><%= source == 'project' ? 'Project' : 'Healthcare' %></td>
-                <td class="px-2 py-3"><%= project_or_request %></td>
-                <td class="px-2 py-3"><%= (e.respond_to?(:title) && e.title.present?) ? e.title : (e.description.presence || '-') %></td>
-                <td class="px-2 py-3 text-right font-medium"><%= number_to_currency(e.amount) %></td>
+
+              <tr class="hover:shadow-sm hover:-translate-y-0.5 transform transition">
+                <td class="px-3 py-3 text-xs text-gray-600"><%= source == 'project' ? 'Project' : 'Healthcare' %></td>
+                <td class="px-3 py-3"><%= identifier %></td>
+                <td class="px-3 py-3"><%= (e.respond_to?(:title) && e.title.present?) ? e.title : (e.description.presence || '-') %></td>
+                <td class="px-3 py-3 text-right font-medium"><%= number_to_currency(e.amount) %></td>
               </tr>
             <% end %>
           </tbody>
@@ -146,18 +186,21 @@
     </section>
   </div>
 
-  <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-    <div class="bg-white p-4 rounded-lg shadow">
+  <!-- Footer small metrics -->
+  <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="p-4 rounded-lg bg-white border border-gray-100 shadow-sm">
       <div class="text-xs text-gray-500">Donations total</div>
       <div class="font-medium"><%= number_to_currency(@donations_total || 0) %></div>
     </div>
-    <div class="bg-white p-4 rounded-lg shadow">
+    <div class="p-4 rounded-lg bg-white border border-gray-100 shadow-sm">
       <div class="text-xs text-gray-500">Expenses total</div>
       <div class="font-medium text-red-600"><%= number_to_currency(@expenses_total || 0) %></div>
-    </div> 
-    <div class="bg-white p-4 rounded-lg shadow">
+    </div>
+    <div class="p-4 rounded-lg bg-white border border-gray-100 shadow-sm">
       <div class="text-xs text-gray-500">Net balance</div>
       <div class="text-xl font-semibold <%= (@balance || 0) >= 0 ? 'text-foundationprimarygreen' : 'text-red-600' %>"><%= number_to_currency(@balance || 0) %></div>
     </div>
   </div>
 </div>
+
+<!-- Charts are initialized from a bundled module that imports ApexCharts from package.json -->

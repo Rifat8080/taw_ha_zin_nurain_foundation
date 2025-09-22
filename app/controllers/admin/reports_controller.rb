@@ -77,6 +77,23 @@ class Admin::ReportsController < ApplicationController
   @expenses_total = (expenses.sum(:amount) || 0) + (healthcare_expenses.sum(:amount) || 0)
   @balance = @donations_total - @expenses_total
 
+    # Chart data: time series over the selected period (default last 30 days)
+    chart_start = @start_date || (Date.today - 29)
+    chart_end = @end_date || Date.today
+    labels = (chart_start..chart_end).map { |d| d.strftime("%Y-%m-%d") }
+
+    donations_by_date = (donations.to_a + healthcare_donations.to_a).group_by { |d| d.created_at.to_date }
+    expenses_by_date = (expenses.to_a + healthcare_expenses.to_a).group_by { |e| (e.respond_to?(:expense_date) ? e.expense_date : e.created_at.to_date) }
+
+    @chart_labels = labels
+    @donation_series = labels.map { |lbl| (donations_by_date[Date.parse(lbl)] || []).sum { |r| r.amount.to_f } }
+    @expense_series = labels.map { |lbl| (expenses_by_date[Date.parse(lbl)] || []).sum { |r| r.amount.to_f } }
+
+    # Donation source breakdown
+    project_don_total = donations.sum(:amount) || 0
+    healthcare_don_total = healthcare_donations.sum(:amount) || 0
+    @donation_source_breakdown = { project: project_don_total.to_f, healthcare: healthcare_don_total.to_f }
+
     respond_to do |format|
       format.html
       format.csv do

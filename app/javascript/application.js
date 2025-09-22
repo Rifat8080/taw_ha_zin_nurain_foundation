@@ -20,6 +20,7 @@ import "modules/spot_registration_ticket_types";
 import "modules/bulk_ticket_modal";
 import "modules/carousel";
 import "modules/stats";
+import "modules/reports_charts";
 import "modules/bulk_ticket_modal_fallback";
 import "modules/gallery_tabs";
 import "modules/healthcare_manual_user_search";
