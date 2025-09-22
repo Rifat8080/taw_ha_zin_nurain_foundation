@@ -37,7 +37,7 @@ module Reports
             d.created_at.to_s,
             d.user_id,
             (d.user&.email || (d.respond_to?(:email) ? d.email : nil)),
-            ["request_id:#{d.request_id}", (d.respond_to?(:payment_method) ? d.payment_method : nil)].compact.join(' ')
+            [ "request_id:#{d.request_id}", (d.respond_to?(:payment_method) ? d.payment_method : nil) ].compact.join(" ")
           ]
         end
 

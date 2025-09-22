@@ -5,7 +5,15 @@ class Admin::ReportsController < ApplicationController
     # Parse filters
     @start_date = params[:start_date].presence && Date.parse(params[:start_date]) rescue nil
     @end_date = params[:end_date].presence && Date.parse(params[:end_date]) rescue nil
+    # Combined entity filter: either "project:ID" or "request:ID"
+    @selected_entity = params[:entity].presence
     @project_id = params[:project_id].presence
+    @request_id = nil
+    if @selected_entity&.start_with?("project:")
+      @project_id = @selected_entity.split(':', 2)[1]
+    elsif @selected_entity&.start_with?("request:")
+      @request_id = @selected_entity.split(':', 2)[1]
+    end
 
   # Project donations (regular) and healthcare donations
   donations = Donation.includes(:user, :project).order("donations.created_at DESC")
@@ -18,10 +26,29 @@ class Admin::ReportsController < ApplicationController
     if @project_id.present?
       donations = donations.where(project_id: @project_id)
       expenses = expenses.where(project_id: @project_id)
+      # When filtering by a project we do not want to show healthcare records
+      # (healthcare_requests are not tied to projects in this schema), so
+      # explicitly hide healthcare donations and expenses.
+      healthcare_donations = HealthcareDonation.none
+      begin
+        healthcare_expenses = HealthcareExpense.none
+      rescue => _e
+        healthcare_expenses = HealthcareExpense.none
+      end
+    end
 
-  # Note: `healthcare_requests` do not reference projects in this schema,
-  # so we cannot reliably filter healthcare_donations/expenses by project here.
-  # Keep the healthcare sets unfiltered when a project_id is provided.
+    # If a healthcare request was selected, filter healthcare sets to that request
+    if @request_id.present?
+      healthcare_donations = healthcare_donations.where(request_id: @request_id)
+      begin
+        healthcare_expenses = healthcare_expenses.where(healthcare_request_id: @request_id)
+      rescue => _e
+        # Some schema variants may use different column names; ignore if absent
+      end
+
+      # When a healthcare request is selected we intentionally hide project donations/expenses
+      donations = Donation.none
+      expenses = Expense.none
     end
 
     if @start_date.present?

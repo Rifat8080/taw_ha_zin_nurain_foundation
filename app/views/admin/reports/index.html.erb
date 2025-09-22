@@ -5,7 +5,7 @@
       <div class="text-sm text-gray-500">Detailed view of donations and expenses (including healthcare)</div>
     </div>
     <div class="flex items-center gap-3">
-      <a href="<%= admin_reports_path(format: :csv, start_date: params[:start_date], end_date: params[:end_date], project_id: params[:project_id]) %>" class="btn-secondary px-4 py-2">Download CSV</a>
+      <a href="<%= admin_reports_path(format: :csv, start_date: params[:start_date], end_date: params[:end_date], entity: params[:entity]) %>" class="btn-secondary px-4 py-2">Download CSV</a>
     </div>
   </div>
 
@@ -35,7 +35,22 @@
         <label class="text-sm text-gray-600">End date</label>
         <input type="date" name="end_date" value="<%= params[:end_date] %>" class="w-full rounded border px-3 py-2 text-sm" />
       </div>
-  <!-- removed combined Projects + Healthcare requests dropdown per request -->
+      <div>
+        <label class="text-sm text-gray-600">Filter by Project or Healthcare Request</label>
+        <select name="entity" class="w-full rounded border px-3 py-2 text-sm">
+          <option value="" <%= params[:entity].blank? ? 'selected' : '' %>>All</option>
+          <optgroup label="Projects">
+            <% Project.order(:name).each do |p| %>
+              <option value="project:<%= p.id %>" <%= params[:entity] == "project:#{p.id}" ? 'selected' : '' %>><%= p.name %></option>
+            <% end %>
+          </optgroup>
+          <optgroup label="Healthcare Requests">
+            <% HealthcareRequest.order(:patient_name).each do |hr| %>
+              <option value="request:<%= hr.id %>" <%= params[:entity] == "request:#{hr.id}" ? 'selected' : '' %>><%= hr.patient_name %></option>
+            <% end %>
+          </optgroup>
+        </select>
+      </div>
       <div class="flex items-end gap-2">
         <button class="btn-primary w-full sm:w-auto px-4 py-2">Filter</button>
         <a href="<%= admin_reports_path %>" class="inline-block text-sm text-gray-600 border rounded px-4 py-2 hover:bg-gray-50">Clear</a>
@@ -82,7 +97,6 @@
                 <td class="px-2 py-3 text-sm text-gray-600"><%= method.presence || '-' %></td>
                 <td class="px-2 py-3 text-right font-medium"><%= number_to_currency(d.amount) %></td>
               </tr>
-              <%# expanded healthcare detail row removed to avoid showing patient/request info inline %>
             <% end %>
           </tbody>
         </table>
@@ -120,7 +134,7 @@
               <tr class="hover:bg-gray-50">
                 <td class="px-2 py-3 text-xs text-gray-600"><%= source == 'project' ? 'Project' : 'Healthcare' %></td>
                 <td class="px-2 py-3"><%= project_or_request %></td>
-                <td class="px-2 py-3"><%= e.title || e.description || '-' %></td>
+                <td class="px-2 py-3"><%= (e.respond_to?(:title) && e.title.present?) ? e.title : (e.description.presence || '-') %></td>
                 <td class="px-2 py-3 text-right font-medium"><%= number_to_currency(e.amount) %></td>
               </tr>
             <% end %>
@@ -140,7 +154,7 @@
     <div class="bg-white p-4 rounded-lg shadow">
       <div class="text-xs text-gray-500">Expenses total</div>
       <div class="font-medium text-red-600"><%= number_to_currency(@expenses_total || 0) %></div>
-    </div>
+    </div> 
     <div class="bg-white p-4 rounded-lg shadow">
       <div class="text-xs text-gray-500">Net balance</div>
       <div class="text-xl font-semibold <%= (@balance || 0) >= 0 ? 'text-foundationprimarygreen' : 'text-red-600' %>"><%= number_to_currency(@balance || 0) %></div>
