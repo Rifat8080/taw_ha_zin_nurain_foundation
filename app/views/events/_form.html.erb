@@ -16,200 +16,268 @@
     </div>
   <% end %>
 
-  <div class="bg-white border border-foundationprimarygreen/10 rounded-lg shadow-lg p-6">
-    <div class="mb-4">
-      <h2 class="text-4xl text-center font-bold">
-        <span class="text-foundationprimarygreen"><%= event.persisted? ? "Edit" : "Create"%></span>
-        <span class="text-forange">Event</span>
-      </h2>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Left: Main inputs -->
-      <div class="lg:col-span-2 space-y-4">
-        <div>
-          <%= form.label :name, class: "block text-sm font-medium text-foundationprimarygreen" %>
-          <div class="mt-1">
-            <%= form.text_field :name, class: ["block w-full rounded-md shadow-sm sm:text-sm px-3 py-2 border", {"border-gray-300 focus:border-foundationprimarygreen focus:ring-foundationprimarygreen": event.errors[:name].none?, "border-red-400 focus:ring-red-500": event.errors[:name].any?}] %>
-          </div>
-        </div>
-
-        <div>
-          <%= form.label :venue, class: "block text-sm font-medium text-foundationprimarygreen" %>
-          <div class="mt-1">
-            <%= form.text_area :venue, rows: 3, class: ["block w-full rounded-md shadow-sm sm:text-sm px-3 py-2 border", {"border-gray-300 focus:border-foundationprimarygreen focus:ring-foundationprimarygreen": event.errors[:venue].none?, "border-red-400 focus:ring-red-500": event.errors[:venue].any?}] %>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <%= form.label :start_date, class: "block text-sm font-medium text-foundationprimarygreen" %>
-            <%= form.date_field :start_date, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-foundationprimarygreen focus:ring-foundationprimarygreen" %>
-          </div>
-          
-          <div>
-            <%= form.label :end_date, class: "block text-sm font-medium text-foundationprimarygreen" %>
-            <%= form.date_field :end_date, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-foundationprimarygreen focus:ring-foundationprimarygreen" %>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <%= form.label :start_time, class: "block text-sm font-medium text-foundationprimarygreen" %>
-            <%= form.time_field :start_time, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-foundationprimarygreen focus:ring-foundationprimarygreen" %>
-          </div>
-          
-          <div>
-            <%= form.label :end_time, class: "block text-sm font-medium text-foundationprimarygreen" %>
-            <%= form.time_field :end_time, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-foundationprimarygreen focus:ring-foundationprimarygreen" %>
-          </div>
+  <div class="px-4 sm:px-6">
+    <div class="bg-white rounded-3xl shadow-2xl ring-1 ring-foundationprimarygreen/6 overflow-hidden">
+      <div class="bg-foundation-gradient py-3 px-3 sm:py-6 sm:px-8 backdrop-blur-sm">
+        <div class="text-center">
+          <h2 class="text-xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+            <span class="text-foundationprimarygreen"><%= event.persisted? ? "Edit" : "Create" %></span>
+            <span class="text-forange"> Event</span>
+          </h2>
+          <p class="mt-2 text-xs sm:text-base text-gray-700 max-w-xl sm:max-w-2xl mx-auto">Provide event details and ticket configuration. Keep descriptions concise so attendees can decide quickly.</p>
         </div>
       </div>
 
-      <!-- Ticket Types Configuration -->
-      <div class="space-y-6">
-        <div class="flex justify-between items-center">
-          <h3 class="text-lg font-medium text-gray-900">Ticket Types</h3>
-          <button type="button" id="add-ticket-type" class="inline-flex items-center px-3 py-1 btn-primary text-white rounded-md text-sm">
-            <i class="fa fa-plus mr-2" aria-hidden="true"></i>
-            Add Ticket Type
-          </button>
-        </div>
+  <div class="py-4 px-4 sm:p-8">
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+          <!-- Main inputs -->
+          <div class="md:col-span-8 lg:col-span-8 space-y-4">
+            <div>
+              <%= form.label :name, class: "block text-xs font-semibold uppercase tracking-wide text-gray-600" %>
+              <div class="mt-1 relative">
+                <%= form.text_field :name, class: ["block w-full rounded-md shadow-sm text-sm px-2 py-2 sm:px-4 sm:py-3 border bg-white/60 backdrop-blur-[2px]", {"border-gray-200 focus:border-foundationprimarygreen focus:ring-foundationprimarygreen/40": event.errors[:name].none?, "border-red-400 focus:ring-red-500": event.errors[:name].any?}] %>
+              </div>
+            </div>
 
-        <div id="ticket-types-container">
-          <% if event.new_record? || event.ticket_types.empty? %>
-            <!-- Default ticket type for new events or events without ticket types -->
-            <div class="ticket-type-fields bg-white rounded-lg p-4 mb-4 border border-foundationprimarygreen/5">
-              <div class="flex justify-between items-center mb-4">
-                <h4 class="text-lg font-medium text-gray-900">Ticket Type 1</h4>
-                <button type="button" class="remove-ticket-type text-red-600 hover:text-red-800 p-2" data-remove-ticket disabled>
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                  </svg>
+            <div>
+              <%= form.label :venue, class: "block text-xs font-semibold uppercase tracking-wide text-gray-600" %>
+              <div class="mt-2">
+                <%= form.text_area :venue, rows: 3, class: ["block w-full rounded-lg shadow-sm text-sm px-3 py-2 sm:px-4 sm:py-3 border bg-white/60 backdrop-blur-[2px]", {"border-gray-200 focus:border-foundationprimarygreen focus:ring-foundationprimarygreen/40": event.errors[:venue].none?, "border-red-400 focus:ring-red-500": event.errors[:venue].any?}] %>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <%= form.label :start_date, class: "block text-xs font-semibold uppercase tracking-wide text-gray-600" %>
+                <%= form.date_field :start_date, class: "mt-1 block w-full rounded-md border-gray-200 shadow-sm focus:border-foundationprimarygreen focus:ring-foundationprimarygreen/40" %>
+              </div>
+
+              <div>
+                <%= form.label :end_date, class: "block text-xs font-semibold uppercase tracking-wide text-gray-600" %>
+                <%= form.date_field :end_date, class: "mt-1 block w-full rounded-md border-gray-200 shadow-sm focus:border-foundationprimarygreen focus:ring-foundationprimarygreen/40" %>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <%= form.label :start_time, class: "block text-xs font-semibold uppercase tracking-wide text-gray-600" %>
+                <%= form.time_field :start_time, class: "mt-1 block w-full rounded-md border-gray-200 shadow-sm focus:border-foundationprimarygreen focus:ring-foundationprimarygreen/40" %>
+              </div>
+
+              <div>
+                <%= form.label :end_time, class: "block text-xs font-semibold uppercase tracking-wide text-gray-600" %>
+                <%= form.time_field :end_time, class: "mt-1 block w-full rounded-md border-gray-200 shadow-sm focus:border-foundationprimarygreen focus:ring-foundationprimarygreen/40" %>
+              </div>
+            </div>
+
+            <!-- Ticket Types Configuration -->
+            <div class="bg-white rounded-2xl p-3 sm:p-4 shadow-sm border border-foundationprimarygreen/5">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <h3 class="text-base font-medium text-gray-900">Ticket Types</h3>
+                <button type="button" id="add-ticket-type" class="w-full sm:w-auto inline-flex items-center justify-center px-2 py-1 btn-primary text-white rounded-md text-sm">
+                  <!-- inline SVG plus to avoid relying on external icon fonts on very small screens -->
+                  <svg class="w-3 h-3 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14M5 12h14"/></svg>
+                  Add Ticket Type
                 </button>
               </div>
-              
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Name -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Type Name</label>
-                  <input type="text" name="event[ticket_types][][name]" 
-                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen focus:border-transparent"
-                         placeholder="e.g., General Admission" value="<%= event.new_record? ? 'General Admission' : '' %>" required />
+
+              <div id="ticket-types-container" class="mt-4">
+                <% if event.new_record? || event.ticket_types.empty? %>
+                  <!-- Default ticket type for new events or events without ticket types -->
+                  <div class="ticket-type-fields bg-white rounded-md p-2 mb-3 border border-foundationprimarygreen/5">
+                    <div class="flex items-center justify-between mb-2">
+                      <h4 class="text-sm font-medium text-gray-900">Ticket Type 1</h4>
+                      <button type="button" class="remove-ticket-type text-red-600 hover:text-red-800 p-1" data-remove-ticket disabled aria-label="Remove ticket type">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                      </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <!-- Name -->
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Type Name</label>
+         <input type="text" name="event[ticket_types][][name]" 
+           class="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen focus:border-transparent text-sm"
+                               placeholder="e.g., General Admission" value="<%= event.new_record? ? 'General Admission' : '' %>" required />
+                      </div>
+                      
+                      <!-- Category -->
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+      <select name="event[ticket_types][][category]" 
+        class="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen focus:border-transparent text-sm" required>
+                          <option value="">Select category</option>
+                          <option value="general" <%= 'selected' if event.new_record? %>>General</option>
+                          <option value="vip">VIP</option>
+                          <option value="premium">Premium</option>
+                          <option value="standard">Standard</option>
+                        </select>
+                      </div>
+                      
+                      <!-- Price -->
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+         <input type="number" name="event[ticket_types][][price]" 
+           class="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen focus:border-transparent text-sm"
+                               step="0.01" min="0" placeholder="0.00" value="<%= event.ticket_price if event.persisted? %>" required />
+                      </div>
+                      
+                      <!-- Seats Available -->
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Seats Available</label>
+         <input type="number" name="event[ticket_types][][seats_available]" 
+           class="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen focus;border-transparent text-sm"
+                               min="1" placeholder="100" value="<%= event.new_record? ? '' : event.total_seats %>" required data-seats-input />
+                      </div>
+                      
+                      <!-- Description -->
+                      <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Description (Optional)</label>
+                        <textarea name="event[ticket_types][][description]" 
+                                  class="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen focus;border-transparent text-sm"
+                                  rows="2" placeholder="Brief description of what this ticket type includes..."></textarea>
+                      </div>
+                    </div>
+                  </div>
+                <% else %>
+                  <!-- Existing ticket types for edit -->
+                  <% event.ticket_types.each_with_index do |ticket_type, index| %>
+                    <div class="ticket-type-fields bg-white rounded-md p-3 mb-3 border border-foundationprimarygreen/5">
+                      <div class="flex items-center justify-between mb-3">
+                        <h4 class="text-base font-medium text-gray-900">Ticket Type <%= index + 1 %></h4>
+                        <button type="button" class="remove-ticket-type text-red-600 hover:text-red-800 p-1" data-remove-ticket <%= 'disabled' if event.ticket_types.length == 1 %>>
+                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                          </svg>
+                        </button>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <!-- Name -->
+                          <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Type Name</label>
+                            <input type="text" name="event[ticket_types][][name]" 
+                                       class="w-full px-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen focus:border-transparent text-sm"
+                                       placeholder="e.g., General Admission" value="<%= ticket_type['name'] %>" required />
+                          </div>
+                          
+                          <!-- Category -->
+                          <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+          <select name="event[ticket_types][][category]" 
+            class="w-full px-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen focus:border-transparent text-sm" required>
+                              <option value="">Select category</option>
+                              <option value="general" <%= 'selected' if ticket_type['category'] == 'general' %>>General</option>
+                              <option value="vip" <%= 'selected' if ticket_type['category'] == 'vip' %>>VIP</option>
+                              <option value="premium" <%= 'selected' if ticket_type['category'] == 'premium' %>>Premium</option>
+                              <option value="standard" <%= 'selected' if ticket_type['category'] == 'standard' %>>Standard</option>
+                            </select>
+                          </div>
+                          
+                          <!-- Price -->
+                          <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Price ($)</label>
+        <input type="number" name="event[ticket_types][][price]" 
+          class="w-full px-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen focus;border-transparent text-sm"
+                                   step="0.01" min="0" placeholder="0.00" value="<%= ticket_type['price'] %>" required />
+                          </div>
+                          
+                          <!-- Seats Available -->
+                          <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Seats Available</label>
+        <input type="number" name="event[ticket_types][][seats_available]" 
+          class="w-full px-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen focus;border-transparent text-sm"
+                                   min="1" placeholder="100" value="<%= ticket_type['seats_available'] %>" required data-seats-input />
+                          </div>
+                          
+                          <!-- Description -->
+                          <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
+                            <textarea name="event[ticket_types][][description]" 
+                                      class="w-full px-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen focus;border-transparent text-sm"
+                                      rows="2" placeholder="Brief description of what this ticket type includes..."><%= ticket_type['description'] %></textarea>
+                          </div>
+                        </div>
+                    </div>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+
+            <!-- Event Image & Description (main) -->
+            <div class="grid grid-cols-1 gap-4">
+              <div>
+                <%= form.label :event_image, "Event Image", class: "block text-xs font-semibold uppercase tracking-wide text-gray-600" %>
+                <%= form.file_field :event_image, accept: "image/*", class: "mt-1 block w-full text-sm text-gray-600 file:border-0 file:bg-forange/10 file:text-forange file:px-3 file:py-2 rounded-md" %>
+                <% if event.event_image.attached? %>
+                  <div class="mt-3">
+                    <%= image_tag event.event_image.variant(resize_to_limit: [600, 400]), class: "rounded-md w-full h-auto" %>
+                  </div>
+                <% end %>
+              </div>
+
+              <div>
+                <%= form.label :description, "Event Description", class: "block text-xs font-semibold uppercase tracking-wide text-gray-600" %>
+                <%= form.text_area :description, rows: 4, placeholder: "Describe the event, activities, and what attendees can expect...", class: "mt-1 block w-full rounded-md border-gray-200 shadow-sm focus:border-foundationprimarygreen focus:ring-foundationprimarygreen/40" %>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sidebar: stats & admin controls - place after main on xs to save horizontal space -->
+          <aside class="md:col-span-4 lg:col-span-4 space-y-6 order-last md:order-none">
+            <div class="md:sticky top-20">
+              <div class="bg-white rounded-2xl p-3 shadow-lg border border-foundationprimarygreen/5">
+                <div class="flex items-start gap-4">
+                  <div class="flex-1">
+                    <div class="text-xs font-semibold text-gray-500">Total Seats</div>
+                    <div class="mt-1 text-3xl font-extrabold text-foundationprimarygreen"><span id="total-seats-display"><%= event.persisted? ? event.total_seats_available : 0 %></span></div>
+                    <div class="text-xs text-gray-500 mt-1">Configured across all ticket types</div>
+                  </div>
+                  <div class="ml-2 flex-shrink-0 bg-foundationprimarygreen/10 rounded-full p-2">
+                    <svg class="w-6 h-6 text-foundationprimarygreen/90" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3"/></svg>
+                  </div>
                 </div>
-                
-                <!-- Category -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                  <select name="event[ticket_types][][category]" 
-                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen focus:border-transparent" required>
-                    <option value="">Select category</option>
-                    <option value="general" <%= 'selected' if event.new_record? %>>General</option>
-                    <option value="vip">VIP</option>
-                    <option value="premium">Premium</option>
-                    <option value="standard">Standard</option>
-                  </select>
-                </div>
-                
-                <!-- Price -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Price ($)</label>
-                  <input type="number" name="event[ticket_types][][price]" 
-                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen focus:border-transparent"
-                         step="0.01" min="0" placeholder="0.00" value="<%= event.ticket_price if event.persisted? %>" required />
-                </div>
-                
-                <!-- Seats Available -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Seats Available</label>
-                  <input type="number" name="event[ticket_types][][seats_available]" 
-                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen focus:border-transparent"
-                         min="1" placeholder="100" value="<%= event.new_record? ? '' : event.total_seats %>" required data-seats-input />
-                </div>
-                
-                <!-- Description -->
-                <div class="md:col-span-2">
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
-                  <textarea name="event[ticket_types][][description]" 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen focus:border-transparent"
-                            rows="2" placeholder="Brief description of what this ticket type includes..."></textarea>
+              </div>
+
+              <div class="mt-4 bg-gray-50 border border-gray-200 rounded-lg p-3">
+                <div class="text-sm font-medium text-gray-800">Visibility</div>
+                  <div class="mt-2 text-sm text-gray-600">
+                    <%# compute a safe active flag: prefer explicit is_active if present, otherwise infer from dates %>
+                    <% active_flag = if event.respond_to?(:is_active)
+                                       event.is_active
+                                     else
+                                       event.start_date.present? && event.end_date.present? && Date.current >= event.start_date && Date.current <= event.end_date
+                                     end %>
+                    <p>Active: <span class="font-medium <%= active_flag ? 'text-foundationprimarygreen' : 'text-gray-600' %>"><%= active_flag ? 'Yes' : 'No' %></span></p>
+                  </div>
+              </div>
+
+              <div class="mt-4 bg-white rounded-lg p-3 border border-gray-100">
+                <div class="text-sm font-medium text-foundationprimarygreen">Settings</div>
+                <div class="mt-2 space-y-2">
+                  <div>
+                    <div class="flex items-center justify-between p-2 border border-foundationprimarygreen/10 rounded-md bg-foundationprimarygreen/3">
+                      <div class="flex items-center gap-2">
+                        <% if event.respond_to?(:is_active) || (event.respond_to?(:attribute_names) && event.attribute_names.include?('is_active')) %>
+                          <%= form.check_box :is_active, class: "h-4 w-4 text-foundationprimarygreen rounded border-gray-300 focus:ring-foundationprimarygreen" %>
+                          <div>
+                            <%= form.label :is_active, class: "text-sm font-medium text-foundationprimarygreen" %>
+                            <p class="text-xs text-gray-500">Mark the event as active to make it visible.</p>
+                          </div>
+                        <% else %>
+                          <div>
+                            <p class="text-sm text-gray-600">This model does not have an explicit visibility toggle. Active status is inferred from the event dates.</p>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          <% else %>
-            <!-- Existing ticket types for edit -->
-            <% event.ticket_types.each_with_index do |ticket_type, index| %>
-              <div class="ticket-type-fields bg-white rounded-lg p-4 mb-4 border border-foundationprimarygreen/5">
-                <div class="flex justify-between items-center mb-4">
-                  <h4 class="text-lg font-medium text-gray-900">Ticket Type <%= index + 1 %></h4>
-                  <button type="button" class="remove-ticket-type text-red-600 hover:text-red-800 p-2" data-remove-ticket <%= 'disabled' if event.ticket_types.length == 1 %>>
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                    </svg>
-                  </button>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <!-- Name -->
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Type Name</label>
-                    <input type="text" name="event[ticket_types][][name]" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen focus:border-transparent"
-                           placeholder="e.g., General Admission" value="<%= ticket_type['name'] %>" required />
-                  </div>
-                  
-                  <!-- Category -->
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                    <select name="event[ticket_types][][category]" 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen focus:border-transparent" required>
-                      <option value="">Select category</option>
-                      <option value="general" <%= 'selected' if ticket_type['category'] == 'general' %>>General</option>
-                      <option value="vip" <%= 'selected' if ticket_type['category'] == 'vip' %>>VIP</option>
-                      <option value="premium" <%= 'selected' if ticket_type['category'] == 'premium' %>>Premium</option>
-                      <option value="standard" <%= 'selected' if ticket_type['category'] == 'standard' %>>Standard</option>
-                    </select>
-                  </div>
-                  
-                  <!-- Price -->
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Price ($)</label>
-                    <input type="number" name="event[ticket_types][][price]" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen focus:border-transparent"
-                           step="0.01" min="0" placeholder="0.00" value="<%= ticket_type['price'] %>" required />
-                  </div>
-                  
-                  <!-- Seats Available -->
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Seats Available</label>
-                    <input type="number" name="event[ticket_types][][seats_available]" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen focus:border-transparent"
-                           min="1" placeholder="100" value="<%= ticket_type['seats_available'] %>" required data-seats-input />
-                  </div>
-                  
-                  <!-- Description -->
-                  <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
-                    <textarea name="event[ticket_types][][description]" 
-                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-foundationprimarygreen focus:border-transparent"
-                              rows="2" placeholder="Brief description of what this ticket type includes..."><%= ticket_type['description'] %></textarea>
-                  </div>
-                </div>
-              </div>
-            <% end %>
-          <% end %>
-        </div>
-
-        <!-- Total Seats Summary -->
-        <div class="bg-foundationprimarygreen/5 border border-foundationprimarygreen/10 rounded-lg p-4">
-          <div class="flex items-center">
-            <svg class="w-5 h-5 text-foundationprimarygreen mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-            </svg>
-            <span class="text-sm font-medium text-foundationprimarygreen">
-              Total Seats: <span id="total-seats-display"><%= event.persisted? ? event.total_seats_available : 0 %></span>
-            </span>
-          </div>
+          </aside>
         </div>
 
         <!-- Hidden fields for backward compatibility -->
@@ -217,51 +285,38 @@
         <%= form.hidden_field :ticket_price, value: event.persisted? ? event.ticket_price : 0 %>
         <%= form.hidden_field :ticket_category, value: event.persisted? ? event.ticket_category : "general" %>
 
-        <div>
-          <%= form.label :event_image, "Event Image", class: "block text-sm font-medium text-foundationprimarygreen" %>
-          <%= form.file_field :event_image, accept: "image/*", class: "mt-1 block w-full text-sm text-gray-600 file:border-0 file:bg-forange/10 file:text-forange file:px-3 file:py-2 rounded-md" %>
-          <% if event.event_image.attached? %>
-            <div class="mt-2">
-              <%= image_tag event.event_image.variant(resize_to_limit: [300, 200]), class: "rounded-md" %>
+        <!-- Guest Information -->
+        <div class="space-y-4 mt-4">
+          <div>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 mt-2 gap-2">
+              <label class="block text-sm font-medium text-gray-700">Event Guests</label>
+              <button type="button" 
+                      id="add-guest-btn"
+                      class="w-full sm:w-auto inline-flex items-center justify-center px-2 py-1 btn-primary text-white rounded-md text-sm">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+                Add Guest
+              </button>
             </div>
-          <% end %>
+            
+            <div id="guests-container" class="space-y-3">
+              <%= form.fields_for :guests do |guest_form| %>
+                <%= render 'guest_fields', form: guest_form %>
+              <% end %>
+            </div>
+          </div>
         </div>
 
-        <div>
-          <%= form.label :description, "Event Description", class: "block text-sm font-medium text-foundationprimarygreen" %>
-          <%= form.text_area :description, rows: 4, placeholder: "Describe the event, activities, and what attendees can expect...", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-foundationprimarygreen focus:ring-foundationprimarygreen" %>
+        <!-- Actions -->
+        <div class="mt-4">
+          <div class="flex flex-col-reverse sm:flex-row items-center sm:justify-end gap-2">
+            <%= link_to 'Cancel', event.persisted? ? event : events_path, class: "w-full sm:w-auto inline-flex justify-center items-center px-3 py-2 border border-forange/30 rounded-md bg-white text-sm text-foundationprimarygreen hover:bg-forange/10" %>
+            <%= form.submit event.persisted? ? 'Update Event' : 'Create Event', class: "w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 rounded-md text-sm text-white font-semibold shadow-lg btn-primary hover:scale-[1.02] transition-transform duration-150" %>
+          </div>
+          <p class="mt-2 text-xs text-gray-500 text-center sm:text-right">By submitting you confirm all details are accurate. Admins can update visibility and settings later.</p>
         </div>
       </div>
-    </div>
-
-    <!-- Guest Information -->
-    <div class="space-y-6">
-      <!-- Dynamic Guest Management -->
-      <div>
-        <div class="flex items-center justify-between mb-4 mt-4">
-          <label class="block text-sm font-medium text-gray-700">Event Guests</label>
-          <button type="button" 
-                  id="add-guest-btn"
-                  class="inline-flex items-center px-3 py-1 btn-primary text-white rounded-md text-sm">
-            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-            </svg>
-            Add Guest
-          </button>
-        </div>
-        
-        <div id="guests-container" class="space-y-4">
-          <%= form.fields_for :guests do |guest_form| %>
-            <%= render 'guest_fields', form: guest_form %>
-          <% end %>
-        </div>
-      </div>
-    </div>
-
-    <!-- Actions -->
-    <div class="mt-6 flex flex-col sm:flex-row items-center justify-end gap-3">
-      <%= link_to 'Cancel', event.persisted? ? event : events_path, class: "w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-forange/30 rounded-md bg-white text-sm text-foundationprimarygreen hover:bg-forange/10" %>
-      <%= form.submit class: "w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 rounded-md text-sm text-white font-medium shadow-md btn-primary" %>
     </div>
   </div>
 <% end %>
