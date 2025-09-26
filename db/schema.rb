@@ -297,10 +297,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_090000) do
     t.string "icon"
     t.string "donation_title"
     t.text "donation_subtitle"
+    t.uuid "updated_by_id"
+    t.string "updated_by_name"
     t.index ["created_at"], name: "index_active_projects_on_created_at", where: "(is_active = true)"
     t.index ["created_at"], name: "index_projects_on_created_at"
     t.index ["is_active", "created_at"], name: "index_projects_on_active_and_created_at"
     t.index ["name"], name: "index_projects_on_name"
+    t.index ["updated_by_id"], name: "index_projects_on_updated_by_id"
   end
 
   create_table "team_assignments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -433,6 +436,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_090000) do
   add_foreign_key "notifications", "users", column: "recipient_id"
   add_foreign_key "payments", "projects"
   add_foreign_key "payments", "users"
+  add_foreign_key "projects", "users", column: "updated_by_id"
   add_foreign_key "team_assignments", "volunteers"
   add_foreign_key "team_assignments", "volunteers_teams", column: "team_id"
   add_foreign_key "tickets", "events"

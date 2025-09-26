@@ -46,9 +46,9 @@ class ProjectsController < ApplicationController
       @impact_items = @project.expenses.order(created_at: :desc).limit(10).map do |e|
         # Expense model has `title` and `amount` (no `description`/`category`).
         title = e.respond_to?(:title) ? e.title : "Expense: $#{e.amount}"
-        summary_parts = ["Spent $#{e.amount}"]
+        summary_parts = [ "Spent $#{e.amount}" ]
         summary_parts << "on #{e.title}" if e.respond_to?(:title) && e.title.present?
-        OpenStruct.new(title: title, summary: summary_parts.join(' '), created_at: e.created_at)
+        OpenStruct.new(title: title, summary: summary_parts.join(" "), created_at: e.created_at)
       end
       # If still empty, supply a few static items
       if @impact_items.empty?
@@ -75,6 +75,11 @@ class ProjectsController < ApplicationController
   # POST /projects or /projects.json
   def create
     @project = Project.new(project_params)
+    # track who created/updated this project
+    if current_user
+      @project.updated_by = current_user
+      @project.updated_by_name = "#{current_user.first_name} #{current_user.last_name}" rescue nil
+    end
 
     respond_to do |format|
       if @project.save
@@ -90,6 +95,11 @@ class ProjectsController < ApplicationController
   # PATCH/PUT /projects/1 or /projects/1.json
   def update
     respond_to do |format|
+      # track updater
+      if current_user
+        @project.updated_by = current_user
+        @project.updated_by_name = "#{current_user.first_name} #{current_user.last_name}" rescue nil
+      end
       if @project.update(project_params)
         format.html { redirect_to @project, notice: "Project was successfully updated." }
         format.json { render :show, status: :ok, location: @project }

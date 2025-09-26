@@ -2,6 +2,7 @@ class Project < ApplicationRecord
     has_one_attached :image
     has_many :donations, dependent: :destroy
     has_many :expenses, dependent: :destroy
+  belongs_to :updated_by, class_name: "User", optional: true
 
   # Allowed categories for projects. Use a frozen constant to ensure the list is immutable.
   CATEGORIES = %w[Palestine Orphans Food&Water Crisis_Relief Sadaqah Healthcare Education Emergency Community].freeze

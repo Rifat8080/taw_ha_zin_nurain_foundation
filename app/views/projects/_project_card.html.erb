@@ -76,11 +76,11 @@
           <i class="fas fa-ban mr-1"></i> Inactive
         </div>
       <% end %>
-  <% if current_user&.role == "admin" %>
-  <%= link_to edit_project_path(project), class: "flex-1 min-w-[120px] text-center px-4 py-2 bg-[rgb(var(--color-foundation-secondary))] text-white font-semibold rounded-lg transition-all duration-200 shadow-md scale-100 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-foundation-secondary))]/60 transform will-change-transform hover:shadow-lg hover:shadow-[rgba(var(--color-foundation-secondary),0.25)] hover:-translate-y-1 hover:-rotate-x-2 hover:scale-105 active:scale-95 active:shadow-inner" do %>
+  <% if current_user && (current_user.role == "admin" || current_user.role == "volunteer") %>
+    <%= link_to edit_project_path(project), class: "flex-1 min-w-[120px] text-center px-4 py-2 bg-[rgb(var(--color-foundation-secondary))] text-white font-semibold rounded-lg transition-all duration-200 shadow-md scale-100 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-foundation-secondary))]/60 transform will-change-transform hover:shadow-lg hover:shadow-[rgba(var(--color-foundation-secondary),0.25)] hover:-translate-y-1 hover:-rotate-x-2 hover:scale-105 active:scale-95 active:shadow-inner" do %>
           <i class="fas fa-edit mr-1"></i> Edit
-        <% end %>
-      <% end %>
+    <% end %>
+  <% end %>
     </div>
   <% if current_user&.role == "admin" %>
       <div class="mt-2">
@@ -90,4 +90,41 @@
       </div>
     <% end %>
   </div>
+  <%# Show last editor only to admins if available %>
+  <% if current_user&.role == 'admin' %>
+    <%# Modern, responsive "Last edited by" card: show avatar/initials, full name and email when available %>
+    <% editor = (project.respond_to?(:updated_by) && project.updated_by.present?) ? project.updated_by : nil %>
+    <% editor_name = editor ? [editor.first_name, editor.last_name].compact.join(' ') : (project.respond_to?(:updated_by_name) ? project.updated_by_name : nil) %>
+    <% editor_email = editor ? editor.email : (project.respond_to?(:updated_by_email) ? project.updated_by_email : nil) %>
+    <% if editor_name.present? || editor_email.present? %>
+      <div class="px-6 pt-4">
+        <div class="flex items-center gap-3 bg-gray-50/60 dark:bg-gray-800/50 rounded-lg p-3">
+          <%# Avatar: use ActiveStorage variant or initials fallback %>
+          <div class="flex-shrink-0">
+            <% if editor && editor.respond_to?(:avatar) && editor.avatar.attached? %>
+              <%= image_tag editor.avatar.variant(resize_to_fill: [48,48]), class: "w-12 h-12 rounded-full object-cover" %>
+            <% else %>
+              <% initials = editor_name.to_s.split.map { |n| n[0] }.join.upcase[0,2] rescue '' %>
+              <div class="w-12 h-12 rounded-full bg-gradient-to-br from-foundationprimarygreen to-[rgb(var(--color-foundation-secondary))] text-white flex items-center justify-center font-semibold"> <%= initials.presence || '?' %> </div>
+            <% end %>
+          </div>
+
+          <div class="min-w-0">
+            <% if editor_name.present? %>
+              <div class="text-sm font-semibold text-gray-900 truncate"><%= editor_name %></div>
+            <% end %>
+            <% if editor_email.present? %>
+              <div class="text-xs text-gray-500 truncate"><%= editor_email %></div>
+            <% end %>
+            <div class="mt-1 text-xs text-gray-400">Last updated</div>
+          </div>
+
+          <div class="ml-auto hidden sm:flex items-center text-xs text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 00-1-1H6zm1 6a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
+            <span class="whitespace-nowrap">for admins only</span>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
 </div>
