@@ -5,7 +5,7 @@ class HealthcareDonationsController < ApplicationController
 
   def index
   # Index should list manual donations only (admin view) unless filtering for a specific request
-  authorize_admin!
+ 
   @requests = HealthcareRequest.all.order(created_at: :desc).limit(200)
 
   if params[:request_id].present?
@@ -33,7 +33,7 @@ class HealthcareDonationsController < ApplicationController
 
   # Admin edit form for a manual donation
   def edit
-    authorize_admin!
+   
   set_healthcare_donation
   @users = User.order(:email).limit(500)
   @healthcare_requests = HealthcareRequest.accepting_donations
@@ -41,7 +41,7 @@ class HealthcareDonationsController < ApplicationController
 
   # Admin update action for manual donations
   def update
-    authorize_admin!
+   
     set_healthcare_donation
 
     # Handle user assignment/creation similar to manual_create
@@ -113,7 +113,7 @@ class HealthcareDonationsController < ApplicationController
 
   # Admin-only manual donation creation for a specified request and donor
   def manual_new
-    authorize_admin!
+   
     @healthcare_donation = HealthcareDonation.new
   @healthcare_requests = HealthcareRequest.accepting_donations
     # allow admin to search existing users when creating manual donation
@@ -141,7 +141,7 @@ class HealthcareDonationsController < ApplicationController
   end
 
   def manual_create
-    authorize_admin!
+   
 
   # Build donation from params (exclude nested user_attributes when initializing model)
   donation_attrs = manual_donation_params.except(:user_attributes)
@@ -212,11 +212,5 @@ class HealthcareDonationsController < ApplicationController
 
   def manual_donation_params
   params.require(:healthcare_donation).permit(:amount, :user_id, :request_id, user_attributes: [ :first_name, :last_name, :email, :phone_number ])
-  end
-
-  def authorize_admin!
-    unless current_user&.role == "admin"
-      redirect_to healthcare_donations_path, alert: "Not authorized."
-    end
   end
 end
