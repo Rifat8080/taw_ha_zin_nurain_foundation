@@ -241,41 +241,9 @@
                 </div>
               </div>
 
-              <div class="mt-4 bg-gray-50 border border-gray-200 rounded-lg p-3">
-                <div class="text-sm font-medium text-gray-800">Visibility</div>
-                  <div class="mt-2 text-sm text-gray-600">
-                    <%# compute a safe active flag: prefer explicit is_active if present, otherwise infer from dates %>
-                    <% active_flag = if event.respond_to?(:is_active)
-                                       event.is_active
-                                     else
-                                       event.start_date.present? && event.end_date.present? && Date.current >= event.start_date && Date.current <= event.end_date
-                                     end %>
-                    <p>Active: <span class="font-medium <%= active_flag ? 'text-foundationprimarygreen' : 'text-gray-600' %>"><%= active_flag ? 'Yes' : 'No' %></span></p>
-                  </div>
-              </div>
+           
 
-              <div class="mt-4 bg-white rounded-lg p-3 border border-gray-100">
-                <div class="text-sm font-medium text-foundationprimarygreen">Settings</div>
-                <div class="mt-2 space-y-2">
-                  <div>
-                    <div class="flex items-center justify-between p-2 border border-foundationprimarygreen/10 rounded-md bg-foundationprimarygreen/3">
-                      <div class="flex items-center gap-2">
-                        <% if event.respond_to?(:is_active) || (event.respond_to?(:attribute_names) && event.attribute_names.include?('is_active')) %>
-                          <%= form.check_box :is_active, class: "h-4 w-4 text-foundationprimarygreen rounded border-gray-300 focus:ring-foundationprimarygreen" %>
-                          <div>
-                            <%= form.label :is_active, class: "text-sm font-medium text-foundationprimarygreen" %>
-                            <p class="text-xs text-gray-500">Mark the event as active to make it visible.</p>
-                          </div>
-                        <% else %>
-                          <div>
-                            <p class="text-sm text-gray-600">This model does not have an explicit visibility toggle. Active status is inferred from the event dates.</p>
-                          </div>
-                        <% end %>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+             
             </div>
           </aside>
         </div>
