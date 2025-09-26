@@ -132,12 +132,15 @@ class Event < ApplicationRecord
   after_commit :notify_event_created, on: :create
   after_commit :notify_event_updated, on: :update
 
+  # Optional association to track who last updated the event
+  belongs_to :updated_by, class_name: "User", optional: true
+
   def notify_event_created
-    EventNotificationJob.perform_later(id, 'created')
+    EventNotificationJob.perform_later(id, "created")
   end
 
   def notify_event_updated
-    EventNotificationJob.perform_later(id, 'updated')
+    EventNotificationJob.perform_later(id, "updated")
   end
 
   private

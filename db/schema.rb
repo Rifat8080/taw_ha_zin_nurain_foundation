@@ -117,11 +117,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_090000) do
     t.datetime "updated_at", null: false
     t.jsonb "ticket_types_config", default: []
     t.text "description"
+    t.uuid "updated_by_id"
+    t.string "updated_by_name"
+    t.string "updated_by_email"
     t.index ["created_at"], name: "index_events_on_created_at"
     t.index ["name"], name: "index_events_on_name"
     t.index ["start_date", "end_date"], name: "index_events_on_date_range"
     t.index ["ticket_category"], name: "index_events_on_ticket_category"
     t.index ["ticket_types_config"], name: "index_events_on_ticket_types_config", using: :gin
+    t.index ["updated_by_id"], name: "index_events_on_updated_by_id"
   end
 
   create_table "expenses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -424,6 +428,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_090000) do
   add_foreign_key "donations", "users"
   add_foreign_key "event_users", "events"
   add_foreign_key "event_users", "users"
+  add_foreign_key "events", "users", column: "updated_by_id"
   add_foreign_key "expenses", "projects"
   add_foreign_key "guests", "events"
   add_foreign_key "healthcare_donations", "healthcare_requests", column: "request_id"

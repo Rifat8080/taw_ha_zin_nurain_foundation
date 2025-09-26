@@ -43,6 +43,12 @@ class EventsController < ApplicationController
 
   def create
     @event = Event.new(event_params)
+    # Record who created the event (persist name/email for quick display)
+    if current_user
+      @event.updated_by = current_user
+      @event.updated_by_name = "#{current_user.first_name} #{current_user.last_name}" rescue nil
+      @event.updated_by_email = current_user.email rescue nil
+    end
 
     if @event.save
       redirect_to @event, notice: "Event was successfully created."
@@ -63,6 +69,13 @@ def update
   end
 
   if @event.update(event_params)
+    # Record who updated the event
+    if current_user
+      @event.updated_by = current_user
+      @event.updated_by_name = "#{current_user.first_name} #{current_user.last_name}" rescue nil
+      @event.updated_by_email = current_user.email rescue nil
+      @event.save if @event.changed?
+    end
     redirect_to @event, notice: "Event was successfully updated."
   else
     # Collect all guest errors for better display
